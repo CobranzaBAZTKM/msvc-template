@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <Properties>
+        <Property name="LOG_CONSOLE_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] [%L] %c{1} - %msg%n%throwable
+        </Property>
+        <Property name="LOG_FILE_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] [%L] %c{1} - %msg%n
+        </Property>
+        <Property name="LOG_DIR">./logs</Property>
+        <Property name="FILENAME">msvc-template</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_CONSOLE_PATTERN}"/>
+        </Console>
+
+        <RollingFile
+                name="RollingFile"
+                fileName="${LOG_DIR}/${FILENAME}.log"
+                filePattern="${LOG_DIR}/archived/${FILENAME}-%d{yyyy-MM-dd}.%i.log.gz"
+                ignoreExceptions="false">
+            <PatternLayout pattern="${LOG_FILE_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+
+        <Logger name="RollingFile" level="debug" additivity="false">
+            <appender-ref ref="RollingFile" level="debug"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>

@@ -1,0 +1,47 @@
+package com.spring.services.carteralocal.service.impl.rest;
+
+import com.spring.services.cartera.model.ClienteModel;
+import com.spring.services.cartera.model.ExtrasModel;
+import com.spring.services.carteralocal.service.impl.CarteraLocalImpl;
+import com.spring.utils.RestResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+
+@RestController
+@CrossOrigin("*")
+@RequestMapping("/service/carteraLocal")
+public class CarteraLocalRest {
+
+    @Autowired
+    private CarteraLocalImpl carteraLoImpl;
+    public CarteraLocalRest() {
+        //Vacio
+    }
+
+    @PostMapping(value = "/carteraCompletaSCLGuardar",
+            consumes = {"application/json"},
+            produces = {"application/json"})
+//            consumes = { MediaType.APPLICATION_JSON_VALUE },
+//            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(@RequestBody final ExtrasModel cokkie){
+//    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
+        return carteraLoImpl.carteraCompletaGuardar(cokkie);
+    }
+
+
+    @PostMapping(value = "/carteraCompletaDia",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> carteraCompletaDia(){
+//    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
+        return carteraLoImpl.carteraCompletaDia();
+    }
+
+    @GetMapping(value = "/consultarNuevasCuentasDia",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia(){
+//    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
+        return carteraLoImpl.consultarNuevasCuentasDia();
+    }
+}
