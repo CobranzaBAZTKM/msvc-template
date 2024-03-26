@@ -29,7 +29,7 @@ public class PromesasTKMLogic {
     }
 
     public RestResponse<ArrayList<PromesasModel>> consultarPromesas() {
-        return gesDao.consultarPromesas();
+        return gesDao2.consultarPromesas();
     }
 
     public RestResponse<String> insertarPromesas(PromesasModel promesa) {

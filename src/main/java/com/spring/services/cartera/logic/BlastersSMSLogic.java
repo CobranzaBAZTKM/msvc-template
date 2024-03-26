@@ -29,8 +29,8 @@ public class BlastersSMSLogic {
     private CarteraLogic carteraLog;
     @Autowired
     private CarteraSetearDatosLogic setearDatosLogic;
-    @Autowired
-    private UtilService util;
+
+    private UtilService util=new UtilService();
 
 
     @Value("${blasters.envioMasivoTTS}")
@@ -119,7 +119,7 @@ public class BlastersSMSLogic {
             headers.add("SOAPAction","http://tempuri.org/IServicioBlaster/EnvioBlasterMasivoTTS");
             HttpEntity<String> integralEntity = new HttpEntity(requestBlaster, (MultiValueMap)headers);
             LOGGER.log(Level.INFO, () -> "REQUEST Envio Blasters "+integralEntity);
-                        respuesta=rest.postForObject(urlBlastersTTS,integralEntity,String.class,new Object[0]);
+                        respuesta=rest.postForObject("https://wsblaster.marcatel.com.mx/ServicioBlaster.svc/mex",integralEntity,String.class,new Object[0]);
             String respLog=respuesta;
             LOGGER.log(Level.INFO, () -> "RESPONSE Envio Blasters Parametros "+respLog);
         }
@@ -145,7 +145,7 @@ public class BlastersSMSLogic {
                 "            <Telefonos>\n";
         String parteFinalFormato="</Telefonos>\n" +
                 "            <FechaInicial>"+fecha+" "+hora+"</FechaInicial>\n" +
-                "            <FechaFinal>"+fecha+" 20:00</FechaFinal>\n" +
+                "            <FechaFinal>"+fecha+" 20:55</FechaFinal>\n" +
                 "            <MensajeTTS>"+mensaje+"</MensajeTTS>\n" +
                 "            <TipodeVoz>M</TipodeVoz>\n" +
                 "            <Buzon>0</Buzon>\n" +
