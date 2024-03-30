@@ -33,4 +33,9 @@ public class CarteraLocalService implements CarteraLocalImpl {
     public RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia() {
         return carteraLocLog.nuevasCuentasDia();
     }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
+        return carteraLocLog.consultarCarteraDescarte();
+    }
 }

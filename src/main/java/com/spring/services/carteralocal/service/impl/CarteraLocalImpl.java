@@ -10,4 +10,5 @@ public interface CarteraLocalImpl {
     RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie);
     RestResponse<ArrayList<ClienteModel>> carteraCompletaDia();
     RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia();
+    RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte();
 }

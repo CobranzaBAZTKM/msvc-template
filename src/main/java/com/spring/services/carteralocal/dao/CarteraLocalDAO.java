@@ -745,6 +745,7 @@ public class CarteraLocalDAO {
             cs.setString(98,cuenta.getESTATUS_PROMESA_PAGO());
             cs.setString(99,cuenta.getMONTO_PROMESA_PAGO());
             cs.setString(100, String.valueOf(cuenta.getSEGMENTO()));
+            cs.execute();
 
             respuesta.setCode(1);
             respuesta.setError(false);

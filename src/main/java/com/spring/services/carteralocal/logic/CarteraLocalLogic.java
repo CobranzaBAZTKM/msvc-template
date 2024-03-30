@@ -4,6 +4,7 @@ import com.spring.services.cartera.logic.ObtenerClientesCartera;
 import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.cartera.model.ExtrasModel;
 import com.spring.services.carteralocal.dao.CarteraLocalDAO;
+import com.spring.services.carteralocal.dao.CarteraLocalDAO2;
 import com.spring.services.operacion.logic.GestionLlamadasLogic;
 import com.spring.services.operacion.logic.TipificacionesLogic;
 import com.spring.services.operacion.model.GestionLlamadasModel;
@@ -31,6 +32,7 @@ public class CarteraLocalLogic {
     TipificacionesLogic tipificaciones=new TipificacionesLogic();
     UtilService utilService=new UtilService();
     CarteraLocalDAO carteraDAO=new CarteraLocalDAO();
+    CarteraLocalDAO2 carteraDAO2=new CarteraLocalDAO2();
 
 
     public CarteraLocalLogic() {
@@ -43,45 +45,46 @@ public class CarteraLocalLogic {
         RestResponse<ArrayList<ClienteModel>>carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
         if(carteraCompleta.getCode()==1){
 
-            ArrayList<GestionLlamadasModel>gestiones=gestionLlam.consultarGestionLlamadas().getData();
-            ArrayList<TipificacionesModel>tipificacion=tipificaciones.consultarTipificaciones().getData();
+//            ArrayList<GestionLlamadasModel>gestiones=gestionLlam.consultarGestionLlamadas().getData();// DUDA
+//            ArrayList<TipificacionesModel>tipificacion=tipificaciones.consultarTipificaciones().getData();//DUDA
             ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa().getData();
             ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT().getData();
-            ArrayList<ClienteModel>cuentas=new ArrayList<>();
-            ArrayList<GestionLlamadasModel>gestionesDiaAnterior=new ArrayList<>();
+//            ArrayList<ClienteModel>cuentas=new ArrayList<>();
+//            ArrayList<GestionLlamadasModel>gestionesDiaAnterior=new ArrayList<>();//DUDA
             String fecha=utilService.FechaDiaAnteriorPosterior(-1);
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Se obtuvieron "+carteraCompleta.getData().size());
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando validacion de cuentas con gestion");
-            for(int l=0;l<gestiones.size();l++){
-                if(fecha.equals(gestiones.get(l).getFechaInserto())){
-                    gestionesDiaAnterior.add(gestiones.get(l));
-                }
-            }
-
-
-            for(int i=0;i<carteraCompleta.getData().size();i++){
-                for(int j=0;j<gestionesDiaAnterior.size();j++){
-                    int valor=0;
-                    for(int k=0;k<tipificacion.size();k++){
-                        if(gestionesDiaAnterior.get(j).getIdTipificacion()==tipificacion.get(k).getId()){
-                            valor=tipificacion.get(k).getValor();
-                        }
-
-                    }
-
-                    if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO1())){
-                        carteraCompleta.getData().get(i).setTIPOTEL1(""+valor);
-                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO2())){
-                        carteraCompleta.getData().get(i).setTIPOTEL2(""+valor);
-                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO3())){
-                        carteraCompleta.getData().get(i).setTIPOTEL3(""+valor);
-                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO4())){
-                        carteraCompleta.getData().get(i).setTIPOTEL4(""+valor);
-                    }
-                }
-
-                cuentas.add(carteraCompleta.getData().get(i));
-            }
+            ArrayList<ClienteModel>cuentas=this.revisarGestiones(fecha,carteraCompleta.getData()).getData();
+//            for(int l=0;l<gestiones.size();l++){ //DUDA
+//                if(fecha.equals(gestiones.get(l).getFechaInserto())){ //DUDA
+//                    gestionesDiaAnterior.add(gestiones.get(l)); //DUDA
+//                }
+//            }
+//
+//
+//            for(int i=0;i<carteraCompleta.getData().size();i++){
+//                for(int j=0;j<gestionesDiaAnterior.size();j++){
+//                    int valor=0;
+//                    for(int k=0;k<tipificacion.size();k++){
+//                        if(gestionesDiaAnterior.get(j).getIdTipificacion()==tipificacion.get(k).getId()){
+//                            valor=tipificacion.get(k).getValor();
+//                        }
+//
+//                    }
+//
+//                    if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO1())){
+//                        carteraCompleta.getData().get(i).setTIPOTEL1(""+valor);
+//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO2())){
+//                        carteraCompleta.getData().get(i).setTIPOTEL2(""+valor);
+//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO3())){
+//                        carteraCompleta.getData().get(i).setTIPOTEL3(""+valor);
+//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO4())){
+//                        carteraCompleta.getData().get(i).setTIPOTEL4(""+valor);
+//                    }
+//                }
+//
+//                cuentas.add(carteraCompleta.getData().get(i));
+//            }
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina validacion de cuentas con gestion");
 
             this.guardarNuevas(cuentas);
@@ -90,6 +93,7 @@ public class CarteraLocalLogic {
             RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentas,cuentasConPromesa);
             RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto);
 
+            this.guardarCarteraDescarte(descartarNoContacto.getData());
 
 
             respuesta.setCode(1);
@@ -117,6 +121,29 @@ public class CarteraLocalLogic {
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraCompletaDia() {
         return carteraDAO.consultarCarteraCompleta();
     }
+
+
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
+        RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
+        String[] fechaHora=utilService.obtenerFechaActual().split(" ");
+        String fecha=fechaHora[0];
+        ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa().getData();
+        ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT().getData();
+        ArrayList<ClienteModel> cuentasDescarte=carteraDAO2.consultarCarteraDescarte().getData();
+        ArrayList<ClienteModel> cuentasGestion=this.revisarGestiones(fecha,cuentasDescarte).getData();
+
+
+        RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentasGestion,cuentasConPromesa);
+        RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto);
+
+        respuesta.setCode(1);
+        respuesta.setMessage("Proceso terminado correctamente, se obtienen cuentas");
+        respuesta.setData(descartarNoContacto.getData());
+
+        return respuesta;
+    }
+
+
 
 
 
@@ -151,6 +178,7 @@ public class CarteraLocalLogic {
             }
         }
         carteraDAO.borrarCarteraCompleta();
+        carteraDAO2.borrarCarteraDescarte();
         respuesta.setCode(1);
         respuesta.setMessage("Cuenta nuevas ingresadas");
         respuesta.setData("Cuenta nuevas ingresadas");
@@ -314,5 +342,69 @@ public class CarteraLocalLogic {
         return respuesta;
     }
 
+    private RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
+        LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Comienza guardado de cartera con Descarte");
+        RestResponse<String> respuesta=new RestResponse<>();
+
+        for(int i=0;i<cuentas.size();i++){
+            carteraDAO2.insertarCarteraDescarte(cuentas.get(i));
+        }
+
+        respuesta.setCode(1);
+        respuesta.setData("Registros insertado correctamente");
+
+        LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Termina guardado de cartera con Descarte");
+
+        return respuesta;
+
+    }
+
+    private RestResponse<ArrayList<ClienteModel>> revisarGestiones(String fecha,ArrayList<ClienteModel> cartera){
+        RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
+        ArrayList<GestionLlamadasModel>gestiones=gestionLlam.consultarGestionLlamadas().getData();
+        ArrayList<TipificacionesModel>tipificacion=tipificaciones.consultarTipificaciones().getData();
+        ArrayList<ClienteModel>cuentas=new ArrayList<>();
+        ArrayList<GestionLlamadasModel>gestionesDia=new ArrayList<>();
+        for(int l=0;l<gestiones.size();l++){
+            if(fecha.equals(gestiones.get(l).getFechaInserto())){
+                gestionesDia.add(gestiones.get(l));
+            }
+        }
+
+        if(gestionesDia.size()>0) {
+            for (int i = 0; i < cartera.size(); i++) {
+                for (int j = 0; j < gestionesDia.size(); j++) {
+                    int valor = 0;
+                    for (int k = 0; k < tipificacion.size(); k++) {
+                        if (gestionesDia.get(j).getIdTipificacion() == tipificacion.get(k).getId()) {
+                            valor = tipificacion.get(k).getValor();
+                        }
+
+                    }
+
+                    if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO1())) {
+                        cartera.get(i).setTIPOTEL1("" + valor);
+                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO2())) {
+                        cartera.get(i).setTIPOTEL2("" + valor);
+                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO3())) {
+                        cartera.get(i).setTIPOTEL3("" + valor);
+                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO4())) {
+                        cartera.get(i).setTIPOTEL4("" + valor);
+                    }
+                }
+
+                cuentas.add(cartera.get(i));
+            }
+        }
+        else{
+            cuentas.addAll(cartera);
+        }
+
+        respuesta.setCode(1);
+        respuesta.setData(cuentas);
+        respuesta.setMessage("Proces terminado");
+
+        return respuesta;
+    }
 
 }

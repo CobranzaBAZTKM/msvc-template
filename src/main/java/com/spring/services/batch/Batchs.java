@@ -27,7 +27,7 @@ public class Batchs {
     UtilService util=new UtilService();
 
 
-    @Scheduled(cron = "0 0 9,11,14,17,20 * * *")
+    @Scheduled(cron = "0 0 09,11,14,17,20 * * *")
     public void mandarBlasterRecordatorios(){
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Comienza batch envio de recordatorios");
         ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
@@ -44,7 +44,7 @@ public class Batchs {
             }
         }
         promesapagoHoy.add("5539252342");
-        promesapagoHoy.add("5531284629");
+        promesapagoHoy.add("5625247459");
         promesapagoHoy.add("5543773233");
         String mensaje="Cliente Banco Azteca. No hemos recibido su pago, realice el deposito hoy, no pierda de sus beneficios";
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Se envian "+promesapagoHoy.size()+" para blaster");

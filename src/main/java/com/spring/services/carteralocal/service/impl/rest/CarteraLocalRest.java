@@ -44,4 +44,11 @@ public class CarteraLocalRest {
 //    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
         return carteraLoImpl.consultarNuevasCuentasDia();
     }
+
+    @PostMapping(value = "/carteraConDescarte",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
+        return carteraLoImpl.consultarCarteraDescarte();
+    }
+
 }
