@@ -56,7 +56,7 @@ public class PromesasTKMLogic {
     }
 
     public RestResponse<String> borrarPromesas(String idPromesa,String idAdmin) {
-        return gesDao.borrarPromesas(idPromesa,idAdmin);
+        return gesDao2.borrarPromesas(idPromesa,idAdmin);
     }
 
     public RestResponse<String> actualizarPromesasAsignar(PromesasModel promesa) {

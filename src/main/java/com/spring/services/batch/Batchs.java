@@ -1,6 +1,9 @@
 package com.spring.services.batch;
 
 import com.spring.services.cartera.logic.BlastersSMSLogic;
+import com.spring.services.constantes.Constantes;
+import com.spring.services.notificaciones.logic.NotificacionesLogic;
+import com.spring.services.notificaciones.model.CuerpoCorreo;
 import com.spring.services.pagos.logic.PromesasTKMLogic;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.utils.UtilService;
@@ -20,6 +23,7 @@ public class Batchs {
     private static final Logger LOGGER = LogManager.getLogger("Batchs");
     private PromesasTKMLogic promesas=new PromesasTKMLogic();
     private BlastersSMSLogic blaster=new BlastersSMSLogic();
+    private NotificacionesLogic notificaciones=new NotificacionesLogic();
     public Batchs() {
         //Vacio
     }
@@ -27,7 +31,7 @@ public class Batchs {
     UtilService util=new UtilService();
 
 
-    @Scheduled(cron = "0 0 09,11,14,17,20 * * *")
+    @Scheduled(cron = "0 0 09-20 * * *")
     public void mandarBlasterRecordatorios(){
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Comienza batch envio de recordatorios");
         ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
@@ -50,6 +54,55 @@ public class Batchs {
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Se envian "+promesapagoHoy.size()+" para blaster");
         blaster.enviarBlaster(promesapagoHoy,mensaje,"RamcesFDz4","R4mdz.tkm");
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Termina batch envio de recordatorios");
+
+    }
+
+    @Scheduled(cron = "0 0 12,22 * * *")
+    public void avisoElimacionPromesasMes(){
+        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Comienza batch de avisoElminacion de Promesas");
+        ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
+
+        String[] fechaHora=util.obtenerFechaActual().split(" ");
+        String[] horaCompleta=fechaHora[1].split(":");
+        String hora=horaCompleta[0];
+        String[] fechaPF=fechaHora[0].split("-");
+        String fechaFinal=fechaPF[0]+"/"+fechaPF[1]+"/"+fechaPF[2];
+        ArrayList<PromesasModel> promesaRetiroDia=new ArrayList<>();
+        CuerpoCorreo correo=new CuerpoCorreo();
+
+        for(int i=0;i<promesasCompletas.size();i++){
+            if(fechaFinal.equals(promesasCompletas.get(i).getFechInser())){
+                promesaRetiroDia.add(promesasCompletas.get(i));
+            }
+        }
+
+
+        if("22".equals(hora)){
+            for(int j=0; j<promesaRetiroDia.size();j++){
+                String CUElimacion=promesaRetiroDia.get(j).getClienteUnico();
+                String gestor=promesaRetiroDia.get(j).getNombreGestor();
+                LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Promesa CLIENTE UNICO: "+CUElimacion+", GESTOR: "+gestor);
+                promesas.borrarPromesas(String.valueOf(promesaRetiroDia.get(j).getId()),"3");
+            }
+            String mensaje="Se elimaron "+promesaRetiroDia.size()+ " Promesas";
+            correo.setRemitente(Constantes.correoRemitente);
+            correo.setPasswordRemitente(Constantes.passwordRemitente);
+            correo.setDestinatario(Constantes.correoEncargada);
+            correo.setAsunto("ELIMINACION DE PROMESAS");
+            correo.setMensaje(mensaje);
+            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: "+mensaje);
+        }
+        else{
+
+            correo.setRemitente(Constantes.correoRemitente);
+            correo.setPasswordRemitente(Constantes.passwordRemitente);
+            correo.setDestinatario(Constantes.correoEncargada);
+            correo.setAsunto("AVISO, ELIMINACION DE PROMESAS");
+            correo.setMensaje("Se elimanaran "+promesaRetiroDia.size()+" Promesas a las 10 de la noche de hace un mes");
+            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Envio de correo de aviso "+correo);
+        }
+        notificaciones.enviarCorreo(correo);
+        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Termina batch de avisoElminacion de Promesas");
 
     }
 

@@ -161,19 +161,22 @@ public class CarteraCompletaLogic {
                     resp.addAll(datosSeg16);
                     break;
 
-                case 561628:
+                case 56162821:
                     clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5);
                     clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6);
                     clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16);
                     clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28);
+                    clienSeg21=clientesXSegmentos(jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento21"),21);
                     datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5);
                     datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6);
                     datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16);
                     datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28);
+                    datosSeg21=setearDatosLogic.setearDatos(clienSeg21.getData(),21);
                     resp.addAll(datosSeg5);
                     resp.addAll(datosSeg6);
                     resp.addAll(datosSeg16);
                     resp.addAll(datosSeg28);
+                    resp.addAll(datosSeg21);
                     break;
                 default:
                     //vacio

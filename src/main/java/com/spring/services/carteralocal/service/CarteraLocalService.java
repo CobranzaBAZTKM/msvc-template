@@ -38,4 +38,14 @@ public class CarteraLocalService implements CarteraLocalImpl {
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
         return carteraLocLog.consultarCarteraDescarte();
     }
+
+    @Override
+    public RestResponse<String> guardarCarteraCompletaDia(ArrayList<ClienteModel> cartera){
+        return carteraLocLog.guardarCarteraCompletaDia(cartera);
+    }
+
+    @Override
+    public RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
+        return carteraLocLog.guardarCarteraDescarte(cuentas);
+    }
 }

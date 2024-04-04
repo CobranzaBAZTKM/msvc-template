@@ -51,4 +51,18 @@ public class CarteraLocalRest {
         return carteraLoImpl.consultarCarteraDescarte();
     }
 
+    @PostMapping(value = "/carteraCompletaGuardarLocal",
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public RestResponse<String> guardarCarteraCompletaDia(@RequestBody final ArrayList<ClienteModel> cartera){
+        return carteraLoImpl.guardarCarteraCompletaDia(cartera);
+    }
+
+
+    @PostMapping(value = "/carteraDescarteGuardarLocal",
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public RestResponse<String>guardarCarteraDescarte(@RequestBody final  ArrayList<ClienteModel> cuentas){
+        return carteraLoImpl.guardarCarteraDescarte(cuentas);
+    }
 }

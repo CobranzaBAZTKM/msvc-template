@@ -11,9 +11,23 @@ import com.spring.services.operacion.model.GestionLlamadasModel;
 import com.spring.services.operacion.model.TipificacionesModel;
 import com.spring.utils.RestResponse;
 import com.spring.utils.UtilService;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -22,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -45,55 +60,27 @@ public class CarteraLocalLogic {
         RestResponse<ArrayList<ClienteModel>>carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
         if(carteraCompleta.getCode()==1){
 
-//            ArrayList<GestionLlamadasModel>gestiones=gestionLlam.consultarGestionLlamadas().getData();// DUDA
-//            ArrayList<TipificacionesModel>tipificacion=tipificaciones.consultarTipificaciones().getData();//DUDA
             ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa().getData();
             ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT().getData();
-//            ArrayList<ClienteModel>cuentas=new ArrayList<>();
-//            ArrayList<GestionLlamadasModel>gestionesDiaAnterior=new ArrayList<>();//DUDA
+
             String fecha=utilService.FechaDiaAnteriorPosterior(-1);
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Se obtuvieron "+carteraCompleta.getData().size());
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando validacion de cuentas con gestion");
             ArrayList<ClienteModel>cuentas=this.revisarGestiones(fecha,carteraCompleta.getData()).getData();
-//            for(int l=0;l<gestiones.size();l++){ //DUDA
-//                if(fecha.equals(gestiones.get(l).getFechaInserto())){ //DUDA
-//                    gestionesDiaAnterior.add(gestiones.get(l)); //DUDA
-//                }
-//            }
-//
-//
-//            for(int i=0;i<carteraCompleta.getData().size();i++){
-//                for(int j=0;j<gestionesDiaAnterior.size();j++){
-//                    int valor=0;
-//                    for(int k=0;k<tipificacion.size();k++){
-//                        if(gestionesDiaAnterior.get(j).getIdTipificacion()==tipificacion.get(k).getId()){
-//                            valor=tipificacion.get(k).getValor();
-//                        }
-//
-//                    }
-//
-//                    if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO1())){
-//                        carteraCompleta.getData().get(i).setTIPOTEL1(""+valor);
-//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO2())){
-//                        carteraCompleta.getData().get(i).setTIPOTEL2(""+valor);
-//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO3())){
-//                        carteraCompleta.getData().get(i).setTIPOTEL3(""+valor);
-//                    }else if(gestiones.get(j).getTelefono().equals(carteraCompleta.getData().get(i).getTELEFONO4())){
-//                        carteraCompleta.getData().get(i).setTIPOTEL4(""+valor);
-//                    }
-//                }
-//
-//                cuentas.add(carteraCompleta.getData().get(i));
-//            }
+
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina validacion de cuentas con gestion");
 
             this.guardarNuevas(cuentas);
-            this.guardarCarteraCompletaDia(cuentas);
+
 
             RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentas,cuentasConPromesa);
             RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto);
 
-            this.guardarCarteraDescarte(descartarNoContacto.getData());
+//            this.guardarCarteraCompletaDia(cuentas);
+//            this.guardarCarteraDescarte(descartarNoContacto.getData());
+
+            RestResponse<String>guardarCarteraCompleta=this.puenteServidorExtraGuardarCarteraCompleta(cuentas);
+            RestResponse<String>guardarCarteraDescarte=this.puenteServidorExtraGuardarCarteraDescarte(descartarNoContacto.getData());
 
 
             respuesta.setCode(1);
@@ -188,7 +175,7 @@ public class CarteraLocalLogic {
 
     }
 
-    private RestResponse<String> guardarCarteraCompletaDia(ArrayList<ClienteModel> cartera){
+    public RestResponse<String> guardarCarteraCompletaDia(ArrayList<ClienteModel> cartera){
         LOGGER.log(Level.INFO, () -> "guardarCarteraCompletaDia: Comienza guardado de cartera Completa");
         RestResponse<String> respuesta=new RestResponse<>();
 
@@ -342,9 +329,10 @@ public class CarteraLocalLogic {
         return respuesta;
     }
 
-    private RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
+    public RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
         LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Comienza guardado de cartera con Descarte");
         RestResponse<String> respuesta=new RestResponse<>();
+        Collections.sort(cuentas,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
 
         for(int i=0;i<cuentas.size();i++){
             carteraDAO2.insertarCarteraDescarte(cuentas.get(i));
@@ -382,13 +370,13 @@ public class CarteraLocalLogic {
 
                     }
 
-                    if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO1())) {
+                    if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO1())) {
                         cartera.get(i).setTIPOTEL1("" + valor);
-                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO2())) {
+                    } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO2())) {
                         cartera.get(i).setTIPOTEL2("" + valor);
-                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO3())) {
+                    } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO3())) {
                         cartera.get(i).setTIPOTEL3("" + valor);
-                    } else if (gestiones.get(j).getTelefono().equals(cartera.get(i).getTELEFONO4())) {
+                    } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO4())) {
                         cartera.get(i).setTIPOTEL4("" + valor);
                     }
                 }
@@ -406,5 +394,60 @@ public class CarteraLocalLogic {
 
         return respuesta;
     }
+
+
+
+    private RestResponse<String> puenteServidorExtraGuardarCarteraCompleta(ArrayList<ClienteModel> cartera){
+        RestResponse<String>respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setData(null);
+        respuesta.setError(true);
+        CloseableHttpResponse serviceResponse = null;
+        try{
+            CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
+            HttpPost serviceRequest = new HttpPost("http://172.16.201.6:8080/api/v1/msvc-template/service/carteraLocal/carteraCompletaGuardarLocal");
+            StringEntity post = new StringEntity(String.valueOf(cartera), ContentType.APPLICATION_JSON);
+            serviceRequest.setEntity((HttpEntity)post);
+            serviceResponse = client.execute((HttpUriRequest)serviceRequest);
+            int respStatus=serviceResponse.getStatusLine().getStatusCode();
+            if(respStatus==200||respStatus==201){
+                respuesta.setCode(1);
+            }
+        }
+        catch(Exception e){
+            respuesta.setMessage("Algo fallo "+ e);
+            respuesta.setError(true);
+        }
+
+        return respuesta;
+
+    }
+
+    private RestResponse<String> puenteServidorExtraGuardarCarteraDescarte(ArrayList<ClienteModel> cartera){
+        RestResponse<String>respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setData(null);
+        respuesta.setError(true);
+        CloseableHttpResponse serviceResponse = null;
+        try{
+            CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
+            HttpPost serviceRequest = new HttpPost("http://172.16.201.6:8080/api/v1/msvc-template/service/carteraLocal/carteraDescarteGuardarLocal");
+            StringEntity post = new StringEntity(String.valueOf(cartera), ContentType.APPLICATION_JSON);
+            serviceRequest.setEntity((HttpEntity)post);
+            serviceResponse = client.execute((HttpUriRequest)serviceRequest);
+            int respStatus=serviceResponse.getStatusLine().getStatusCode();
+            if(respStatus==200||respStatus==201){
+                respuesta.setCode(1);
+            }
+        }
+        catch(Exception e){
+            respuesta.setMessage("Algo fallo "+ e);
+            respuesta.setError(true);
+        }
+
+        return respuesta;
+
+    }
+
 
 }
