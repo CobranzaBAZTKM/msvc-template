@@ -47,7 +47,7 @@ public class ObtenerClientesCartera {
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            respuesta=carteraLogic2.clientesCompletos(segmentosCartera.getData(),561628,cokkie);
+            respuesta=carteraLogic2.clientesCompletos(segmentosCartera.getData(),56162821,cokkie);
 //            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),561628,cokkie);
 //            respuesta.setCode(1);
 //            respuesta.setMessage("Se generaron "+datosClientes.getData().toArray().length+" clientes de la cartera completa");
