@@ -31,7 +31,7 @@ public class Batchs {
     UtilService util=new UtilService();
 
 
-    @Scheduled(cron = "0 0 09-20 * * *")
+    @Scheduled(cron = "0 0 9-20 * * *")
     public void mandarBlasterRecordatorios(){
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Comienza batch envio de recordatorios");
         ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
