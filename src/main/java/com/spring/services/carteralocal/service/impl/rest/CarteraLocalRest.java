@@ -54,8 +54,8 @@ public class CarteraLocalRest {
     @PostMapping(value = "/carteraCompletaGuardarLocal",
             consumes = {"application/json"},
             produces = {"application/json"})
-    public RestResponse<String> guardarCarteraCompletaDia(@RequestBody final ArrayList<ClienteModel> cartera){
-        return carteraLoImpl.guardarCarteraCompletaDia(cartera);
+    public RestResponse<String> carteraCompletaGuardarLocalPuente(@RequestBody final String cartera){
+        return carteraLoImpl.carteraCompletaGuardarLocalPuente(cartera);
     }
 
 
