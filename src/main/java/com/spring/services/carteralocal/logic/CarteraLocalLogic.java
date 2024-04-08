@@ -211,10 +211,10 @@ public class CarteraLocalLogic {
             cuenta.setCLASIFICACION_CTE((String)jsonCuenta.get("CLASIFICACION_CTE"));
             cuenta.setDIQUE((String)jsonCuenta.get("DIQUE"));
             cuenta.setATRASO_MAXIMO((String)jsonCuenta.get("ATRASO_MAXIMO"));
-            cuenta.setDIAS_ATRASO((Integer) jsonCuenta.get(" DIAS_ATRASO"));
+            cuenta.setDIAS_ATRASO((Integer) jsonCuenta.get("DIAS_ATRASO"));
             cuenta.setSALDO((String)jsonCuenta.get("SALDO"));
             cuenta.setMORATORIOS((String)jsonCuenta.get("MORATORIOS"));
-            cuenta.setSALDO_TOTAL((Float) jsonCuenta.get("SALDO_TOTAL"));
+            cuenta.setSALDO_TOTAL(Float.parseFloat((String) jsonCuenta.get("SALDO_TOTAL")));
             cuenta.setSALDO_ATRASADO((String)jsonCuenta.get("SALDO_ATRASADO"));
             cuenta.setSALDO_REQUERIDO((String)jsonCuenta.get("SALDO_REQUERIDO"));
             cuenta.setPAGO_PUNTUAL((String)jsonCuenta.get("PAGO_PUNTUAL"));
@@ -599,7 +599,7 @@ public class CarteraLocalLogic {
             cliente.put("CLASIFICACION_CTE",cartera.get(i).getCLASIFICACION_CTE());
             cliente.put("DIQUE",cartera.get(i).getDIQUE());
             cliente.put("ATRASO_MAXIMO",cartera.get(i).getATRASO_MAXIMO());
-            cliente.put(" DIAS_ATRASO",cartera.get(i).getDIAS_ATRASO());
+            cliente.put("DIAS_ATRASO",cartera.get(i).getDIAS_ATRASO());
             cliente.put("SALDO",cartera.get(i).getSALDO());
             cliente.put("MORATORIOS",cartera.get(i).getMORATORIOS());
             cliente.put("SALDO_TOTAL",cartera.get(i).getSALDO_TOTAL());
