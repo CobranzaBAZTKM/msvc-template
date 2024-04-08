@@ -214,7 +214,8 @@ public class CarteraLocalLogic {
             cuenta.setDIAS_ATRASO((Integer) jsonCuenta.get("DIAS_ATRASO"));
             cuenta.setSALDO((String)jsonCuenta.get("SALDO"));
             cuenta.setMORATORIOS((String)jsonCuenta.get("MORATORIOS"));
-            cuenta.setSALDO_TOTAL(Float.parseFloat((String) jsonCuenta.get("SALDO_TOTAL")));
+            String saldoTotal=(String) jsonCuenta.get("SALDO_TOTAL");
+            cuenta.setSALDO_TOTAL(Float.parseFloat(saldoTotal));
             cuenta.setSALDO_ATRASADO((String)jsonCuenta.get("SALDO_ATRASADO"));
             cuenta.setSALDO_REQUERIDO((String)jsonCuenta.get("SALDO_REQUERIDO"));
             cuenta.setPAGO_PUNTUAL((String)jsonCuenta.get("PAGO_PUNTUAL"));
@@ -602,7 +603,8 @@ public class CarteraLocalLogic {
             cliente.put("DIAS_ATRASO",cartera.get(i).getDIAS_ATRASO());
             cliente.put("SALDO",cartera.get(i).getSALDO());
             cliente.put("MORATORIOS",cartera.get(i).getMORATORIOS());
-            cliente.put("SALDO_TOTAL",cartera.get(i).getSALDO_TOTAL());
+            String saldoTotal=String.valueOf(cartera.get(i).getSALDO_TOTAL());
+            cliente.put("SALDO_TOTAL",saldoTotal);
             cliente.put("SALDO_ATRASADO",cartera.get(i).getSALDO_ATRASADO());
             cliente.put("SALDO_REQUERIDO",cartera.get(i).getSALDO_REQUERIDO());
             cliente.put("PAGO_PUNTUAL",cartera.get(i).getPAGO_PUNTUAL());
