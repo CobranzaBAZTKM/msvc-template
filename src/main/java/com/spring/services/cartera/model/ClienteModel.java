@@ -108,6 +108,7 @@ public class ClienteModel {
     private String MONTO_PROMESA_PAGO;
     private Integer SEGMENTO;
     private String FECHA_INSER_LOCAL;
+    private String TURNO;
 
     public ClienteModel() {
         //Vacio

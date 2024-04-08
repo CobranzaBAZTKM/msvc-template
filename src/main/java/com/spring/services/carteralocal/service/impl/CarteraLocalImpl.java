@@ -12,5 +12,5 @@ public interface CarteraLocalImpl {
     RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia();
     RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte();
     RestResponse<String> carteraCompletaGuardarLocalPuente(String cartera);
-    RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas);
+    RestResponse<String>carteraDescarteGuardarLocalPuente(String cuentas);
 }

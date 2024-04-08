@@ -79,9 +79,13 @@ public class CarteraLocalLogic {
 
 //            this.guardarCarteraCompletaDia(cuentas);
 //            this.guardarCarteraDescarte(descartarNoContacto.getData());
-
+            LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando guardado de cartera completa con puente");
             RestResponse<String>guardarCarteraCompleta=this.puenteServidorExtraGuardarCarteraCompleta(cuentas);
+            LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina guardado de cartera completa con puente, RESPONSE: "+guardarCarteraCompleta.toString());
+
+            LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando guardado de cartera descarte con puente");
             RestResponse<String>guardarCarteraDescarte=this.puenteServidorExtraGuardarCarteraDescarte(descartarNoContacto.getData());
+            LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina guardado de cartera descarte con puente, RESPONSE: "+guardarCarteraDescarte.toString());
 
 
             respuesta.setCode(1);
@@ -177,6 +181,14 @@ public class CarteraLocalLogic {
     }
 
     public RestResponse<String> carteraCompletaGuardarLocalPuente(String json){
+        return carterasLocalPuentes(json,1);
+    }
+
+    public RestResponse<String> carteraDescarteGuardarLocalPuente(String json){
+        return carterasLocalPuentes(json,2);
+    }
+
+    private RestResponse<String> carterasLocalPuentes(String json,Integer tipo){
         RestResponse<String> respuesta=new RestResponse<>();
         JSONObject jsonRec=new JSONObject(json);
         JSONArray arrayCuentas=jsonRec.getJSONArray("cartera");
@@ -286,10 +298,24 @@ public class CarteraLocalLogic {
             cuenta.setESTATUS_PROMESA_PAGO((String)jsonCuenta.get("ESTATUS_PROMESA_PAGO"));
             cuenta.setMONTO_PROMESA_PAGO((String)jsonCuenta.get("MONTO_PROMESA_PAGO"));
             cuenta.setSEGMENTO((Integer) jsonCuenta.get("SEGMENTO"));
+            if(tipo!=1){
+                if(i%2==0){
+                    cuenta.setTURNO("M");
+                }
+                else{
+                    cuenta.setTURNO("V");
+                }
+            }
             cartera.add(cuenta);
         }
 
-        return guardarCarteraCompletaDia(cartera);
+        if(tipo==1){
+            return guardarCarteraCompletaDia(cartera);
+        }
+        else{
+            return guardarCarteraDescarte(cartera);
+        }
+
     }
 
     private RestResponse<String> guardarCarteraCompletaDia(ArrayList<ClienteModel> cartera){
@@ -549,7 +575,6 @@ public class CarteraLocalLogic {
         CloseableHttpResponse serviceResponse = null;
         try{
             JSONObject json=prepararDatosPuente(cartera);
-//            JSONArray json=prepararDatosPuente(cartera);
             CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
             HttpPost serviceRequest = new HttpPost("http://172.16.201.6:8080/api/v1/msvc-template/service/carteraLocal/carteraDescarteGuardarLocal");
             StringEntity post = new StringEntity(json.toString(), ContentType.APPLICATION_JSON);

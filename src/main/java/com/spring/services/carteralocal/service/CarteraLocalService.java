@@ -45,7 +45,7 @@ public class CarteraLocalService implements CarteraLocalImpl {
     }
 
     @Override
-    public RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
-        return carteraLocLog.guardarCarteraDescarte(cuentas);
+    public RestResponse<String>carteraDescarteGuardarLocalPuente(String cuentas){
+        return carteraLocLog.carteraDescarteGuardarLocalPuente(cuentas);
     }
 }
