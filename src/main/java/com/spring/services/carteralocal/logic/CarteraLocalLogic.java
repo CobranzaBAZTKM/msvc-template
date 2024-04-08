@@ -184,7 +184,7 @@ public class CarteraLocalLogic {
 
         for(int i=0;i<arrayCuentas.length();i++){
             ClienteModel cuenta=new ClienteModel();
-            JSONObject jsonCuenta=new JSONObject(arrayCuentas.get(i));
+            JSONObject jsonCuenta= (JSONObject) arrayCuentas.get(i);
             cuenta.setCLIENTE_UNICO((String) jsonCuenta.get("CLIENTE_UNICO"));
             cuenta.setNOMBRE_CTE((String)jsonCuenta.get("NOMBRE_CTE"));
             cuenta.setRFC_CTE((String)jsonCuenta.get("RFC_CTE"));
