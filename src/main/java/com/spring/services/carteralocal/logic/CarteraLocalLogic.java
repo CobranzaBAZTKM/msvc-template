@@ -123,8 +123,9 @@ public class CarteraLocalLogic {
         ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa().getData();
         ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT().getData();
         ArrayList<ClienteModel> cuentasDescarte=carteraDAO2.consultarCarteraDescarte().getData();
-        ArrayList<ClienteModel> cuentasGestion=this.revisarGestiones(fecha,cuentasDescarte).getData();
 
+        ArrayList<ClienteModel> cuentasGestion=this.revisarGestiones(fecha,cuentasDescarte).getData();
+        Collections.sort(cuentasGestion,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
 
         RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentasGestion,cuentasConPromesa);
         RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto);
