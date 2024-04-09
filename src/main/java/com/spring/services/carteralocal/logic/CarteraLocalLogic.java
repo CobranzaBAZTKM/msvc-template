@@ -71,12 +71,12 @@ public class CarteraLocalLogic {
 
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina validacion de cuentas con gestion");
 
-//            this.guardarNuevas(cuentas);
+            this.guardarNuevas(cuentas);
 
 
             RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentas,cuentasConPromesa);
             RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto);
-
+            ArrayList<ClienteModel>sinCumplidosVigente=descartarCumplidosVigente(descartarNoContacto.getData());
 //            this.guardarCarteraCompletaDia(cuentas);
 //            this.guardarCarteraDescarte(descartarNoContacto.getData());
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando guardado de cartera completa con puente");
@@ -84,13 +84,13 @@ public class CarteraLocalLogic {
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina guardado de cartera completa con puente, RESPONSE: "+guardarCarteraCompleta.toString());
 
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comenzando guardado de cartera descarte con puente");
-            RestResponse<String>guardarCarteraDescarte=this.puenteServidorExtraGuardarCarteraDescarte(descartarNoContacto.getData());
+            RestResponse<String>guardarCarteraDescarte=this.puenteServidorExtraGuardarCarteraDescarte(sinCumplidosVigente);
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina guardado de cartera descarte con puente, RESPONSE: "+guardarCarteraDescarte.toString());
 
 
             respuesta.setCode(1);
             respuesta.setMessage("Cartera Obtenida correctamente");
-            respuesta.setData(descartarNoContacto.getData());
+            respuesta.setData(sinCumplidosVigente);
 
 
         }
@@ -475,7 +475,7 @@ public class CarteraLocalLogic {
     public RestResponse<String>guardarCarteraDescarte(ArrayList<ClienteModel> cuentas){
         LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Comienza guardado de cartera con Descarte");
         RestResponse<String> respuesta=new RestResponse<>();
-        Collections.sort(cuentas,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
+//        Collections.sort(cuentas,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
 
         for(int i=0;i<cuentas.size();i++){
             carteraDAO2.insertarCarteraDescarte(cuentas.get(i));
@@ -704,6 +704,18 @@ public class CarteraLocalLogic {
         }
 
         respuesta.put("cartera",datos);
+        return respuesta;
+    }
+
+    private ArrayList<ClienteModel>descartarCumplidosVigente(ArrayList<ClienteModel> cuentas){
+        LOGGER.log(Level.INFO, () -> "descartarCumplidosVigente: Comienza descarte de Cumplidos y Vigentes");
+        ArrayList<ClienteModel> respuesta=new ArrayList<>();
+        for(int i=0;i<cuentas.size();i++){
+            if(!cuentas.get(i).getESTATUS_PLAN().contains("VIGENTE")&&!"CUMPLIDO".equals(cuentas.get(i).getESTATUS_PLAN())){
+                respuesta.add(cuentas.get(i));
+            }
+        }
+        LOGGER.log(Level.INFO, () -> "descartarCumplidosVigente: Termina descarte de Cumplidos y Vigentes");
         return respuesta;
     }
 
