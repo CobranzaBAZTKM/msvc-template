@@ -117,14 +117,16 @@ public class CarteraLocalLogic {
 
 
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
+        LOGGER.log(Level.INFO, () -> "consultarCarteraDescarte: Comenzando consulta de la cartera con Descarte");
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         String[] fechaHora=utilService.obtenerFechaActual().split(" ");
         String fecha=fechaHora[0];
         ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa().getData();
         ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT().getData();
         ArrayList<ClienteModel> cuentasDescarte=carteraDAO2.consultarCarteraDescarte().getData();
-
+        LOGGER.log(Level.INFO, () -> "consultarCarteraDescarte: Se obtuvieron "+cuentasDescarte.size()+" de la cartera con Descarte");
         ArrayList<ClienteModel> cuentasGestion=this.revisarGestiones(fecha,cuentasDescarte).getData();
+        LOGGER.log(Level.INFO, () -> "consultarCarteraDescarte: Total de  Revision de Gestiones"+cuentasGestion.size());
         Collections.sort(cuentasGestion,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
 
         RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentasGestion,cuentasConPromesa);
@@ -133,7 +135,7 @@ public class CarteraLocalLogic {
         respuesta.setCode(1);
         respuesta.setMessage("Proceso terminado correctamente, se obtienen cuentas");
         respuesta.setData(descartarNoContacto.getData());
-
+        LOGGER.log(Level.INFO, () -> "consultarCarteraDescarte: Termina consulta de la cartera con Descarte");
         return respuesta;
     }
 
@@ -365,7 +367,7 @@ public class CarteraLocalLogic {
         if(conPromesa.size()>0){
             String[] fechaCompleta=utilService.obtenerFechaActual().split(" ");
             String fecha=fechaCompleta[0];
-
+            LOGGER.log(Level.INFO, () -> "guardarConPromesa: Cuentas con promesa: "+conPromesa.size());
             for(int j=0;j<conPromesa.size();j++){
                 int valor=0;
                 for(int k=0;k<cuentasConPromesa.size();k++){
@@ -375,6 +377,8 @@ public class CarteraLocalLogic {
                 }
 
                 if(valor==0){
+                    String CU=conPromesa.get(j).getCLIENTE_UNICO()+","+j;
+                    LOGGER.log(Level.INFO, () -> "guardarConPromesa: Cliente Unico: "+CU);
                     carteraDAO.insertarCuentaConPromesa(conPromesa.get(j),fecha);
                 }
 
@@ -434,6 +438,7 @@ public class CarteraLocalLogic {
         if(cuentasDescartadas.size()>0){
             String[] fechaCompleta=utilService.obtenerFechaActual().split(" ");
             String fecha=fechaCompleta[0];
+            LOGGER.log(Level.INFO, () -> "descartarNoCCTT: Cuentas sin contacto: "+cuentasDescartadas.size());
             for(int j=0;j<cuentasDescartadas.size();j++){
                 int valor=0;
 
@@ -444,6 +449,8 @@ public class CarteraLocalLogic {
                 }
 
                 if(valor==0){
+                    String CU=cuentasDescartadas.get(j).getCLIENTE_UNICO()+","+j;
+                    LOGGER.log(Level.INFO, () -> "guardarConPromesa: Cliente Unico: "+CU);
                     carteraDAO.insertarCuentaSinContactoTT(cuentasDescartadas.get(j),fecha);
                 }
 
@@ -478,6 +485,7 @@ public class CarteraLocalLogic {
         LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Comienza guardado de cartera con Descarte");
 //        RestResponse<String> respuesta=new RestResponse<>();
 //        Collections.sort(cuentas,((o1, o2)-> o1.getSEGMENTO().compareTo(o2.getSEGMENTO())));
+        LOGGER.log(Level.INFO, () -> "guardarCarteraDescarte: Se insertan "+cuentas.size());
         RestResponse<String> respuesta=carteraDAO2.insertarCarteraDescarte(cuentas);
 //        for(int i=0;i<cuentas.size();i++){
 //            carteraDAO2.insertarCarteraDescarte(cuentas.get(i));
