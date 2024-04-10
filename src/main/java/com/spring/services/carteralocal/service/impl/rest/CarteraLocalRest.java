@@ -65,4 +65,10 @@ public class CarteraLocalRest {
     public RestResponse<String>carteraDescarteGuardarLocalPuente(@RequestBody final String cuentas){
         return carteraLoImpl.carteraDescarteGuardarLocalPuente(cuentas);
     }
+
+    @GetMapping(value = "/consultarClienteUnico/{cu}",
+            produces = {"application/json"})
+    public RestResponse<ClienteModel> consultarCUCarteraCompleta(@PathVariable String cu){
+        return carteraLoImpl.consultarCUCarteraCompleta(cu);
+    }
 }

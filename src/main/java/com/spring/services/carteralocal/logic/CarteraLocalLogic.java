@@ -750,4 +750,7 @@ public class CarteraLocalLogic {
     }
 
 
+    public RestResponse<ClienteModel> consultarCUCarteraCompleta(String cu){
+        return carteraDAO.consultarCUCarteraCompleta(cu);
+    }
 }
