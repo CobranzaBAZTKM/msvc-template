@@ -39,6 +39,7 @@ public class GestionLlamadasDAO {
                 gestion.setIdTipificacion(rs.getInt(5));
                 gestion.setComentario(rs.getString(6));
                 gestion.setFechaInserto(rs.getString(7));
+                gestion.setHoraInserto(rs.getString(8));
                 gestiones.add(gestion);
             }
             respuesta.setCode(1);
