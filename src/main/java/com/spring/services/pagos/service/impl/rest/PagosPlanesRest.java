@@ -1,11 +1,14 @@
 package com.spring.services.pagos.service.impl.rest;
 
+import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.services.pagos.service.impl.PagosPlanesImpl;
 import com.spring.utils.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/service/pagos")
@@ -31,6 +34,16 @@ public class PagosPlanesRest {
     public RestResponse<String> obtenerPlanesPagoSemanal(@RequestBody final datosEntradaPagosPlanes cu){
         return ppImpl.obtenerPlanesPagoSemanal(cu);
     }
+
+    @PostMapping(value = "/pagosDia",
+            consumes = { MediaType.APPLICATION_JSON_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(@RequestBody final datosEntradaPagosPlanes cu){
+        return ppImpl.obtenerPagosDia(cu);
+    }
+
+
+
 
 }
 

@@ -1,5 +1,6 @@
 package com.spring.services.pagos.logic;
 
+import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.utils.RestResponse;
 
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 @Component
@@ -31,6 +33,10 @@ public class PagosPlanesLogic {
 
     @Autowired
     private UtilService util;
+
+    private PromesasTKMLogic promesas=new PromesasTKMLogic();
+
+
 
     public PagosPlanesLogic() {
         //Vacio
@@ -261,11 +267,14 @@ public class PagosPlanesLogic {
         JSONObject abonosEdoCuenta= new JSONObject();
         String diasAbonos="";
         Integer abonosTotal=0;
+        int sumaIntentos=1;
         do{
             obtenerAbonosEdoCuenta=obDatLogic.obtenerAbonosEdoCuenta(cu, cokkie);
-            LOGGER.log(Level.INFO, () -> "Intentando montos del estado de cuenta del cliente");
+            int finalSumaIntentos = sumaIntentos;
+            LOGGER.log(Level.INFO, () -> "Intentando montos del estado de cuenta del cliente "+ cu+ ", intento "+finalSumaIntentos);
+            sumaIntentos++;
         }
-        while(obtenerAbonosEdoCuenta.getCode()!=1);
+        while(obtenerAbonosEdoCuenta.getCode()!=1&&sumaIntentos!=500);
 
         String[] fechaHora=util.obtenerFechaActual().split(" ");
         String[] fechaCompleta=fechaHora[0].split("-");
@@ -277,12 +286,13 @@ public class PagosPlanesLogic {
                 for (int i = 0; i < abonos.length(); i++) {
 
                     String fecha = abonos.getJSONObject(i).getString("fecha");
-                    if (fecha.contains(fechaMesYear)) {
+                    String cargoAt= abonos.getJSONObject(i).getString("cargo_automatico");
+//                    if (fecha.contains(fechaMesYear)&&"NO".equals(cargoAt)) {
+                    if ("NO".equals(cargoAt)) {
                         Integer importeAbono = abonos.getJSONObject(i).getInt("importe");
                         abonosTotal = abonosTotal + importeAbono;
-                        diasAbonos = diasAbonos + " " + (String) abonos.getJSONObject(i).get("fecha") + "=" + importeAbono + ", ";
+                        diasAbonos = diasAbonos + "," + (String) abonos.getJSONObject(i).get("fecha") + "=" + importeAbono ;
                     }
-
                 }
                 abonosEdoCuenta.put("abono", abonosTotal);
                 abonosEdoCuenta.put("diasPago", diasAbonos);
@@ -304,6 +314,84 @@ public class PagosPlanesLogic {
 
         return respuesta;
     }
+
+    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cookie) {
+        RestResponse<ArrayList<PromesasModel>> respuesta=new RestResponse<>();
+        String[] fechaHora=util.obtenerFechaActual().split(" ");
+        String[] fechaCompleta=fechaHora[0].split("-");
+
+        ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
+        ArrayList<PromesasModel>promesasDia=new ArrayList<>();
+        for(int i=0;i<promesasCompletas.size();i++){
+            if(cookie.getDiaPago().equals(promesasCompletas.get(i).getFechaPago())){
+                RestResponse<JSONObject>montos=this.obtenerEdoCuentasMontos(promesasCompletas.get(i).getClienteUnico(),cookie);
+                if(montos.getData()!=null) {
+                    String montosObtenidos = montos.getData().getString("diasPago");
+                    if (!"".equals(montosObtenidos)) {
+                        String[] montosEnc = montosObtenidos.split(",");
+                        int bandera = 0;
+                        for (int j = 0; j < montosEnc.length; j++) {
+                            if (!"".equals(montosEnc[j])) {
+                                String[] separarMonto = montosEnc[j].split("=");
+                                if (separarMonto[0].equals(cookie.getIdPlanActivo())) {
+                                    Integer monto = Integer.parseInt(separarMonto[1]);
+                                    if (monto > 0) {
+                                        PromesasModel promesa = new PromesasModel();
+                                        promesa.setId(promesasCompletas.get(i).getId());
+                                        promesa.setClienteUnico(promesasCompletas.get(i).getClienteUnico());
+                                        promesa.setNota(promesasCompletas.get(i).getNota());
+                                        promesa.setPagoFinal(monto);
+                                        promesa.setNombreCliente(promesasCompletas.get(i).getNombreCliente());
+                                        promesa.setNombreGestor(promesasCompletas.get(i).getNombreGestor());
+                                        promesa.setMontoPago(promesasCompletas.get(i).getMontoPago());
+                                        promesasDia.add(promesa);
+                                        promesas.actualizarPromesasEstPag(promesa);
+                                        bandera = 1;
+                                    }
+
+                                }
+
+                            }
+                        }
+
+                        if (bandera == 0) {
+                            promesasDia.add(promesasCompletas.get(i));
+                        }
+                    }
+                    else {
+                        promesasDia.add(promesasCompletas.get(i));
+                    }
+                }
+                else {
+                    promesasDia.add(promesasCompletas.get(i));
+                }
+
+            }
+
+        }
+
+        respuesta.setCode(1);
+        respuesta.setMessage("Datos obtenidos");
+        respuesta.setData(promesasDia);
+
+        return respuesta;
+    }
+
+    public RestResponse<String>promesasIncumplidas(){
+        RestResponse<String>respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setError(false);
+
+
+
+
+        return respuesta;
+    }
+
+
+
+
+
 
 
 }
