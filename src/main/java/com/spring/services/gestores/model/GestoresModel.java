@@ -19,6 +19,7 @@ public class GestoresModel {
     private Integer idRegistro;
     private Integer idActualizo;
     private String turno;
+    private Integer estado;
 
     public GestoresModel() {
         //Vacio

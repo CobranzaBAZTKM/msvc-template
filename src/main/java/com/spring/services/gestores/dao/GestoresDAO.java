@@ -43,6 +43,7 @@ public class GestoresDAO {
                 persona.setIdRegistro(rs.getInt(6));
                 persona.setIdActualizo(rs.getInt(7));
                 persona.setTurno(rs.getString(8));
+                persona.setEstado(rs.getInt(9));
                 personal.add(persona);
             }
             respuesta.setCode(1);
@@ -61,7 +62,7 @@ public class GestoresDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query="INSERT INTO personal (idGestorSCL,nombre,password,puesto,idRegisto,turno) values (?,?,?,?,?,?);";
+        String query="INSERT INTO personal (idGestorSCL,nombre,password,puesto,idRegisto,turno,estado) values (?,?,?,?,?,?,?);";
         try{
             CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
             cs.setString(1, empleado.getIdGestor());
@@ -70,6 +71,7 @@ public class GestoresDAO {
             cs.setInt(4,empleado.getPuesto());
             cs.setInt(5,empleado.getIdRegistro());
             cs.setString(6,empleado.getTurno());
+            cs.setInt(7,1);
             cs.execute();
 
             respuesta.setCode(1);
@@ -89,16 +91,16 @@ public class GestoresDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query="UPDATE personal SET personal.idGestorSCL=?,personal.nombre=?,personal.password=?,personal.puesto=?,personal.idRegisto=?,personal.idActualizo=?,personal.turno=? WHERE personal.id=?";
+        String query="UPDATE personal SET personal.idGestorSCL=?,personal.nombre=?,personal.password=?,personal.puesto=?,personal.idActualizo=?,personal.turno=?,personal.estado=? WHERE personal.id=?";
         try{
             CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
             cs.setString(1, empleado.getIdGestor());
             cs.setString(2,empleado.getNombreGestor());
             cs.setString(3, empleado.getPassword());
             cs.setInt(4,empleado.getPuesto());
-            cs.setInt(5,empleado.getIdRegistro());
-            cs.setInt(6,empleado.getIdActualizo());
-            cs.setString(7,empleado.getTurno());
+            cs.setInt(5,empleado.getIdActualizo());
+            cs.setString(6,empleado.getTurno());
+            cs.setInt(7,empleado.getEstado());
             cs.setInt(8,empleado.getIdTkm());
 
             cs.execute();

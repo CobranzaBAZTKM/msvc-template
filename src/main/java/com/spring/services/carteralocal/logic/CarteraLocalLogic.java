@@ -140,13 +140,6 @@ public class CarteraLocalLogic {
     }
 
 
-
-
-
-
-
-
-
     private RestResponse<String> guardarNuevas(ArrayList<ClienteModel> cartera){
         LOGGER.log(Level.INFO, () -> "guardarNuevas: Comienza guardado de cuentas nuevas");
         RestResponse<String> respuesta=new RestResponse<>();
@@ -548,8 +541,6 @@ public class CarteraLocalLogic {
         return respuesta;
     }
 
-
-
     private RestResponse<String> puenteServidorExtraGuardarCarteraCompleta(ArrayList<ClienteModel> cartera){
         RestResponse<String>respuesta=new RestResponse<>();
         respuesta.setCode(0);
@@ -749,8 +740,12 @@ public class CarteraLocalLogic {
         return respuesta;
     }
 
-
     public RestResponse<ClienteModel> consultarCUCarteraCompleta(String cu){
         return carteraDAO.consultarCUCarteraCompleta(cu);
     }
+
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
+        return carteraDAO.consultarCuentasConPromesa();
+    }
+
 }
