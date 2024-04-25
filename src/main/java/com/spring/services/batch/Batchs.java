@@ -6,6 +6,7 @@ import com.spring.services.notificaciones.logic.NotificacionesLogic;
 import com.spring.services.notificaciones.model.CuerpoCorreo;
 import com.spring.services.pagos.logic.PromesasTKMLogic;
 import com.spring.services.pagos.model.PromesasModel;
+import com.spring.utils.RestResponse;
 import com.spring.utils.UtilService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,7 @@ public class Batchs {
     UtilService util=new UtilService();
 
 
-    @Scheduled(cron = "0 0 9-20 * * *")
+    @Scheduled(cron = "0 0 09-20 * * *")
     public void mandarBlasterRecordatorios(){
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Comienza batch envio de recordatorios");
         ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
@@ -47,9 +48,9 @@ public class Batchs {
                 }
             }
         }
-        promesapagoHoy.add("5539252342");
+//        promesapagoHoy.add("5539252342");
         promesapagoHoy.add("5625247459");
-        promesapagoHoy.add("5543773233");
+//        promesapagoHoy.add("5543773233");
         String mensaje="Cliente Banco Azteca. No hemos recibido su pago, realice el deposito hoy, no pierda de sus beneficios";
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Se envian "+promesapagoHoy.size()+" para blaster");
         blaster.enviarBlaster(promesapagoHoy,mensaje,"RamcesFDz4","R4mdz.tkm");
@@ -105,6 +106,31 @@ public class Batchs {
         LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Termina batch de avisoElminacion de Promesas");
 
     }
+
+    @Scheduled(cron = "0 0 13 * * MON")
+    public void recordatorioValidarPromesas() {
+        LOGGER.log(Level.INFO, () -> "Comienza Batch de recordatorioValidarPromesas de cada Lunes");
+        Calendar calendar = Calendar.getInstance();
+        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
+        if (numeroSemana % 2 != 0) {
+            CuerpoCorreo correo = new CuerpoCorreo();
+            correo.setRemitente(Constantes.correoRemitente);
+            correo.setPasswordRemitente(Constantes.passwordRemitente);
+            correo.setDestinatario("rfrutos@tkm.com.mx");
+            correo.setAsunto("AVISO, CORRER REVISION DE PAGOS DE LA CARTERA CON PROMESA");
+            correo.setMensaje("Recuerda correr la revison de pagos de la cartera con promesa");
+            RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
+            LOGGER.log(Level.INFO, () -> "Se envia correo para correr proceso de validacion de cuentas con promesas "+enviarCorreo);
+        }
+        else{
+            LOGGER.log(Level.INFO, () -> "Batch recordatorioValidarPromesas no han pasado las dos semanas");
+        }
+
+        LOGGER.log(Level.INFO, () -> "Termina Batch de recordatorioValidarPromesas de cada Lunes");
+
+
+    }
+
 
     //Batch con rango de tiempo en horas cada ciertos minutos
 //    @Scheduled(cron = "0 0/30 12-16 * * *")
