@@ -1,6 +1,7 @@
 package com.spring.services.pagos.logic;
 
 
+import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.gestores.logic.GestoresLogic;
 import com.spring.services.pagos.dao.PromesasTKMDAO;
 import com.spring.services.pagos.model.PromesasModel;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 @Component
@@ -20,6 +22,7 @@ public class PromesasTKMLogic {
     private PromesasTKMDAO gesDao;
 
     PromesasTKMDAO gesDao2=new PromesasTKMDAO();
+
 //    @Autowired
 //    private GestoresLogic gestLog=new GestoresLogic();
 
@@ -198,6 +201,8 @@ public class PromesasTKMLogic {
     public RestResponse<String> actualizarPromesasEstPag(PromesasModel promesa) {
         return gesDao2.actualizarPromesasEstPag(promesa);
     }
+
+
 
 
 }

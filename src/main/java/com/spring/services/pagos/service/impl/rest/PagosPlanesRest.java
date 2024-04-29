@@ -1,5 +1,6 @@
 package com.spring.services.pagos.service.impl.rest;
 
+import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.services.pagos.service.impl.PagosPlanesImpl;
@@ -42,6 +43,12 @@ public class PagosPlanesRest {
         return ppImpl.obtenerPagosDia(cu);
     }
 
+    @PostMapping(value = "/validacionPromesasLocal",
+            consumes = { MediaType.APPLICATION_JSON_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(@RequestBody final String json){
+        return ppImpl.validarPromesasPago2semanas(json);
+    }
 
 
 

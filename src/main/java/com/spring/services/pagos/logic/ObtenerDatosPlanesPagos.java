@@ -2,14 +2,18 @@ package com.spring.services.pagos.logic;
 
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.utils.RestResponse;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.json.JSONObject;
@@ -230,7 +234,8 @@ public class ObtenerDatosPlanesPagos {
         try {
             String[] cuSeparado = cu.split("-");
             CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
-            HttpGet serviceRequest = new HttpGet(urlAbonosEdoCuentas+"/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]);
+//            HttpGet serviceRequest = new HttpGet(urlAbonosEdoCuentas+"/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]);
+            HttpGet serviceRequest = new HttpGet("https://www.sclpcj.com.mx:7071/CyCRest/edoCuentaCU/abonosCliente/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]);
             serviceRequest.addHeader("Cookie", cokkie.getCookieGestores());
             serviceResponse = client.execute((HttpUriRequest)serviceRequest);
             int respStatus=serviceResponse.getStatusLine().getStatusCode();
@@ -260,6 +265,47 @@ public class ObtenerDatosPlanesPagos {
         }
         return respuesta;
 
+    }
+
+    public RestResponse<JSONObject> obtenerPagosReporteSCl(String cookie, String json){
+        RestResponse<JSONObject> respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setData(null);
+        respuesta.setError(true);
+
+        CloseableHttpResponse serviceResponse = null;
+        try{
+            JSONObject jsonRequest=new JSONObject(json);
+            CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
+            HttpPost serviceRequest = new HttpPost("https://www.sclpcj.com.mx:7071/CyCRest/cobranza-despachos/pagos");
+            StringEntity post = new StringEntity(jsonRequest.toString(), ContentType.APPLICATION_JSON);
+            serviceRequest.setEntity((HttpEntity)post);
+            serviceRequest.addHeader("Cookie", cookie);
+            serviceResponse = client.execute((HttpUriRequest)serviceRequest);
+            int respStatus=serviceResponse.getStatusLine().getStatusCode();
+            if(respStatus==200||respStatus==201){
+                JsonObject serviceObject = Json.createReader(serviceResponse.getEntity().getContent()).readObject();
+
+                JSONObject jsonGenerado = new JSONObject(serviceObject.toString());
+                respuesta.setCode(1);
+                respuesta.setMessage("Valores Obtenidos");
+                respuesta.setData(jsonGenerado);
+                respuesta.setError(false);
+            }
+            else{
+                respuesta.setMessage("Algo fallo en la consulta");
+                respuesta.setError(false);
+            }
+
+
+        }
+        catch(Exception e){
+            respuesta.setMessage("Algo fallo "+ e);
+            respuesta.setError(true);
+        }
+
+
+        return respuesta;
     }
 
 

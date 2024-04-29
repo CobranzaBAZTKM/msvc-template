@@ -1,5 +1,6 @@
 package com.spring.services.pagos.service.impl;
 
+import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.utils.RestResponse;
@@ -11,4 +12,5 @@ public interface PagosPlanesImpl {
     RestResponse<String> obtenerPlanesPago(datosEntradaPagosPlanes cu);
     RestResponse<String> obtenerPlanesPagoSemanal(datosEntradaPagosPlanes cu);
     RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cu);
+    RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json);
 }

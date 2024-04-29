@@ -1,6 +1,8 @@
 package com.spring.services.batch;
 
 import com.spring.services.cartera.logic.BlastersSMSLogic;
+import com.spring.services.cartera.model.ClienteModel;
+import com.spring.services.carteralocal.logic.CarteraLocalLogic;
 import com.spring.services.constantes.Constantes;
 import com.spring.services.notificaciones.logic.NotificacionesLogic;
 import com.spring.services.notificaciones.model.CuerpoCorreo;
@@ -25,6 +27,7 @@ public class Batchs {
     private PromesasTKMLogic promesas=new PromesasTKMLogic();
     private BlastersSMSLogic blaster=new BlastersSMSLogic();
     private NotificacionesLogic notificaciones=new NotificacionesLogic();
+    private CarteraLocalLogic carteraLog=new CarteraLocalLogic();
     public Batchs() {
         //Vacio
     }
@@ -70,6 +73,15 @@ public class Batchs {
         String fechaFinal=fechaPF[0]+"/"+fechaPF[1]+"/"+fechaPF[2];
         ArrayList<PromesasModel> promesaRetiroDia=new ArrayList<>();
         CuerpoCorreo correo=new CuerpoCorreo();
+        ArrayList<String>correos=new ArrayList<>();
+        correos.add(Constantes.correoEncargada);
+        correos.add("axel.rodriguezn@elektra.com.mx");
+        correos.add("amartinezt@tkm.com.mx");
+        correos.add("aolvera@tkm.com.mx");
+        correo.setRemitente(Constantes.correoRemitente);
+        correo.setPasswordRemitente(Constantes.passwordRemitente);
+        correo.setDestinatario(correos);
+
 
         for(int i=0;i<promesasCompletas.size();i++){
             if(fechaFinal.equals(promesasCompletas.get(i).getFechInser())){
@@ -86,18 +98,11 @@ public class Batchs {
                 promesas.borrarPromesas(String.valueOf(promesaRetiroDia.get(j).getId()),"3");
             }
             String mensaje="Se elimaron "+promesaRetiroDia.size()+ " Promesas";
-            correo.setRemitente(Constantes.correoRemitente);
-            correo.setPasswordRemitente(Constantes.passwordRemitente);
-            correo.setDestinatario(Constantes.correoEncargada);
             correo.setAsunto("ELIMINACION DE PROMESAS");
             correo.setMensaje(mensaje);
             LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: "+mensaje);
         }
         else{
-
-            correo.setRemitente(Constantes.correoRemitente);
-            correo.setPasswordRemitente(Constantes.passwordRemitente);
-            correo.setDestinatario(Constantes.correoEncargada);
             correo.setAsunto("AVISO, ELIMINACION DE PROMESAS");
             correo.setMensaje("Se elimanaran "+promesaRetiroDia.size()+" Promesas a las 10 de la noche de hace un mes");
             LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Envio de correo de aviso "+correo);
@@ -107,20 +112,33 @@ public class Batchs {
 
     }
 
-    @Scheduled(cron = "0 0 13 * * MON")
+    @Scheduled(cron = "0 0 15 * * MON")
     public void recordatorioValidarPromesas() {
         LOGGER.log(Level.INFO, () -> "Comienza Batch de recordatorioValidarPromesas de cada Lunes");
         Calendar calendar = Calendar.getInstance();
         int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
         if (numeroSemana % 2 != 0) {
+            ArrayList<String>correos=new ArrayList<>();
+            correos.add("rfrutos@tkm.com.mx");
+
             CuerpoCorreo correo = new CuerpoCorreo();
             correo.setRemitente(Constantes.correoRemitente);
             correo.setPasswordRemitente(Constantes.passwordRemitente);
-            correo.setDestinatario("rfrutos@tkm.com.mx");
+            correo.setDestinatario(correos);
             correo.setAsunto("AVISO, CORRER REVISION DE PAGOS DE LA CARTERA CON PROMESA");
             correo.setMensaje("Recuerda correr la revison de pagos de la cartera con promesa");
             RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
             LOGGER.log(Level.INFO, () -> "Se envia correo para correr proceso de validacion de cuentas con promesas "+enviarCorreo);
+
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
+            ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
+            for(int i=0;i<obtenerPromesas.getData().size();i++){
+                String actualizar="0,"+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                actualizarMontoPromesa.add(actualizar);
+            }
+
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
+
         }
         else{
             LOGGER.log(Level.INFO, () -> "Batch recordatorioValidarPromesas no han pasado las dos semanas");

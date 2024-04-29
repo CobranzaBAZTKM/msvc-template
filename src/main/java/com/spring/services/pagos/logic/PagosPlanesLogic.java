@@ -1,5 +1,7 @@
 package com.spring.services.pagos.logic;
 
+import com.spring.services.cartera.model.ClienteModel;
+import com.spring.services.carteralocal.logic.CarteraLocalLogic;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.utils.RestResponse;
@@ -28,14 +30,15 @@ public class PagosPlanesLogic {
     @Autowired
     private SetearDatosPagoPlanesLog sdPpLogic;
 
-    @Autowired
-    private ObtenerDatosPlanesPagos obDatLogic;
+//    @Autowired
+    private ObtenerDatosPlanesPagos obDatLogic=new ObtenerDatosPlanesPagos();
 
     @Autowired
     private UtilService util;
 
     private PromesasTKMLogic promesas=new PromesasTKMLogic();
 
+    private CarteraLocalLogic carteraLog=new CarteraLocalLogic();
 
 
     public PagosPlanesLogic() {
@@ -377,17 +380,90 @@ public class PagosPlanesLogic {
         return respuesta;
     }
 
-    public RestResponse<String>promesasIncumplidas(){
-        RestResponse<String>respuesta=new RestResponse<>();
-        respuesta.setCode(0);
-        respuesta.setError(false);
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json){
+        Calendar calendar = Calendar.getInstance();
+        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
+        int numeroSemanaPasada=numeroSemana-1;
+        int numeroSemanaAntePasada=numeroSemana-2;
+        if(numeroSemana==1){
+            numeroSemanaPasada=52;
+            numeroSemanaAntePasada=51;
+        }
 
+        String json1="{\n" +
+                "    \"anio\":2024,\n" +
+                "    \"despacho\":\"58921\",\n" +
+                "    \"segmento\":0,\n" +
+                "    \"semana\":"+numeroSemanaPasada+"\n" +
+                "}";
+
+        String json2="{\n" +
+                "    \"anio\":2024,\n" +
+                "    \"despacho\":\"58921\",\n" +
+                "    \"segmento\":0,\n" +
+                "    \"semana\":"+numeroSemanaAntePasada+"\n" +
+                "}";
+
+        JSONObject jsonCookie=new JSONObject(json);
+
+        RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
+        RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
+
+        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData());
+    }
+
+    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt) {
+        RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
+        RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
+        JSONArray pagosSemPas=reporteSemPas.getJSONArray("respuesta");
+        JSONArray pagosSemAntPas=reporteSemAnt.getJSONArray("respuesta");
+        ArrayList<ClienteModel> valores=new ArrayList<>();
+        ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
+
+        for(int i=0;i<obtenerPromesas.getData().size();i++){
+            int bandera=0;
+            for(int j=0;j<pagosSemPas.length();j++){
+                JSONObject pagos=(JSONObject) pagosSemPas.get(j);
+                Float montoPago= (Float) pagos.get("recupporgestion");
+                if(montoPago!=0){
+                    String cuMonto= (String) pagos.get("clienteUnico");
+                    if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+                      bandera=1;
+                      obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(String.valueOf(montoPago));
+                      String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                      actualizarMontoPromesa.add(actualizar);
+                    }
+                }
+            }
+
+            if(bandera==1){
+                for(int k=0;k<pagosSemAntPas.length();k++){
+                    JSONObject pagos= (JSONObject) pagosSemAntPas.get(k);
+                    Float montoPago= (Float) pagos.get("recupporgestion");
+                    if(montoPago!=0){
+                        String cuMonto= (String) pagos.get("clienteUnico");
+                        if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+                            obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(String.valueOf(montoPago));
+                            String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                            actualizarMontoPromesa.add(actualizar);
+                        }
+                    }
+                }
+            }
+
+            valores.add(obtenerPromesas.getData().get(i));
+        }
+
+        this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
+
+        respuesta.setCode(1);
+        respuesta.setMessage("Proceso terminado correctamente");
+        respuesta.setData(valores);
 
 
 
         return respuesta;
     }
-
 
 
 

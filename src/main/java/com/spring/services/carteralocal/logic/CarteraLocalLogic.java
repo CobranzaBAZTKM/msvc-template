@@ -162,9 +162,7 @@ public class CarteraLocalLogic {
 
         if(cuentasNuevas.size()>0){
             LOGGER.log(Level.INFO, () -> "guardarNuevas: Se insertan "+cuentasNuevas.size()+" cuentasNuevas");
-            for(int k=0;k<cuentasNuevas.size();k++){
-                carteraDAO.insertarCuentasNuevasDia(cuentasNuevas.get(k));
-            }
+            carteraDAO.insertarCuentasNuevasDia(cuentasNuevas);
         }
         carteraDAO.borrarCarteraCompleta();
         carteraDAO2.borrarCarteraDescarte();
@@ -746,6 +744,10 @@ public class CarteraLocalLogic {
 
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
         return carteraDAO.consultarCuentasConPromesa();
+    }
+
+    public RestResponse<String> actualizarMontoCuentaConPromesa(ArrayList<String> registro){
+        return carteraDAO.actualizarMontoCuentaConPromesa(registro);
     }
 
 }

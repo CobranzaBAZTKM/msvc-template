@@ -165,13 +165,15 @@ public class CarteraLogic {
 
 
     private RestResponse<String> mandarCorreoCarteras(String asunto, String mensaje,ArrayList<ClienteModel> datos){
-
+        ArrayList<String>correos=new ArrayList<>();
+        correos.add(Constantes.correoEncargada);
+        correos.add("axel.rodriguezn@elektra.com.mx");
         Double obtenerSaldoTotal=setarDatosLogic.obtenerSaldoTotal(datos);
         String saldo= String.valueOf(BigDecimal.valueOf(obtenerSaldoTotal));
         CuerpoCorreo datosCorreo=new CuerpoCorreo();
         datosCorreo.setRemitente(Constantes.correoRemitente);
         datosCorreo.setPasswordRemitente(Constantes.passwordRemitente);
-        datosCorreo.setDestinatario(Constantes.correoEncargada);
+        datosCorreo.setDestinatario(correos);
         datosCorreo.setAsunto(asunto);
         datosCorreo.setMensaje(mensaje+conUnSaldo+obtenerSaldoTotal);
 

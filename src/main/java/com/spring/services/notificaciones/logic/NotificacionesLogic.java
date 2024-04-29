@@ -13,6 +13,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
 import java.util.Properties;
 
 @Component
@@ -38,10 +39,16 @@ public class NotificacionesLogic {
         Session session = Session.getDefaultInstance(properties);
 
         try{
+            LOGGER.log(Level.INFO, () -> "REQUEST enviarCorreo"+correo);
+            String correos="";
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(correo.getRemitente()));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress("axel.rodriguezn@elektra.com.mx"));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario()));
+            for(int i=0;i<correo.getDestinatario().size();i++) {
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario().get(i)));
+                correos=correos+" "+correo.getDestinatario().get(i)+",";
+            }
+//            message.addRecipient(Message.RecipientType.TO, new InternetAddress("axel.rodriguezn@elektra.com.mx"));
+//            message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario()));
             message.setSubject(correo.getAsunto());
             message.setText(correo.getMensaje());
             Transport t = session.getTransport("smtp");
@@ -51,8 +58,9 @@ public class NotificacionesLogic {
 
             respuesta.setCode(1);
             respuesta.setError(false);
-            respuesta.setMessage("Correo enviado correctamente");
-            respuesta.setData("Revisa tu buzon");
+            respuesta.setMessage("Correo(s) enviado(s) correctamente "+correos);
+            respuesta.setData("Revisa tu buzon de enviados");
+            LOGGER.log(Level.INFO, () -> "REQUEST enviarCorreo"+respuesta);
 
         }
         catch (Exception e){
@@ -65,14 +73,17 @@ public class NotificacionesLogic {
 
     public RestResponse<String>  enviarCorreoGenerico(CuerpoCorreo correo){
 //        CuerpoCorreo datosCorreo=new CuerpoCorreo();
+        ArrayList<String> correos=new ArrayList<>();
+        correos.add(Constantes.correoEncargada);
+        correos.add("axel.rodriguezn@elektra.com.mx");
         correo.setRemitente(Constantes.correoRemitente);
         correo.setPasswordRemitente(Constantes.passwordRemitente);
-        correo.setDestinatario(Constantes.correoEncargada);
+        correo.setDestinatario(correos);
 //        datosCorreo.setAsunto(asunto);
 //        datosCorreo.setMensaje(mensaje);
-        LOGGER.log(Level.INFO, () -> "REQUEST Envio correo"+correo);
+        LOGGER.log(Level.INFO, () -> "REQUEST Envio Correo Generico"+correo);
         RestResponse<String> respuesta=this.enviarCorreo(correo);
-        LOGGER.log(Level.INFO, () -> "RESPONSE Envio correo "+respuesta);
+        LOGGER.log(Level.INFO, () -> "RESPONSE Envio Correo Generico"+respuesta);
         return respuesta;
     }
 

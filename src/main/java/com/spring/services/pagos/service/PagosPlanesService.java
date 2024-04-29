@@ -1,5 +1,6 @@
 package com.spring.services.pagos.service;
 
+import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.pagos.logic.PagosPlanesLogic;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
@@ -33,5 +34,10 @@ public class PagosPlanesService implements PagosPlanesImpl {
     @Override
     public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cu) {
         return ppLogic.obtenerPagosDia(cu);
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json){
+        return ppLogic.validarPromesasPago2semanas(json);
     }
 }
