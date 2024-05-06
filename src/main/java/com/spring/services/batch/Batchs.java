@@ -112,7 +112,7 @@ public class Batchs {
 
     }
 
-    @Scheduled(cron = "0 0 15 * * MON")
+    @Scheduled(cron = "0 30 09 * * MON")
     public void recordatorioValidarPromesas() {
         LOGGER.log(Level.INFO, () -> "Comienza Batch de recordatorioValidarPromesas de cada Lunes");
         Calendar calendar = Calendar.getInstance();
