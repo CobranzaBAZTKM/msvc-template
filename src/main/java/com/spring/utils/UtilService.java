@@ -10,8 +10,11 @@ import java.util.UUID;
 
 @Service
 public class UtilService {
+  public UtilService() {
+    //Vacio
+  }
 
-//  public ResponseEntity<RestResponse<Object>> armarRespuesta (int code, String message, boolean error, Object data,
+  //  public ResponseEntity<RestResponse<Object>> armarRespuesta (int code, String message, boolean error, Object data,
 //          HttpStatus status) {
 //    return new ResponseEntity<>(
 //            RestResponse.builder()
