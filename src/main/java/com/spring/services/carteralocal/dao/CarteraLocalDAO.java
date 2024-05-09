@@ -960,7 +960,7 @@ public class CarteraLocalDAO {
                 cuenta.setCLAVE_SPEI(rs.getString(39));
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(40));
                 cuenta.setSEGMENTO(Integer.valueOf(rs.getString(41)));
-                cuenta.setFECHA_INSER_LOCAL(rs.getString(42));
+                cuenta.setFECHA_INSER_LOCAL(rs.getString(43));
 
 
                 cuentas.add(cuenta);
@@ -1114,7 +1114,7 @@ public class CarteraLocalDAO {
         return respuesta;
 
     }
-    public RestResponse<String> eliminarCuentaConPromesa(ArrayList<String> id){
+    public RestResponse<String> eliminarCuentasConPromesa(ArrayList<String> id){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(false);
@@ -1321,9 +1321,6 @@ public class CarteraLocalDAO {
     }
 
 
-//    public RestResponse<String> eliminarCuentaConPromesa(String id){
-//
-//    }
 
 
 

@@ -750,4 +750,7 @@ public class CarteraLocalLogic {
         return carteraDAO.actualizarMontoCuentaConPromesa(registro);
     }
 
+    public RestResponse<String>eliminarCuentasConPromesa(ArrayList<String> registros){
+        return carteraDAO.eliminarCuentasConPromesa(registros);
+    }
 }

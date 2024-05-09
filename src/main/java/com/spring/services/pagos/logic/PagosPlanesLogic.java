@@ -33,8 +33,8 @@ public class PagosPlanesLogic {
 //    @Autowired
     private ObtenerDatosPlanesPagos obDatLogic=new ObtenerDatosPlanesPagos();
 
-    @Autowired
-    private UtilService util;
+//    @Autowired
+    private UtilService util=new UtilService();
 
     private PromesasTKMLogic promesas=new PromesasTKMLogic();
 
@@ -381,6 +381,12 @@ public class PagosPlanesLogic {
     }
 
     public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json){
+        String[] fechaHora=util.obtenerFechaActual().split(" ");
+        String fechaDia=fechaHora[0];
+        String fechaDiaAtUno=util.FechaDiaAnteriorPosterior(-1);
+        String fechaDiaAtDos=util.FechaDiaAnteriorPosterior(-2);
+        String fechaDiaAtTres=util.FechaDiaAnteriorPosterior(-3);
+
         Calendar calendar = Calendar.getInstance();
         int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
         int numeroSemanaPasada=numeroSemana-1;
@@ -409,10 +415,10 @@ public class PagosPlanesLogic {
         RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
         RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
 
-        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData());
+        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData(),fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres);
     }
 
-    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt) {
+    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres) {
         RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
         RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
         JSONArray pagosSemPas=reporteSemPas.getJSONArray("respuesta");
@@ -420,38 +426,63 @@ public class PagosPlanesLogic {
         ArrayList<ClienteModel> valores=new ArrayList<>();
         ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
 
-        for(int i=0;i<obtenerPromesas.getData().size();i++){
+
+        ArrayList<ClienteModel> promesasDifDia=new ArrayList<>();
+
+        for(int m=0;m<obtenerPromesas.getData().size();m++){
+            if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaDia)){
+                if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtUno)) {
+                    if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtDos)) {
+                        if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtTres)) {
+                            promesasDifDia.add(obtenerPromesas.getData().get(m));
+                        }
+                    }
+                }
+            }
+        }
+
+//        for(int i=0;i<obtenerPromesas.getData().size();i++){
+        for(int i=0;i<promesasDifDia.size();i++){
             int bandera=0;
             for(int j=0;j<pagosSemPas.length();j++){
                 JSONObject pagos=(JSONObject) pagosSemPas.get(j);
-                Float montoPago= (Float) pagos.get("recupporgestion");
-                if(montoPago!=0){
+                String montoPago= String.valueOf( pagos.get("recupporgestion"));
+                if(!"0".equals(montoPago)){
                     String cuMonto= (String) pagos.get("clienteUnico");
-                    if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+//                    if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+                    if(promesasDifDia.get(i).getCLIENTE_UNICO().equals(cuMonto)){
                       bandera=1;
-                      obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(String.valueOf(montoPago));
-                      String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                      String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
+//                      obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(detalles);
+                      promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
+//                      String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                      String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
                       actualizarMontoPromesa.add(actualizar);
                     }
                 }
             }
 
-            if(bandera==1){
+            if(bandera!=1){
                 for(int k=0;k<pagosSemAntPas.length();k++){
                     JSONObject pagos= (JSONObject) pagosSemAntPas.get(k);
-                    Float montoPago= (Float) pagos.get("recupporgestion");
-                    if(montoPago!=0){
+                    String montoPago= String.valueOf(pagos.get("recupporgestion"));
+                    if(!"0".equals(montoPago)){
                         String cuMonto= (String) pagos.get("clienteUnico");
-                        if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
-                            obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(String.valueOf(montoPago));
-                            String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+
+//                        if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+                        if(promesasDifDia.get(i).getCLIENTE_UNICO().equals(cuMonto)){
+                            String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
+//                            obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(detalles);
+                            promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
+//                            String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                            String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
                             actualizarMontoPromesa.add(actualizar);
                         }
                     }
                 }
             }
 
-            valores.add(obtenerPromesas.getData().get(i));
+            valores.add(promesasDifDia.get(i));
         }
 
         this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
@@ -460,10 +491,24 @@ public class PagosPlanesLogic {
         respuesta.setMessage("Proceso terminado correctamente");
         respuesta.setData(valores);
 
+        this.eliminarPromesas(valores);
 
 
         return respuesta;
     }
+
+    private RestResponse<String> eliminarPromesas(ArrayList<ClienteModel>promesas){
+        ArrayList<String>promesasSnMonto=new ArrayList<>();
+        for(int i=0;i<promesas.size();i++){
+            if("N/A".equals(promesas.get(i).getMONTO_PROMESA_PAGO())){
+                promesasSnMonto.add(promesas.get(i).getCLIENTE_UNICO());
+            }
+        }
+
+        return carteraLog.eliminarCuentasConPromesa(promesasSnMonto);
+
+    }
+
 
 
 
