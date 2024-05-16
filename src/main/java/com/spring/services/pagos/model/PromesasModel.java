@@ -33,6 +33,7 @@ public class PromesasModel {
     private String fechInser;
     private Integer pagoFinal;
     private String turnoGestor;
+    private Integer idAutorizo;
     public PromesasModel() {
         //Vacio
     }
