@@ -34,6 +34,7 @@ public class PromesasModel {
     private Integer pagoFinal;
     private String turnoGestor;
     private Integer idAutorizo;
+    private String tipoCartera;
     public PromesasModel() {
         //Vacio
     }

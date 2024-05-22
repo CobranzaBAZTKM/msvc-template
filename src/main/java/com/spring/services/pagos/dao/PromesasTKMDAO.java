@@ -56,6 +56,8 @@ public class PromesasTKMDAO {
                 promesa.setFechInser(rs.getString(23));
                 promesa.setPagoFinal(rs.getInt(24));
                 promesa.setTurnoGestor(rs.getString(25));
+                promesa.setIdAutorizo(rs.getInt(26));
+                promesa.setTipoCartera(rs.getString(27));
                 promesas.add(promesa);
             }
             respuesta.setCode(1);
@@ -75,7 +77,7 @@ public class PromesasTKMDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query=Constantes.insertarBD+"promesaspp (fechaIngresoPP,fechaPago,fechaVencimientoPP,folio,montoPago,nombreCliente,clienteUnico,telefono,idGestorSCL,nombreGestor,observaciones,asignado,whatsApp,nota,idGestorTKM,inserto,tipoLlamada,fechInser,pagoFinal,turnoGestor,idAutorizo)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+        String query=Constantes.insertarBD+"promesaspp (fechaIngresoPP,fechaPago,fechaVencimientoPP,folio,montoPago,nombreCliente,clienteUnico,telefono,idGestorSCL,nombreGestor,observaciones,asignado,whatsApp,nota,idGestorTKM,inserto,tipoLlamada,fechInser,pagoFinal,turnoGestor,idAutorizo,tipoCartera)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
         try{
             LOGGER.log(Level.INFO, () -> "REQUEST insertarPromesas: "+promesa.toString());
@@ -101,6 +103,7 @@ public class PromesasTKMDAO {
             cs.setInt(19,promesa.getPagoFinal());
             cs.setString(20,promesa.getTurnoGestor());
             cs.setInt(21,promesa.getIdAutorizo());
+            cs.setString(22,promesa.getTipoCartera());
             cs.execute();
 
             respuesta.setCode(1);
