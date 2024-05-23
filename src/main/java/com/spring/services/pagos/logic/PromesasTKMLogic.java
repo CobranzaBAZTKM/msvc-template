@@ -75,79 +75,85 @@ public class PromesasTKMLogic {
         ArrayList<PromesasModel> promesas=new ArrayList<>();
         for(int i=0;i<cus.length();i++){
             PromesasModel promesa=new PromesasModel();
-            String[] cuPreparado=cus.getJSONObject(i).getString("clienteUnico").split("-");
-            String pais="0"+cuPreparado[0];
-            String canal=cuPreparado[1].length()==2?cuPreparado[1]:"0"+cuPreparado[1];
-            String sucursal=cuPreparado[2].length()==3?"0"+cuPreparado[2]:cuPreparado[2];
-            String[] folio =cuPreparado[3].split("");
-            String folio1="";
-            String folio2="";
-            String folioFinal="";
-            String cuFinal="";
+            if(!cus.getJSONObject(i).isNull("tipoCartera")&&"Normalidad".equals(cus.getJSONObject(i).get("tipoCartera"))){
+                String[] cuPreparado=cus.getJSONObject(i).getString("clienteUnico").split("-");
+                String pais="0"+cuPreparado[0];
+                String canal=cuPreparado[1].length()==2?cuPreparado[1]:"0"+cuPreparado[1];
+                String sucursal=cuPreparado[2].length()==3?"0"+cuPreparado[2]:cuPreparado[2];
+                String[] folio =cuPreparado[3].split("");
+                String folio1="";
+                String folio2="";
+                String folioFinal="";
+                String cuFinal="";
 
-            if(cuPreparado[3].length()<=4){
-                folio1=cuPreparado[3];
-            }
-            else{
-                for(int j=0; j<4;j++){
-                    folio1= folio1+folio[j];
+                if(cuPreparado[3].length()<=4){
+                    folio1=cuPreparado[3];
                 }
-                for(int k=4; k<folio.length;k++){
-                    folio2= folio2+folio[k];
+                else{
+                    for(int j=0; j<4;j++){
+                        folio1= folio1+folio[j];
+                    }
+                    for(int k=4; k<folio.length;k++){
+                        folio2= folio2+folio[k];
+                    }
                 }
-            }
 
-            if(("").equals(folio2)){
-                folioFinal=folio1;
-            }
-            else{
-                folioFinal=folio1+"-"+folio2;
-            }
+                if(("").equals(folio2)){
+                    folioFinal=folio1;
+                }
+                else{
+                    folioFinal=folio1+"-"+folio2;
+                }
 
-            cuFinal=pais+canal+"-"+sucursal+"-"+folioFinal;
+                cuFinal=pais+canal+"-"+sucursal+"-"+folioFinal;
 
-            String jsonConGest="{\n" +
-                    "    \"cookie\":\""+cokkie+"\",\n" +
-                    "    \"cu\":\""+cuFinal+"\"\n" +
-                    "}";
-            GestoresLogic gestLog=new GestoresLogic();
-            RestResponse<JSONObject>gestiones=gestLog.consultarGestionesCU(jsonConGest);
-            if(gestiones.getCode()==1){
+                String jsonConGest="{\n" +
+                        "    \"cookie\":\""+cokkie+"\",\n" +
+                        "    \"cu\":\""+cuFinal+"\"\n" +
+                        "}";
+                GestoresLogic gestLog=new GestoresLogic();
+                RestResponse<JSONObject>gestiones=gestLog.consultarGestionesCU(jsonConGest);
+                if(gestiones.getCode()==1){
 
-//                JSONObject jsonGes=new JSONObject(gestiones.getData());
-                JSONArray jsonArrGest=gestiones.getData().getJSONArray("respuesta");
-                for(int j=0;j<jsonArrGest.length();j++){
-                    if(promesa.getGestion3()==null){
-                        String comentarioArray=null;
+    //                JSONObject jsonGes=new JSONObject(gestiones.getData());
+                    JSONArray jsonArrGest=gestiones.getData().getJSONArray("respuesta");
+                    for(int j=0;j<jsonArrGest.length();j++){
+                        if(promesa.getGestion3()==null){
+                            String comentarioArray=null;
 
-                        if(!jsonArrGest.getJSONObject(j).isNull("comentario")){
-                            comentarioArray=(String) jsonArrGest.getJSONObject(j).get("comentario");
-                        }
-                        else{
-                            comentarioArray="gestion telefonica";
-                        }
+                            if(!jsonArrGest.getJSONObject(j).isNull("comentario")){
+                                comentarioArray=(String) jsonArrGest.getJSONObject(j).get("comentario");
+                            }
+                            else{
+                                comentarioArray="gestion telefonica";
+                            }
 
-                        if(!comentarioArray.contains("gestion telefonica")){
-                            if(!comentarioArray.contains("GESTION TELEFONICA BLASTER Y SMS SOLICTANDO PAGO HOY")) {
-                                if (promesa.getGestion1() == null) {
-                                    promesa.setGestion1((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
-                                } else if (promesa.getGestion2() == null) {
-                                    promesa.setGestion2((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
-                                } else {
-                                    promesa.setGestion3((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
+                            if(!comentarioArray.contains("gestion telefonica")){
+                                if(!comentarioArray.contains("GESTION TELEFONICA BLASTER Y SMS SOLICTANDO PAGO HOY")) {
+                                    if (promesa.getGestion1() == null) {
+                                        promesa.setGestion1((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
+                                    } else if (promesa.getGestion2() == null) {
+                                        promesa.setGestion2((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
+                                    } else {
+                                        promesa.setGestion3((String) jsonArrGest.getJSONObject(j).get("fechaGestion") + " / " + (String) jsonArrGest.getJSONObject(j).get("comentario"));
+                                    }
                                 }
                             }
                         }
-                    }
-                    else{
-                        break;
+                        else{
+                            break;
+                        }
                     }
                 }
-            }
-            else{
-                promesa.setGestion1("No se obtuvo Gestion");
-                promesa.setGestion2("No se obtuvo Gestion");
-                promesa.setGestion3("No se obtuvo Gestion");
+                else{
+                    promesa.setGestion1("No se obtuvo Gestion");
+                    promesa.setGestion2("No se obtuvo Gestion");
+                    promesa.setGestion3("No se obtuvo Gestion");
+                }
+            }else{
+                promesa.setGestion1("La cuenta no es normalidad");
+                promesa.setGestion2("La cuenta no es normalidad");
+                promesa.setGestion3("La cuenta no es normalidad");
             }
 
             promesa.setIdGestorSCL((String) cus.getJSONObject(i).get("idGestorSCL"));
@@ -181,6 +187,15 @@ public class PromesasTKMLogic {
             if(!cus.getJSONObject(i).isNull("nota")) {
                 promesa.setNota((String) cus.getJSONObject(i).get("nota"));
             }
+
+            if(!cus.getJSONObject(i).isNull("idAutorizo")) {
+                promesa.setIdAutorizo((Integer) cus.getJSONObject(i).get("idAutorizo"));
+            }
+
+            if(!cus.getJSONObject(i).isNull("tipoCartera")) {
+                promesa.setTipoCartera((String) cus.getJSONObject(i).get("tipoCartera"));
+            }
+
 
 
             promesas.add(promesa);
