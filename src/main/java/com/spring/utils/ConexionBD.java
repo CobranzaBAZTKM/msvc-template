@@ -22,7 +22,7 @@ public class ConexionBD {
     }
 
     String usuario="BDUSERCLTKMBAZ";
-    String password="COLETkmBD2023.2";
+    String password="COLETkmBD2023.3";
 //    String usuario="sa";
 //    String password="CobranzaLegalTKMBD23.";
 
