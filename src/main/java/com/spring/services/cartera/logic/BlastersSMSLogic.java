@@ -125,6 +125,7 @@ public class BlastersSMSLogic {
         }
         catch(Exception e){
             respuesta="Algo fallo "+ e;
+            LOGGER.log(Level.INFO, () -> "ISSUE enviarBlaster: Ocurrio algo Inesperado:  "+e);
 
         }
         return respuesta;

@@ -6,6 +6,8 @@ import com.spring.services.carteralocal.logic.CarteraLocalLogic;
 import com.spring.services.constantes.Constantes;
 import com.spring.services.notificaciones.logic.NotificacionesLogic;
 import com.spring.services.notificaciones.model.CuerpoCorreo;
+import com.spring.services.operacion.logic.GestionLlamadasLogic;
+import com.spring.services.operacion.model.GestionLlamadasModel;
 import com.spring.services.pagos.logic.PromesasTKMLogic;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.utils.RestResponse;
@@ -28,11 +30,11 @@ public class Batchs {
     private BlastersSMSLogic blaster=new BlastersSMSLogic();
     private NotificacionesLogic notificaciones=new NotificacionesLogic();
     private CarteraLocalLogic carteraLog=new CarteraLocalLogic();
+    private GestionLlamadasLogic gestionLogic=new GestionLlamadasLogic();
+    private UtilService util=new UtilService();
     public Batchs() {
         //Vacio
     }
-
-    UtilService util=new UtilService();
 
 
     @Scheduled(cron = "0 0 09-20 * * *")
@@ -56,7 +58,7 @@ public class Batchs {
 //        promesapagoHoy.add("5543773233");
         String mensaje="Cliente Banco Azteca. No hemos recibido su pago, realice el deposito hoy, no pierda de sus beneficios";
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Se envian "+promesapagoHoy.size()+" para blaster");
-        blaster.enviarBlaster(promesapagoHoy,mensaje,"RamcesFDz4","R4mdz.tkm");
+        blaster.enviarBlaster(promesapagoHoy,mensaje,"RamcesFDz4","CobranzaTKM2024*");
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Termina batch envio de recordatorios");
 
     }
@@ -149,6 +151,52 @@ public class Batchs {
 
     }
 
+//    @Scheduled(cron = "0 0 15,23 * * *")
+//    public void eliminarGestiones3meses() {
+//        LOGGER.log(Level.INFO, () -> "eliminarGestiones3meses: Comienza batch eliminacion de Gestiones de 3 meses");
+//
+//        String fecha3Meses=util.FechaMesAnteriorPosterior(-3);
+//        String[] fechaHora=util.obtenerFechaActual().split(" ");
+//        String[] horaCompleta=fechaHora[1].split(":");
+//        String hora=horaCompleta[0];
+//        CuerpoCorreo correo=new CuerpoCorreo();
+//        ArrayList<String>correos=new ArrayList<>();
+//        correos.add(Constantes.correoEncargada);
+//        correos.add("axel.rodriguezn@elektra.com.mx");
+//        correo.setRemitente(Constantes.correoRemitente);
+//        correo.setPasswordRemitente(Constantes.passwordRemitente);
+//        correo.setDestinatario(correos);
+//
+//        if("23".equals(hora)){
+//            ArrayList<GestionLlamadasModel> gestiones=gestionLogic.consultarGestionLlamadas().getData();
+//            ArrayList<String> gestionesABorrar=new ArrayList<>();
+//
+//            for(int i=0; i<gestiones.size();i++){
+//                if(gestiones.get(i).getFechaInserto().equals(fecha3Meses)){
+//                    gestionesABorrar.add(String.valueOf(gestiones.get(i).getIdGestionLlam()));
+//                }
+//            }
+//
+//            RestResponse<String> borrarPromesas=gestionLogic.borrarGestionLlamadas(gestionesABorrar,"3");
+//
+//            String mensaje="Se elimaron las gestiones del dia "+fecha3Meses;
+//            correo.setAsunto("ELIMINACION DE GESTIONES");
+//            correo.setMensaje(mensaje);
+//            LOGGER.log(Level.INFO, () -> "eliminarGestiones3meses: "+mensaje+" ,"+borrarPromesas);
+//
+//        }
+//        else{
+//            correo.setAsunto("AVISO, ELIMINACION DE GESTIONES");
+//            correo.setMensaje("Se elimanaran las gestiones a las 11 de la noche de hace tres meses ("+fecha3Meses+")");
+//            LOGGER.log(Level.INFO, () -> "eliminarGestiones3meses: Envio de correo de aviso "+correo);
+//        }
+//
+//        notificaciones.enviarCorreo(correo);
+//
+//        LOGGER.log(Level.INFO, () -> "eliminarGestiones3meses: Termina batch eliminacion de Gestiones de 3 meses");
+//    }
+
+
 
     //Batch con rango de tiempo en horas cada ciertos minutos
 //    @Scheduled(cron = "0 0/30 12-16 * * *")
@@ -164,8 +212,5 @@ public class Batchs {
 //        LOGGER.log(Level.INFO, () -> "pruebaBatch Se prueba Batch3" + fecha);
 //    }
 
-
-
-
-
 }
+
