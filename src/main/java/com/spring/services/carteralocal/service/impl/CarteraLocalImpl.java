@@ -7,11 +7,10 @@ import com.spring.utils.RestResponse;
 import java.util.ArrayList;
 
 public interface CarteraLocalImpl {
-    RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie);
+    RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie, String tipoCarteraTKM);
     RestResponse<ArrayList<ClienteModel>> carteraCompletaDia();
     RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia();
-    RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte();
-    RestResponse<String> carteraCompletaGuardarLocalPuente(String cartera);
-    RestResponse<String>carteraDescarteGuardarLocalPuente(String cuentas);
+    RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(String tipoCarteraTKM);
     RestResponse<ClienteModel> consultarCUCarteraCompleta(String cu);
+    RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa();
 }

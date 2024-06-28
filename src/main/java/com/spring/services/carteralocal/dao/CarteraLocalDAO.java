@@ -136,6 +136,7 @@ public class CarteraLocalDAO {
                 cuenta.setESTATUS_PROMESA_PAGO(rs.getString(98));
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(99));
                 cuenta.setSEGMENTO(Integer.parseInt(rs.getString(100)));
+                cuenta.setTIPOCARTERATKM(rs.getString(102));
 
                 cuentas.add(cuenta);
 
@@ -268,6 +269,7 @@ public class CarteraLocalDAO {
                 cuenta.setESTATUS_PROMESA_PAGO(rs.getString(98));
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(99));
                 cuenta.setSEGMENTO(Integer.parseInt(rs.getString(100)));
+                cuenta.setTIPOCARTERATKM(rs.getString(102));
             }
             respuesta.setCode(1);
             respuesta.setError(false);
@@ -389,7 +391,9 @@ public class CarteraLocalDAO {
                 "MORATORIOS_ANTES_PLAN," +
                 "ESTATUS_PROMESA_PAGO," +
                 "MONTO_PROMESA_PAGO," +
-                "SEGMENTO)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                "SEGMENTO,"+
+                "TIPOCARTERATKM)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
 
@@ -494,6 +498,7 @@ public class CarteraLocalDAO {
                 cs.setString(98, cuenta.get(i).getESTATUS_PROMESA_PAGO());
                 cs.setString(99, cuenta.get(i).getMONTO_PROMESA_PAGO());
                 cs.setString(100, String.valueOf(cuenta.get(i).getSEGMENTO()));
+                cs.setString(101,cuenta.get(i).getTIPOCARTERATKM());
                 cs.execute();
             }
 
@@ -511,9 +516,17 @@ public class CarteraLocalDAO {
         return respuesta;
     }
 
-    public RestResponse<String>borrarCarteraCompleta(){
+    public RestResponse<String>borrarCarteraCompleta(String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
-        String query=Constantes.deleteBD+"cartera";
+        String valoresBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            valoresBD=" WHERE cartera.TIPOCARTERATKM='Normalidad'";
+        }
+        else{
+            valoresBD=" WHERE cartera.TIPOCARTERATKM='VIP'";
+        }
+
+        String query=Constantes.deleteBD+"cartera"+valoresBD;
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
             cs.execute();
@@ -907,11 +920,19 @@ public class CarteraLocalDAO {
     }
 
 
-    public RestResponse<ArrayList<ClienteModel>> consultarCuentasConPromesa(){
+    public RestResponse<ArrayList<ClienteModel>> consultarCuentasConPromesa(String tipoCartera){
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.consultaBD+"carteraConPromesa;";
+        String tablaBD=null;
+        if("1".equals(tipoCartera)){
+            tablaBD="carteraConPromesa;";
+        }
+        else{
+            tablaBD="carteraConPromesaVIP;";
+        }
+
+        String query= Constantes.consultaBD+tablaBD;
         Statement st;
         try{
             ArrayList<ClienteModel> cuentas=new ArrayList<>();
@@ -980,11 +1001,19 @@ public class CarteraLocalDAO {
     }
 
 
-    public RestResponse<String> insertarCuentaConPromesa(ClienteModel cuenta,String fechaInsert){
+    public RestResponse<String> insertarCuentaConPromesa(ClienteModel cuenta,String fechaInsert,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.insertarBD+"carteraConPromesa(" +
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraConPromesa";
+        }
+        else{
+            tablaBD="carteraConPromesaVIP";
+        }
+
+        String query= Constantes.insertarBD+tablaBD+"(" +
                 "CLIENTE_UNICO," +
                 "NOMBRE_CTE," +
                 "GENERO_CLIENTE," +
@@ -1141,11 +1170,18 @@ public class CarteraLocalDAO {
     }
 
 
-    public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContactoTT(){
+    public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContactoTT(String tipoCarteraTKM){
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.consultaBD+"carteraSinContacto;";
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraSinContacto;";
+        }
+        else{
+            tablaBD="carteraSinContactoVIP;";
+        }
+        String query= Constantes.consultaBD+tablaBD;
         Statement st;
         try{
             ArrayList<ClienteModel> cuentas=new ArrayList<>();
@@ -1214,11 +1250,19 @@ public class CarteraLocalDAO {
     }
 
 
-    public RestResponse<String> insertarCuentaSinContactoTT(ClienteModel cuenta,String fechaInsert){
+    public RestResponse<String> insertarCuentaSinContactoTT(ClienteModel cuenta,String fechaInsert,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.insertarBD+"carteraSinContacto(" +
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraSinContacto";
+        }
+        else{
+            tablaBD="carteraSinContactoVIP";
+        }
+
+        String query= Constantes.insertarBD+tablaBD+"(" +
                 "CLIENTE_UNICO," +
                 "NOMBRE_CTE," +
                 "GENERO_CLIENTE," +

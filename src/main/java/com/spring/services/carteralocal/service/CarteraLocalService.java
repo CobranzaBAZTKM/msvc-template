@@ -19,8 +19,8 @@ public class CarteraLocalService implements CarteraLocalImpl {
     }
 
     @Override
-    public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie) {
-        return carteraLocLog.carteraCompletaGuardar(cokkie);
+    public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie, String tipoCarteraTKM) {
+        return carteraLocLog.carteraCompletaGuardar(cokkie,tipoCarteraTKM);
     }
 
 
@@ -35,22 +35,17 @@ public class CarteraLocalService implements CarteraLocalImpl {
     }
 
     @Override
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
-        return carteraLocLog.consultarCarteraDescarte();
-    }
-
-    @Override
-    public RestResponse<String> carteraCompletaGuardarLocalPuente(String cartera){
-        return carteraLocLog.carteraCompletaGuardarLocalPuente(cartera);
-    }
-
-    @Override
-    public RestResponse<String>carteraDescarteGuardarLocalPuente(String cuentas){
-        return carteraLocLog.carteraDescarteGuardarLocalPuente(cuentas);
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(String tipoCartera) {
+        return carteraLocLog.consultarCarteraDescarte(tipoCartera);
     }
 
     @Override
     public RestResponse<ClienteModel> consultarCUCarteraCompleta(String cu){
         return carteraLocLog.consultarCUCarteraCompleta(cu);
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
+        return carteraLocLog.consultarCarteraConPromesa();
     }
 }

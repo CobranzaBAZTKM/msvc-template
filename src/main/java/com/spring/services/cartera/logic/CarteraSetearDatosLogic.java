@@ -18,7 +18,7 @@ public class CarteraSetearDatosLogic {
         //Vacio
     }
 
-    public ArrayList<ClienteModel> setearDatos(ArrayList<String> datosSS,Integer segmento){
+    public ArrayList<ClienteModel> setearDatos(ArrayList<String> datosSS,Integer segmento,int tipoCarteraTKM){
         ArrayList<ClienteModel> respuesta=new ArrayList<>();
 
         for(int i=0;i<datosSS.toArray().length;i++){
@@ -125,6 +125,12 @@ public class CarteraSetearDatosLogic {
             cliente.setESTATUS_PROMESA_PAGO(separarDatosCliente[97]);
             cliente.setMONTO_PROMESA_PAGO(separarDatosCliente[98]);
             cliente.setSEGMENTO(segmento);
+            if(tipoCarteraTKM==1){
+                cliente.setTIPOCARTERATKM("Normalidad");
+            }
+            else{
+                cliente.setTIPOCARTERATKM("VIP");
+            }
 
 
             respuesta.add(cliente);

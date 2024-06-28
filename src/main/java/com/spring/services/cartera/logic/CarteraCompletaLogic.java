@@ -48,7 +48,7 @@ public class CarteraCompletaLogic {
     @Value("${cartera.segmentos.clientes}")
     private String urlCarteraSegmentosClientes;
 
-    public RestResponse<JSONObject> obtenerSegmentosCartera(ExtrasModel cokkie) {
+    public RestResponse<JSONObject> obtenerSegmentosCartera(ExtrasModel cokkie,int cartera) {
         cookie=cokkie.getCookie();
         RestResponse<JSONObject> respuesta = new RestResponse<>();
         respuesta.setCode(0);
@@ -59,9 +59,20 @@ public class CarteraCompletaLogic {
         CloseableHttpResponse serviceResponse = null;
 
         try {
+            String url="https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/";
+
+            if(cartera==1){
+                url=url+"60054";
+            }
+            else{
+//                url=url+"59912";
+                url=url+"60165";
+
+            }
 
             CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
-            HttpGet serviceRequest = new HttpGet("https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/58921");
+//            HttpGet serviceRequest = new HttpGet("https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/58921");
+            HttpGet serviceRequest = new HttpGet(url);
             serviceRequest.addHeader("Cookie", cookie);
             serviceResponse = client.execute((HttpUriRequest)serviceRequest);
 
@@ -92,7 +103,7 @@ public class CarteraCompletaLogic {
 
 
 
-    public RestResponse<ArrayList<ClienteModel>> clientesCompletos(JSONObject jsonGenerado,int segmento, ExtrasModel cokkie) {
+    public RestResponse<ArrayList<ClienteModel>> clientesCompletos(JSONObject jsonGenerado,int segmento, ExtrasModel cokkie,int tipoCartera) {
         cookie=cokkie.getCookie();
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         try{
@@ -112,71 +123,105 @@ public class CarteraCompletaLogic {
 
             switch(segmento){
                 case 5:
-                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5);
-                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5);
+                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5,tipoCartera);
+                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5,tipoCartera);
                     resp.addAll(datosSeg5);
                     break;
                 case 6:
-                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6);
-                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
                     resp.addAll(datosSeg6);
                     break;
 
                 case 16:
-                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16);
-                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16);
+                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16,tipoCartera);
+                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16,tipoCartera);
                     resp.addAll(datosSeg16);
                     break;
 
                 case 28:
-                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28);
-                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28);
+                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28,tipoCartera);
+                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28,tipoCartera);
                     resp.addAll(datosSeg28);
                     break;
 
                 case 21:
-                    clienSeg21=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento21"),21);
-                    datosSeg21=setearDatosLogic.setearDatos(clienSeg21.getData(),21);
+                    clienSeg21=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento21"),21,tipoCartera);
+                    datosSeg21=setearDatosLogic.setearDatos(clienSeg21.getData(),21,tipoCartera);
                     resp.addAll(datosSeg21);
                     break;
 
                 case 616:
-                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6);
-                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16);
-                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6);
-                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16,tipoCartera);
                     resp.addAll(datosSeg6);
                     resp.addAll(datosSeg16);
                     break;
 
                 case 5616:
-                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5);
-                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6);
-                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16);
-                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5);
-                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6);
-                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16);
+                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5,tipoCartera);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16,tipoCartera);
+                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16,tipoCartera);
                     resp.addAll(datosSeg5);
                     resp.addAll(datosSeg6);
                     resp.addAll(datosSeg16);
                     break;
 
+                case 561628:
+                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5,tipoCartera);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16,tipoCartera);
+                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28,tipoCartera);
+                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16,tipoCartera);
+                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28,tipoCartera);
+                    resp.addAll(datosSeg5);
+                    resp.addAll(datosSeg6);
+                    resp.addAll(datosSeg16);
+                    resp.addAll(datosSeg28);
+                    break;
+
                 case 56162821:
-                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5);
-                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6);
-                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16);
-                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28);
-                    clienSeg21=clientesXSegmentos(jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento21"),21);
-                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5);
-                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6);
-                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16);
-                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28);
-                    datosSeg21=setearDatosLogic.setearDatos(clienSeg21.getData(),21);
+                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5,tipoCartera);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg16=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento16"),16,tipoCartera);
+                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28,tipoCartera);
+                    clienSeg21=clientesXSegmentos(jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento21"),21,tipoCartera);
+                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg16=setearDatosLogic.setearDatos(clienSeg16.getData(),16,tipoCartera);
+                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28,tipoCartera);
+                    datosSeg21=setearDatosLogic.setearDatos(clienSeg21.getData(),21,tipoCartera);
                     resp.addAll(datosSeg5);
                     resp.addAll(datosSeg6);
                     resp.addAll(datosSeg16);
                     resp.addAll(datosSeg28);
                     resp.addAll(datosSeg21);
+                    break;
+                case 628:
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28,tipoCartera);
+                    resp.addAll(datosSeg6);
+                    resp.addAll(datosSeg28);
+                    break;
+                case 5628:
+                    clienSeg5=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento5"),5,tipoCartera);
+                    clienSeg6=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento6"),6,tipoCartera);
+                    clienSeg28=clientesXSegmentos( jsonGenerado.getJSONObject("respuesta").getJSONArray("segmento28"),28,tipoCartera);
+                    datosSeg5=setearDatosLogic.setearDatos(clienSeg5.getData(),5,tipoCartera);
+                    datosSeg6=setearDatosLogic.setearDatos(clienSeg6.getData(),6,tipoCartera);
+                    datosSeg28=setearDatosLogic.setearDatos(clienSeg28.getData(),28,tipoCartera);
+                    resp.addAll(datosSeg5);
+                    resp.addAll(datosSeg6);
+                    resp.addAll(datosSeg28);
                     break;
                 default:
                     //vacio
@@ -197,13 +242,20 @@ public class CarteraCompletaLogic {
         return respuesta;
     }
 
-    public RestResponse<ArrayList<String>> clientesXSegmentos(JSONArray jsonGenerado, int segmento){
+    public RestResponse<ArrayList<String>> clientesXSegmentos(JSONArray jsonGenerado, int segmento,int tipoCartera){
         RestResponse<ArrayList<String>> respuesta=new RestResponse<>();
         ArrayList<String> clientes=new ArrayList<>();
         Integer suma=0;
 
         JSONObject jsonRequest=new JSONObject();
-        jsonRequest.put("idDespacho",58921);
+        if(tipoCartera==1){
+            jsonRequest.put("idDespacho",60054);
+        }else{
+//            jsonRequest.put("idDespacho",59912);
+            jsonRequest.put("idDespacho",60165);
+
+        }
+
         jsonRequest.put("idSegmento",segmento);
 
         for(int i=0;i<jsonGenerado.length();i++){

@@ -23,11 +23,19 @@ public class CarteraLocalDAO2 {
         //Vacio
     }
 
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(){
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(String tipoCarteraTKM){
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.consultaBD+"carteraDescarte;";
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraDescarte;";
+        }
+        else{
+            tablaBD="carteraDescarteVIP;";
+        }
+
+        String query= Constantes.consultaBD+tablaBD;
         Statement st;
         try{
             ArrayList<ClienteModel> cuentas=new ArrayList<>();
@@ -136,6 +144,7 @@ public class CarteraLocalDAO2 {
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(99));
                 cuenta.setSEGMENTO(Integer.parseInt(rs.getString(100)));
                 cuenta.setTURNO(rs.getString(102));
+                cuenta.setTIPOCARTERATKM(rs.getString(103));
 
                 cuentas.add(cuenta);
 
@@ -156,11 +165,19 @@ public class CarteraLocalDAO2 {
         return respuesta;
     }
 
-    public RestResponse<String> insertarCarteraDescarte(ArrayList<ClienteModel> cuenta){
+    public RestResponse<String> insertarCarteraDescarte(ArrayList<ClienteModel> cuenta,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query= Constantes.insertarBD+"carteraDescarte(" +
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraDescarte";
+        }
+        else{
+            tablaBD="carteraDescarteVIP";
+        }
+
+        String query= Constantes.insertarBD+tablaBD+"(" +
                 "CLIENTE_UNICO," +
                 "NOMBRE_CTE," +
                 "RFC_CTE," +
@@ -261,7 +278,8 @@ public class CarteraLocalDAO2 {
                 "ESTATUS_PROMESA_PAGO," +
                 "MONTO_PROMESA_PAGO," +
                 "SEGMENTO," +
-                "TURNO)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+                "TURNO,"+
+                "TIPOCARTERATKM)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
 
@@ -368,6 +386,7 @@ public class CarteraLocalDAO2 {
                 cs.setString(99,cuenta.get(i).getMONTO_PROMESA_PAGO());
                 cs.setString(100, String.valueOf(cuenta.get(i).getSEGMENTO()));
                 cs.setString(101, cuenta.get(i).getTURNO());
+                cs.setString(102,cuenta.get(i).getTIPOCARTERATKM());
                 cs.execute();
             }
 
@@ -387,9 +406,16 @@ public class CarteraLocalDAO2 {
     }
 
 
-    public RestResponse<String>borrarCarteraDescarte(){
+    public RestResponse<String>borrarCarteraDescarte(String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
-        String query=Constantes.deleteBD+"carteraDescarte";
+        String tablaBD=null;
+        if("1".equals(tipoCarteraTKM)){
+            tablaBD="carteraDescarte";
+        }
+        else{
+            tablaBD="carteraDescarteVIP";
+        }
+        String query=Constantes.deleteBD+tablaBD;
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
             cs.execute();

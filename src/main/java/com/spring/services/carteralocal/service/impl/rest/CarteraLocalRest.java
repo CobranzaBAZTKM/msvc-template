@@ -20,14 +20,14 @@ public class CarteraLocalRest {
         //Vacio
     }
 
-    @PostMapping(value = "/carteraCompletaSCLGuardar",
+    @PostMapping(value = "/carteraCompletaSCLGuardar/{tipoCarteraTKM}",
             consumes = {"application/json"},
             produces = {"application/json"})
 //            consumes = { MediaType.APPLICATION_JSON_VALUE },
 //            produces = { MediaType.APPLICATION_JSON_VALUE })
-    public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(@RequestBody final ExtrasModel cokkie){
+    public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(@RequestBody final ExtrasModel cokkie,@PathVariable String tipoCarteraTKM){
 //    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
-        return carteraLoImpl.carteraCompletaGuardar(cokkie);
+        return carteraLoImpl.carteraCompletaGuardar(cokkie,tipoCarteraTKM);
     }
 
 
@@ -45,30 +45,21 @@ public class CarteraLocalRest {
         return carteraLoImpl.consultarNuevasCuentasDia();
     }
 
-    @PostMapping(value = "/carteraConDescarte",
+    @PostMapping(value = "/carteraConDescarte/{tipoCartera}",
             produces = {"application/json"})
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte() {
-        return carteraLoImpl.consultarCarteraDescarte();
-    }
-
-    @PostMapping(value = "/carteraCompletaGuardarLocal",
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    public RestResponse<String> carteraCompletaGuardarLocalPuente(@RequestBody final String cartera){
-        return carteraLoImpl.carteraCompletaGuardarLocalPuente(cartera);
-    }
-
-
-    @PostMapping(value = "/carteraDescarteGuardarLocal",
-            consumes = {"application/json"},
-            produces = {"application/json"})
-    public RestResponse<String>carteraDescarteGuardarLocalPuente(@RequestBody final String cuentas){
-        return carteraLoImpl.carteraDescarteGuardarLocalPuente(cuentas);
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(@PathVariable String tipoCartera) {
+        return carteraLoImpl.consultarCarteraDescarte(tipoCartera);
     }
 
     @GetMapping(value = "/consultarClienteUnico/{cu}",
             produces = {"application/json"})
     public RestResponse<ClienteModel> consultarCUCarteraCompleta(@PathVariable String cu){
         return carteraLoImpl.consultarCUCarteraCompleta(cu);
+    }
+
+    @GetMapping(value = "/consultarCarteraPromesaLocal",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
+        return carteraLoImpl.consultarCarteraConPromesa();
     }
 }
