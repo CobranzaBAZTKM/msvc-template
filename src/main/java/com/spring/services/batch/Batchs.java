@@ -63,56 +63,56 @@ public class Batchs {
 
     }
 
-    @Scheduled(cron = "0 0 12,22 * * *")
-    public void avisoElimacionPromesasMes(){
-        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Comienza batch de avisoElminacion de Promesas");
-        ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
-
-        String[] fechaHora=util.obtenerFechaActual().split(" ");
-        String[] horaCompleta=fechaHora[1].split(":");
-        String hora=horaCompleta[0];
-        String[] fechaPF=fechaHora[0].split("-");
-        String fechaFinal=fechaPF[0]+"/"+fechaPF[1]+"/"+fechaPF[2];
-        ArrayList<PromesasModel> promesaRetiroDia=new ArrayList<>();
-        CuerpoCorreo correo=new CuerpoCorreo();
-        ArrayList<String>correos=new ArrayList<>();
-        correos.add(Constantes.correoEncargada);
-        correos.add("axel.rodriguezn@elektra.com.mx");
-        correos.add("amartinezt@tkm.com.mx");
-        correos.add("aolvera@tkm.com.mx");
-        correo.setRemitente(Constantes.correoRemitente);
-        correo.setPasswordRemitente(Constantes.passwordRemitente);
-        correo.setDestinatario(correos);
-
-
-        for(int i=0;i<promesasCompletas.size();i++){
-            if(fechaFinal.equals(promesasCompletas.get(i).getFechInser())){
-                promesaRetiroDia.add(promesasCompletas.get(i));
-            }
-        }
-
-
-        if("22".equals(hora)){
-            for(int j=0; j<promesaRetiroDia.size();j++){
-                String CUElimacion=promesaRetiroDia.get(j).getClienteUnico();
-                String gestor=promesaRetiroDia.get(j).getNombreGestor();
-                LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Promesa CLIENTE UNICO: "+CUElimacion+", GESTOR: "+gestor);
-                promesas.borrarPromesas(String.valueOf(promesaRetiroDia.get(j).getId()),"3");
-            }
-            String mensaje="Se elimaron "+promesaRetiroDia.size()+ " Promesas";
-            correo.setAsunto("ELIMINACION DE PROMESAS");
-            correo.setMensaje(mensaje);
-            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: "+mensaje);
-        }
-        else{
-            correo.setAsunto("AVISO, ELIMINACION DE PROMESAS");
-            correo.setMensaje("Se elimanaran "+promesaRetiroDia.size()+" Promesas a las 10 de la noche de hace un mes");
-            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Envio de correo de aviso "+correo);
-        }
-        notificaciones.enviarCorreo(correo);
-        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Termina batch de avisoElminacion de Promesas");
-
-    }
+//    @Scheduled(cron = "0 0 12,22 * * *")
+//    public void avisoElimacionPromesasMes(){
+//        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Comienza batch de avisoElminacion de Promesas");
+//        ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
+//
+//        String[] fechaHora=util.obtenerFechaActual().split(" ");
+//        String[] horaCompleta=fechaHora[1].split(":");
+//        String hora=horaCompleta[0];
+//        String[] fechaPF=fechaHora[0].split("-");
+//        String fechaFinal=fechaPF[0]+"/"+fechaPF[1]+"/"+fechaPF[2];
+//        ArrayList<PromesasModel> promesaRetiroDia=new ArrayList<>();
+//        CuerpoCorreo correo=new CuerpoCorreo();
+//        ArrayList<String>correos=new ArrayList<>();
+//        correos.add(Constantes.correoEncargada);
+//        correos.add("axel.rodriguezn@elektra.com.mx");
+//        correos.add("amartinezt@tkm.com.mx");
+//        correos.add("aolvera@tkm.com.mx");
+//        correo.setRemitente(Constantes.correoRemitente);
+//        correo.setPasswordRemitente(Constantes.passwordRemitente);
+//        correo.setDestinatario(correos);
+//
+//
+//        for(int i=0;i<promesasCompletas.size();i++){
+//            if(fechaFinal.equals(promesasCompletas.get(i).getFechInser())){
+//                promesaRetiroDia.add(promesasCompletas.get(i));
+//            }
+//        }
+//
+//
+//        if("22".equals(hora)){
+//            for(int j=0; j<promesaRetiroDia.size();j++){
+//                String CUElimacion=promesaRetiroDia.get(j).getClienteUnico();
+//                String gestor=promesaRetiroDia.get(j).getNombreGestor();
+//                LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Promesa CLIENTE UNICO: "+CUElimacion+", GESTOR: "+gestor);
+//                promesas.borrarPromesas(String.valueOf(promesaRetiroDia.get(j).getId()),"3");
+//            }
+//            String mensaje="Se elimaron "+promesaRetiroDia.size()+ " Promesas";
+//            correo.setAsunto("ELIMINACION DE PROMESAS");
+//            correo.setMensaje(mensaje);
+//            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: "+mensaje);
+//        }
+//        else{
+//            correo.setAsunto("AVISO, ELIMINACION DE PROMESAS");
+//            correo.setMensaje("Se elimanaran "+promesaRetiroDia.size()+" Promesas a las 10 de la noche de hace un mes");
+//            LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Envio de correo de aviso "+correo);
+//        }
+//        notificaciones.enviarCorreo(correo);
+//        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Termina batch de avisoElminacion de Promesas");
+//
+//    }
 
     @Scheduled(cron = "0 30 09 * * MON")
     public void recordatorioValidarPromesas() {
