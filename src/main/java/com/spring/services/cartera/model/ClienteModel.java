@@ -109,6 +109,7 @@ public class ClienteModel {
     private Integer SEGMENTO;
     private String FECHA_INSER_LOCAL;
     private String TURNO;
+    private String TIPOCARTERATKM;
 
     public ClienteModel() {
         //Vacio

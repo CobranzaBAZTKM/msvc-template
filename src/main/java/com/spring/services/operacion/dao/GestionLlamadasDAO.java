@@ -40,6 +40,7 @@ public class GestionLlamadasDAO {
                 gestion.setComentario(rs.getString(6));
                 gestion.setFechaInserto(rs.getString(7));
                 gestion.setHoraInserto(rs.getString(8));
+                gestion.setTipoCarteraTKM(rs.getString(9));
                 gestiones.add(gestion);
             }
             respuesta.setCode(1);
@@ -61,7 +62,7 @@ public class GestionLlamadasDAO {
         RestResponse<String>respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query="INSERT INTO gestiones(clienteUnico,telefono,idGestorTKM,idTipificacion,comentario,fechaInserto,horaInserto) values (?,?,?,?,?,?,?);";
+        String query="INSERT INTO gestiones(clienteUnico,telefono,idGestorTKM,idTipificacion,comentario,fechaInserto,horaInserto,tipoCarteraTKM) values (?,?,?,?,?,?,?,?);";
         try{
             CallableStatement cs = conexionbd.establecerConexion2().prepareCall(query);
             cs.setString(1,gestLlam.getClienteUnico());
@@ -71,6 +72,7 @@ public class GestionLlamadasDAO {
             cs.setString(5, gestLlam.getComentario());
             cs.setString(6,gestLlam.getFechaInserto());
             cs.setString(7,gestLlam.getHoraInserto());
+            cs.setString(8,gestLlam.getTipoCarteraTKM());
             cs.execute();
 
             respuesta.setCode(1);
@@ -115,21 +117,26 @@ public class GestionLlamadasDAO {
         return respuesta;
     }
 
-    public RestResponse<String> borrarGestionLlamadas(String idGestion, String idSupervisor) {
+    public RestResponse<String> borrarGestionLlamadas(ArrayList<String> idGestion, String idSupervisor) {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
         String query="DELETE FROM gestiones WHERE gestiones.id=?";
         try{
-            LOGGER.log(Level.INFO, () -> "REQUEST  borrarGestionLlamadas idGestion"+idGestion+", idSupervisor: "+idSupervisor);
+
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
-            cs.setInt(1,Integer.parseInt(idGestion));
-            cs.execute();
+            for(int i=0;i< idGestion.size();i++) {
+                String id=idGestion.get(i);
+                LOGGER.log(Level.INFO, () -> "REQUEST  borrarGestionLlamadas idGestion"+id+", idSupervisor: "+idSupervisor);
+                cs.setInt(1, Integer.parseInt(id));
+                cs.execute();
+            }
+
 
             respuesta.setCode(1);
             respuesta.setError(false);
-            respuesta.setMessage("Registro borrado en la BD");
-            respuesta.setData("Registro borrado correctamente");
+            respuesta.setMessage("Registros borrados en la BD");
+            respuesta.setData("Registro borrados correctamente");
             LOGGER.log(Level.INFO, () -> "RESPONSE  borrarGestionLlamadas "+respuesta);
             cs.close();
         }

@@ -33,6 +33,8 @@ public class GestionLlamadasService implements GestionLlamadasImpl {
 
     @Override
     public RestResponse<String> borrarGestionLlamadas(String idGestion, String idSupervisor) {
-        return gestLog.borrarGestionLlamadas(idGestion,idSupervisor);
+        ArrayList<String> idGest=new ArrayList<>();
+        idGest.add(idGestion);
+        return gestLog.borrarGestionLlamadas(idGest,idSupervisor);
     }
 }

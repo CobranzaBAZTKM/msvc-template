@@ -17,6 +17,7 @@ public class GestionLlamadasModel {
     private String fechaInserto;
     private Integer cantidadInsert;
     private String horaInserto;
+    private String tipoCarteraTKM;
 
 
     public GestionLlamadasModel() {

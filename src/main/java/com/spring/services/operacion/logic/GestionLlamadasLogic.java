@@ -32,7 +32,7 @@ public class GestionLlamadasLogic {
         return gestLlamDAO.actualizarGestionLlamadas(gestLlam);
     }
 
-    public RestResponse<String> borrarGestionLlamadas(String idGestion, String idSupervisor) {
+    public RestResponse<String> borrarGestionLlamadas(ArrayList<String> idGestion, String idSupervisor) {
         return gestLlamDAO.borrarGestionLlamadas(idGestion,idSupervisor);
     }
 }
