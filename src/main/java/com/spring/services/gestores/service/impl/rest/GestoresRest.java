@@ -28,18 +28,18 @@ public class GestoresRest {
         return gesImp.consultarGestoresSCL(clientes);
     }
 
-    @PostMapping(value = "/asignarClientesUnGestor",
+    @PostMapping(value = "/asignarClientesUnGestor/{tipoCarteraTKM}",
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    public RestResponse<String>insertarClientesSCL(@RequestBody final GestoresModel clientes){
-        return gesImp.asignarClientesSCL(clientes);
+    public RestResponse<String>insertarClientesSCL(@RequestBody final GestoresModel clientes,@PathVariable String tipoCarteraTKM){
+        return gesImp.asignarClientesSCL(clientes,tipoCarteraTKM);
     }
 
-    @PostMapping(value = "/asignarClientesAGestores",
+    @PostMapping(value = "/asignarClientesAGestores/{tipoCarteraTKM}",
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    public RestResponse<String>asignarClientesSCLGestores(@RequestBody final String clientes){
-        return gesImp.asignarClientesSCLGestores(clientes);
+    public RestResponse<String>asignarClientesSCLGestores(@RequestBody final String clientes,@PathVariable String tipoCarteraTKM){
+        return gesImp.asignarClientesSCLGestores(clientes,tipoCarteraTKM);
     }
 
 

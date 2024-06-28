@@ -25,8 +25,8 @@ public class GestoresService  implements GestoresImpl {
     }
 
     @Override
-    public RestResponse<String> asignarClientesSCL(GestoresModel clientes) {
-        return gesLogic.asignarClientesSCL(clientes);
+    public RestResponse<String> asignarClientesSCL(GestoresModel clientes,String tipoCarteraTKM) {
+        return gesLogic.asignarClientesSCL(clientes,tipoCarteraTKM);
     }
 
     @Override
@@ -50,8 +50,8 @@ public class GestoresService  implements GestoresImpl {
     }
 
     @Override
-    public RestResponse<String> asignarClientesSCLGestores(String clientes) {
-        return gesLogic.asignarClientesSCLGestores(clientes);
+    public RestResponse<String> asignarClientesSCLGestores(String clientes,String tipoCarteraTKM) {
+        return gesLogic.asignarClientesSCLGestores(clientes,tipoCarteraTKM);
     }
 
 

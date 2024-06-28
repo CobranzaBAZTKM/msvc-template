@@ -20,6 +20,8 @@ public class GestoresModel {
     private Integer idActualizo;
     private String turno;
     private Integer estado;
+    private String idMitrol;
+    private String idGestorSCLVIP;
 
     public GestoresModel() {
         //Vacio

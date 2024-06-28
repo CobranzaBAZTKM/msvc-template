@@ -66,7 +66,7 @@ public class GestoresLogic {
         return respuesta;
     }
 
-    public RestResponse<String> asignarClientesSCL(GestoresModel clientes) {
+    public RestResponse<String> asignarClientesSCL(GestoresModel clientes,String tipoCarteraTKM) {
         RestResponse<String> respuesta=new RestResponse<>();
         RestResponse<JSONObject> obtenerGestoresComp=new RestResponse<>();
         int sumaIntentos=0;
@@ -86,7 +86,7 @@ public class GestoresLogic {
             }
 
             if(idGestor!=null){
-                respuesta=this.enviarAsignarClientesSCL(clientes,idGestor);
+                respuesta=this.enviarAsignarClientesSCL(clientes,idGestor,tipoCarteraTKM);
             }
             else{
                 respuesta.setCode(0);
@@ -105,10 +105,10 @@ public class GestoresLogic {
     }
 
 
-    private RestResponse<String> enviarAsignarClientesSCL(GestoresModel clientes,String idGestor) {
+    private RestResponse<String> enviarAsignarClientesSCL(GestoresModel clientes,String idGestor,String tipoCarteraTKM) {
         RestResponse<String> respuesta=new RestResponse<>();
         for(int i=0;i<clientes.getCuClientes().toArray().length;i++){
-            this.enviarAsignarClientesSCLFinal(clientes,clientes.getCuClientes().get(i),idGestor);
+            this.enviarAsignarClientesSCLFinal(clientes,clientes.getCuClientes().get(i),idGestor,tipoCarteraTKM);
         }
 
         respuesta.setCode(1);
@@ -118,7 +118,7 @@ public class GestoresLogic {
         return  respuesta;
     }
 
-    private RestResponse<String> enviarAsignarClientesSCLFinal(GestoresModel cokkie,String cu, String idGestor){
+    private RestResponse<String> enviarAsignarClientesSCLFinal(GestoresModel cokkie,String cu, String idGestor,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setMessage("No se logro asignar el cliente");
@@ -129,7 +129,7 @@ public class GestoresLogic {
         do{
             int intentoLog=intento;
             LOGGER.log(Level.INFO, () -> "REQUEST Asignar clientes al gestor: "+idGestor+" ,CU: "+cu+" , intento: "+intentoLog);
-            asignar=mantGesLog.asignarClientesGes(cokkie,cu,idGestor);
+            asignar=mantGesLog.asignarClientesGes(cokkie,cu,idGestor,tipoCarteraTKM);
             RestResponse<JSONObject> finalLog = asignar;
             LOGGER.log(Level.INFO, () -> "RESPONSE Asignar clientes al gestor: "+ finalLog);
             intento++;
@@ -145,7 +145,7 @@ public class GestoresLogic {
         return respuesta;
     }
 
-    public RestResponse<String> asignarClientesSCLGestores(String clientes) {
+    public RestResponse<String> asignarClientesSCLGestores(String clientes,String tipoCarteraTKM) {
 
         RestResponse<String> respuesta=new RestResponse<>();
         JSONObject json=new JSONObject(clientes);
@@ -158,7 +158,7 @@ public class GestoresLogic {
             coo.setCokkie(json.getString("cookie"));
             String cu=planes.getJSONObject(i).getString("clienteUnico");
             String idGes=planes.getJSONObject(i).getString("idGestorSCL");
-            RestResponse<String> resp=this.enviarAsignarClientesSCLFinal(coo,cu,idGes);
+            RestResponse<String> resp=this.enviarAsignarClientesSCLFinal(coo,cu,idGes,tipoCarteraTKM);
             if(resp.getCode()==1){
                 PromesasTKMLogic promesasLog=new PromesasTKMLogic();
                 PromesasModel promesaAsignada=new PromesasModel();

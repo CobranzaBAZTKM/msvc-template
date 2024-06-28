@@ -73,18 +73,26 @@ public class MantenimientoGestoresLogic {
         return respuesta;
     }
 
-    public RestResponse<JSONObject> asignarClientesGes(GestoresModel cookie,String cu, String idGestor){
+    public RestResponse<JSONObject> asignarClientesGes(GestoresModel cookie,String cu, String idGestor,String tipoCarteraTKM){
         RestResponse<JSONObject> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setData(null);
         respuesta.setError(true);
         CloseableHttpResponse serviceResponse = null;
         try{
+            String usuario=null;
+            if("1".equals(tipoCarteraTKM)){
+                usuario="LT48022924";
+            }
+            else{
+                usuario="LT48023012";
+            }
             String[] cuPreparado=cu.split("-");
             JSONObject jsonRequest=new JSONObject();
             jsonRequest.put("opcion",1);
             jsonRequest.put("idGestor",idGestor);
-            jsonRequest.put("usuario","LT48022041");
+//            jsonRequest.put("usuario","LT48022041");
+            jsonRequest.put("usuario",usuario);
             jsonRequest.put("pais", cuPreparado[0]);
             jsonRequest.put("canal",cuPreparado[1]);
             jsonRequest.put("sucursal",cuPreparado[2]);
