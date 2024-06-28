@@ -58,6 +58,10 @@ public class PromesasTKMDAO {
                 promesa.setTurnoGestor(rs.getString(25));
                 promesa.setIdAutorizo(rs.getInt(26));
                 promesa.setTipoCartera(rs.getString(27));
+                promesa.setIdGestorSCLVIP(rs.getString(28));
+                promesa.setRecurrencia(rs.getString(29));
+                promesa.setMontoInicial(rs.getString(30));
+                promesa.setMontoSemanal(rs.getString(31));
                 promesas.add(promesa);
             }
             respuesta.setCode(1);
@@ -77,7 +81,7 @@ public class PromesasTKMDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query=Constantes.insertarBD+"promesaspp (fechaIngresoPP,fechaPago,fechaVencimientoPP,folio,montoPago,nombreCliente,clienteUnico,telefono,idGestorSCL,nombreGestor,observaciones,asignado,whatsApp,nota,idGestorTKM,inserto,tipoLlamada,fechInser,pagoFinal,turnoGestor,idAutorizo,tipoCartera)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+        String query=Constantes.insertarBD+"promesaspp (fechaIngresoPP,fechaPago,fechaVencimientoPP,folio,montoPago,nombreCliente,clienteUnico,telefono,idGestorSCL,nombreGestor,observaciones,asignado,whatsApp,nota,idGestorTKM,inserto,tipoLlamada,fechInser,pagoFinal,turnoGestor,idAutorizo,tipoCartera,idGestorSCLVIP,recurrencia,montoInicial,montoSemanal)"+Constantes.valuesBD+"(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 
         try{
             LOGGER.log(Level.INFO, () -> "REQUEST insertarPromesas: "+promesa.toString());
@@ -104,6 +108,10 @@ public class PromesasTKMDAO {
             cs.setString(20,promesa.getTurnoGestor());
             cs.setInt(21,promesa.getIdAutorizo());
             cs.setString(22,promesa.getTipoCartera());
+            cs.setString(23,promesa.getIdGestorSCLVIP());
+            cs.setString(24,promesa.getMontoInicial());
+            cs.setString(25,promesa.getMontoSemanal());
+            cs.setString(26, promesa.getRecurrencia());
             cs.execute();
 
             respuesta.setCode(1);
@@ -125,7 +133,7 @@ public class PromesasTKMDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query=Constantes.updateBD+"promesaspp SET promesaspp.fechaIngresoPP=?,promesaspp.fechaPago=?,promesaspp.fechaVencimientoPP=?, promesaspp.folio=?, promesaspp.montoPago=?, promesaspp.nombreCliente=?, promesaspp.clienteUnico=?, promesaspp.telefono=?, promesaspp.idGestorSCL=?, promesaspp.nombreGestor=?, promesaspp.observaciones=?, promesaspp.asignado=?, promesaspp.whatsApp=?, promesaspp.nota=?, promesaspp.edito=?, promesaspp.idGestorTKM=?, promesaspp.inserto=?, promesaspp.tipoLlamada=? WHERE promesaspp.id=?";
+        String query=Constantes.updateBD+"promesaspp SET promesaspp.fechaIngresoPP=?,promesaspp.fechaPago=?,promesaspp.fechaVencimientoPP=?, promesaspp.folio=?, promesaspp.montoPago=?, promesaspp.nombreCliente=?, promesaspp.clienteUnico=?, promesaspp.telefono=?, promesaspp.idGestorSCL=?, promesaspp.nombreGestor=?, promesaspp.observaciones=?, promesaspp.asignado=?, promesaspp.whatsApp=?, promesaspp.nota=?, promesaspp.edito=?, promesaspp.idGestorTKM=?, promesaspp.inserto=?, promesaspp.tipoLlamada=?,promesaspp.pagoFinal=?, promesaspp.recurrencia=?,promesaspp.montoSemanal=? WHERE promesaspp.id=?";
         try{
             LOGGER.log(Level.INFO, () -> "REQUEST actualizarPromesas: "+promesa.toString());
             CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
@@ -148,7 +156,10 @@ public class PromesasTKMDAO {
             cs.setInt(16,promesa.getIdGestorTKM());
             cs.setInt(17,promesa.getInserto());
             cs.setString(18,promesa.getTipoLlamada());
-            cs.setInt(19,promesa.getId());
+            cs.setInt(19,promesa.getPagoFinal());
+            cs.setString(20,promesa.getRecurrencia());
+            cs.setString(21,promesa.getMontoSemanal());
+            cs.setInt(22,promesa.getId());
 
             cs.execute();
 
@@ -202,7 +213,7 @@ public class PromesasTKMDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query=Constantes.updateBD+"promesaspp SET promesaspp.nota=?, promesaspp.pagoFinal=? WHERE promesaspp.id=?";
+        String query=Constantes.updateBD+"promesaspp SET promesaspp.nota=?, promesaspp.pagoFinal=?,promesaspp.fechaPago=?,promesaspp.fechaVencimientoPP=?,promesaspp.recurrencia=?,promesaspp.montoPago=? WHERE promesaspp.id=?";
         try{
             LOGGER.log(Level.INFO, () -> "REQUEST actualizarPromesasEstPag: "+promesa.toString());
             CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
@@ -210,7 +221,11 @@ public class PromesasTKMDAO {
 
             cs.setString(1,promesa.getNota());
             cs.setInt(2,promesa.getPagoFinal());
-            cs.setInt(3,promesa.getId());
+            cs.setString(3,promesa.getFechaPago());
+            cs.setString(4,promesa.getFechaVencimientoPP());
+            cs.setString(5,promesa.getRecurrencia());
+            cs.setString(6,promesa.getMontoPago());
+            cs.setInt(7,promesa.getId());
 
             cs.execute();
 

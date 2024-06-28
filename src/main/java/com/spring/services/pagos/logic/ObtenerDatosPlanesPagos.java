@@ -195,7 +195,8 @@ public class ObtenerDatosPlanesPagos {
         try{
             String[] cuSeparado = cu.split("-");
             CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
-            HttpGet serviceRequest = new HttpGet(urlEdoCuentas+"/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]+"/LT48022041");
+            HttpGet serviceRequest = new HttpGet(urlEdoCuentas+"/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]+"/LT48022924");
+//            HttpGet serviceRequest = new HttpGet(urlEdoCuentas+"/"+cuSeparado[0]+"/"+cuSeparado[1]+"/"+cuSeparado[2]+"/"+cuSeparado[3]+"/LT48022041");
             serviceRequest.addHeader("Cookie", cokkie.getCookieGestores());
             serviceResponse = client.execute((HttpUriRequest)serviceRequest);
             int respStatus=serviceResponse.getStatusLine().getStatusCode();

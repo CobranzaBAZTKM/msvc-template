@@ -42,12 +42,12 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic2.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic2.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            respuesta=carteraLogic2.clientesCompletos(segmentosCartera.getData(),56162821,cokkie);
+            respuesta=carteraLogic2.clientesCompletos(segmentosCartera.getData(),56162821,cokkie,1);
 //            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),561628,cokkie);
 //            respuesta.setCode(1);
 //            respuesta.setMessage("Se generaron "+datosClientes.getData().toArray().length+" clientes de la cartera completa");
@@ -68,12 +68,12 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),5,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),5,cokkie,1);
 
             ArrayList<ClienteModel> datosAcomodados=datosClientes.getData();
             //Collections.sort(datosAcomodados,((o1, o2) -> o2.getSALDO_TOTAL().compareTo(o1.getSALDO_TOTAL())));
@@ -99,13 +99,13 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
 
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),6,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),6,cokkie,1);
 
             respuesta.setCode(1);
             respuesta.setMessage("Se generaron "+datosClientes.getData().toArray().length+" clientes del Segmento 6");
@@ -127,12 +127,12 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),6,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),6,cokkie,1);
             ArrayList<ClienteModel> clientesSegSNPNITC=setarDatosLogic.discriminacionPNITC(datosClientes.getData());
 
             Collections.sort(clientesSegSNPNITC,((o1, o2) -> o2.getSALDO_TOTAL().compareTo(o1.getSALDO_TOTAL())));
@@ -158,13 +158,13 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
 
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie,1);
 
             respuesta.setCode(1);
             respuesta.setMessage("Se generaron "+datosClientes.getData().toArray().length+" clientes del Segmento 16");
@@ -185,12 +185,12 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie,1);
             ArrayList<ClienteModel> clientesSegSNPNITC=setarDatosLogic.discriminacionPNITC(datosClientes.getData());
 
             Collections.sort(clientesSegSNPNITC,((o1, o2) -> o2.getSALDO_TOTAL().compareTo(o1.getSALDO_TOTAL())));
@@ -217,13 +217,13 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
 
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),28,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),28,cokkie,1);
 
             ArrayList<ClienteModel> datosAcomodados=datosClientes.getData();
             //Collections.sort(datosAcomodados,((o1, o2) -> o2.getSALDO_TOTAL().compareTo(o1.getSALDO_TOTAL())));
@@ -250,16 +250,16 @@ public class ObtenerClientesCartera {
         RestResponse<ArrayList<ClienteModel>>clientesCompleto=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
             if("Preventa".equals(cokkie.getTipoArchivo())||"MAZ".equals(cokkie.getTipoArchivo())){
-                clientesCompleto=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie);
+                clientesCompleto=carteraLogic.clientesCompletos(segmentosCartera.getData(),16,cokkie,1);
             }
             else{
-                clientesCompleto=carteraLogic.clientesCompletos(segmentosCartera.getData(),5616,cokkie);
+                clientesCompleto=carteraLogic.clientesCompletos(segmentosCartera.getData(),5616,cokkie,1);
             }
 
             ArrayList<ClienteModel> clientesSegmentos=setarDatosLogic.setearDatosSegTipo(clientesCompleto.getData(),cokkie.getTipoArchivo());
@@ -288,7 +288,7 @@ public class ObtenerClientesCartera {
         RestResponse<ArrayList<ClienteModel>>clientesCompleto=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
@@ -359,12 +359,12 @@ public class ObtenerClientesCartera {
         RestResponse<JSONObject> segmentosCartera=new RestResponse<>();
         int sumaIntentos=0;
         do{
-            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie);
+            segmentosCartera=carteraLogic.obtenerSegmentosCartera(cokkie,1);
             sumaIntentos++;
         }while(segmentosCartera.getCode()!=1&&sumaIntentos!=10);
 
         if(segmentosCartera.getCode()==1){
-            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),21,cokkie);
+            RestResponse<ArrayList<ClienteModel>>datosClientes=carteraLogic.clientesCompletos(segmentosCartera.getData(),21,cokkie,1);
             String respuestaMessage="Se generaron "+datosClientes.getData().toArray().length+" clientes del Segmento 21";
             respuesta.setCode(1);
             respuesta.setMessage(respuestaMessage);

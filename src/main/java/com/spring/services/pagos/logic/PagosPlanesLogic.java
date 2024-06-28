@@ -398,14 +398,14 @@ public class PagosPlanesLogic {
 
         String json1="{\n" +
                 "    \"anio\":2024,\n" +
-                "    \"despacho\":\"58921\",\n" +
+                "    \"despacho\":\"60054\",\n" +
                 "    \"segmento\":0,\n" +
                 "    \"semana\":"+numeroSemanaPasada+"\n" +
                 "}";
 
         String json2="{\n" +
                 "    \"anio\":2024,\n" +
-                "    \"despacho\":\"58921\",\n" +
+                "    \"despacho\":\"60054\",\n" +
                 "    \"segmento\":0,\n" +
                 "    \"semana\":"+numeroSemanaAntePasada+"\n" +
                 "}";

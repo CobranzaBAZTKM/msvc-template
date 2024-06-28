@@ -35,6 +35,10 @@ public class PromesasModel {
     private String turnoGestor;
     private Integer idAutorizo;
     private String tipoCartera;
+    private String idGestorSCLVIP;
+    private String recurrencia;
+    private String montoInicial;
+    private String montoSemanal;
     public PromesasModel() {
         //Vacio
     }
