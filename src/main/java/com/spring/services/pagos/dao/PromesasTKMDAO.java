@@ -134,7 +134,7 @@ public class PromesasTKMDAO {
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(true);
-        String query=Constantes.updateBD+"promesaspp SET promesaspp.fechaIngresoPP=?,promesaspp.fechaPago=?,promesaspp.fechaVencimientoPP=?, promesaspp.folio=?, promesaspp.montoPago=?, promesaspp.nombreCliente=?, promesaspp.clienteUnico=?, promesaspp.telefono=?, promesaspp.idGestorSCL=?, promesaspp.nombreGestor=?, promesaspp.observaciones=?, promesaspp.asignado=?, promesaspp.whatsApp=?, promesaspp.nota=?, promesaspp.edito=?, promesaspp.idGestorTKM=?, promesaspp.inserto=?, promesaspp.tipoLlamada=?,promesaspp.pagoFinal=?, promesaspp.recurrencia=?,promesaspp.montoSemanal=? WHERE promesaspp.id=?";
+        String query=Constantes.updateBD+"promesaspp SET promesaspp.fechaIngresoPP=?,promesaspp.fechaPago=?,promesaspp.fechaVencimientoPP=?, promesaspp.folio=?, promesaspp.montoPago=?, promesaspp.nombreCliente=?, promesaspp.clienteUnico=?, promesaspp.telefono=?, promesaspp.idGestorSCL=?, promesaspp.nombreGestor=?, promesaspp.observaciones=?, promesaspp.asignado=?, promesaspp.whatsApp=?, promesaspp.nota=?, promesaspp.edito=?, promesaspp.idGestorTKM=?, promesaspp.inserto=?, promesaspp.tipoLlamada=?, promesaspp.recurrencia=?,promesaspp.montoSemanal=? WHERE promesaspp.id=?";
         try{
             LOGGER.log(Level.INFO, () -> "REQUEST actualizarPromesas: "+promesa.toString());
             CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
@@ -157,10 +157,9 @@ public class PromesasTKMDAO {
             cs.setInt(16,promesa.getIdGestorTKM());
             cs.setInt(17,promesa.getInserto());
             cs.setString(18,promesa.getTipoLlamada());
-            cs.setInt(19,promesa.getPagoFinal());
-            cs.setString(20,promesa.getRecurrencia());
-            cs.setString(21,promesa.getMontoSemanal());
-            cs.setInt(22,promesa.getId());
+            cs.setString(19,promesa.getRecurrencia());
+            cs.setString(20,promesa.getMontoSemanal());
+            cs.setInt(21,promesa.getId());
 
             cs.execute();
 
