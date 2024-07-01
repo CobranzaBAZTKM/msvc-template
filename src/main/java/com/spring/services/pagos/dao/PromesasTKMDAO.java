@@ -109,9 +109,10 @@ public class PromesasTKMDAO {
             cs.setInt(21,promesa.getIdAutorizo());
             cs.setString(22,promesa.getTipoCartera());
             cs.setString(23,promesa.getIdGestorSCLVIP());
-            cs.setString(24,promesa.getMontoInicial());
-            cs.setString(25,promesa.getMontoSemanal());
-            cs.setString(26, promesa.getRecurrencia());
+            cs.setString(24, promesa.getRecurrencia());
+            cs.setString(25,promesa.getMontoInicial());
+            cs.setString(26,promesa.getMontoSemanal());
+
             cs.execute();
 
             respuesta.setCode(1);
