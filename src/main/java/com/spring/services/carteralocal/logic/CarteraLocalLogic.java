@@ -333,15 +333,15 @@ public class CarteraLocalLogic {
         ArrayList<GestionLlamadasModel>gestionesDia=new ArrayList<>();
         for(int l=0;l<gestiones.size();l++){
             if(fecha.equals(gestiones.get(l).getFechaInserto())){
-////                String tipoCartera=gestiones.get(l).getTipoCarteraTKM();
-////                if("Normalidad".equals(tipoCartera)&&"1".equals(tipoCarteraTKM)){
-//                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                String tipoCartera=gestiones.get(l).getTipoCarteraTKM();
+                if("Normalidad".equals(tipoCartera)&&"1".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
                     gestionesDia.add(gestiones.get(l));
-//                }
-//                else if("VIP".equals(tipoCartera)&&"2".equals(tipoCarteraTKM)){
-//                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
-//                    gestionesDia.add(gestiones.get(l));
-//                }
+                }
+                else if("VIP".equals(tipoCartera)&&"2".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
 
             }
         }

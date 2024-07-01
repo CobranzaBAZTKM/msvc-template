@@ -75,7 +75,7 @@ public class PromesasTKMLogic {
         ArrayList<PromesasModel> promesas=new ArrayList<>();
         for(int i=0;i<cus.length();i++){
             PromesasModel promesa=new PromesasModel();
-            if(!cus.getJSONObject(i).isNull("tipoCartera")&&"Normalidad".equals(cus.getJSONObject(i).get("tipoCartera"))){
+//            if(!cus.getJSONObject(i).isNull("tipoCartera")&&"Normalidad".equals(cus.getJSONObject(i).get("tipoCartera"))){
                 String[] cuPreparado=cus.getJSONObject(i).getString("clienteUnico").split("-");
                 String pais="0"+cuPreparado[0];
                 String canal=cuPreparado[1].length()==2?cuPreparado[1]:"0"+cuPreparado[1];
@@ -150,11 +150,11 @@ public class PromesasTKMLogic {
                     promesa.setGestion2("No se obtuvo Gestion");
                     promesa.setGestion3("No se obtuvo Gestion");
                 }
-            }else{
-                promesa.setGestion1("La cuenta no es normalidad");
-                promesa.setGestion2("La cuenta no es normalidad");
-                promesa.setGestion3("La cuenta no es normalidad");
-            }
+//            }else{
+//                promesa.setGestion1("La cuenta no es normalidad");
+//                promesa.setGestion2("La cuenta no es normalidad");
+//                promesa.setGestion3("La cuenta no es normalidad");
+//            }
 
             promesa.setIdGestorSCL((String) cus.getJSONObject(i).get("idGestorSCL"));
             promesa.setWhatsApp((Integer) cus.getJSONObject(i).get("whatsApp"));
