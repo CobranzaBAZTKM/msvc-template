@@ -2,6 +2,7 @@ package com.spring.services.batch;
 
 import com.spring.services.cartera.logic.BlastersSMSLogic;
 import com.spring.services.cartera.model.ClienteModel;
+import com.spring.services.carteralocal.dao.CarteraLocalDAO;
 import com.spring.services.carteralocal.logic.CarteraLocalLogic;
 import com.spring.services.constantes.Constantes;
 import com.spring.services.notificaciones.logic.NotificacionesLogic;
@@ -32,6 +33,7 @@ public class Batchs {
     private CarteraLocalLogic carteraLog=new CarteraLocalLogic();
     private GestionLlamadasLogic gestionLogic=new GestionLlamadasLogic();
     private UtilService util=new UtilService();
+    private CarteraLocalDAO localDAO=new CarteraLocalDAO();
     public Batchs() {
         //Vacio
     }
@@ -63,6 +65,50 @@ public class Batchs {
 
     }
 
+    @Scheduled(cron = "0 30 09 * * MON")
+    public void recordatorioValidarPromesas() {
+        LOGGER.log(Level.INFO, () -> "Comienza Batch de recordatorioValidarPromesas de cada Lunes");
+        Calendar calendar = Calendar.getInstance();
+        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
+        if (numeroSemana % 2 != 0) {
+            ArrayList<String>correos=new ArrayList<>();
+            correos.add("rfrutos@tkm.com.mx");
+
+            CuerpoCorreo correo = new CuerpoCorreo();
+            correo.setRemitente(Constantes.correoRemitente);
+            correo.setPasswordRemitente(Constantes.passwordRemitente);
+            correo.setDestinatario(correos);
+            correo.setAsunto("AVISO, CORRER REVISION DE PAGOS DE LA CARTERA CON PROMESA");
+            correo.setMensaje("Recuerda correr la revison de pagos de la cartera con promesa");
+            RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
+            LOGGER.log(Level.INFO, () -> "Se envia correo para correr proceso de validacion de cuentas con promesas "+enviarCorreo);
+
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
+            ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
+            for(int i=0;i<obtenerPromesas.getData().size();i++){
+                String actualizar="0,"+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+                actualizarMontoPromesa.add(actualizar);
+            }
+
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
+
+        }
+        else{
+            LOGGER.log(Level.INFO, () -> "Batch recordatorioValidarPromesas no han pasado las dos semanas");
+        }
+
+        LOGGER.log(Level.INFO, () -> "Termina Batch de recordatorioValidarPromesas de cada Lunes");
+
+
+    }
+
+    @Scheduled(cron = "0 10 09 * * *")
+    public void eliminacionDeCarteraDiaria() {
+        LOGGER.log(Level.INFO, () -> "Comienza Batch de eliminacion de cartera Diaria");
+        RestResponse<String> borrar=localDAO.borrarCarteraCompleta("0");
+        LOGGER.log(Level.INFO, () -> "Resultado Batch de eliminacion de cartera Diaria: "+borrar);
+        LOGGER.log(Level.INFO, () -> "Termina Batch de eliminacion de cartera Diaria: "+borrar);
+    }
 //    @Scheduled(cron = "0 0 12,22 * * *")
 //    public void avisoElimacionPromesasMes(){
 //        LOGGER.log(Level.INFO, () -> "avisoElimacionPromesasMes: Comienza batch de avisoElminacion de Promesas");
@@ -114,42 +160,7 @@ public class Batchs {
 //
 //    }
 
-    @Scheduled(cron = "0 30 09 * * MON")
-    public void recordatorioValidarPromesas() {
-        LOGGER.log(Level.INFO, () -> "Comienza Batch de recordatorioValidarPromesas de cada Lunes");
-        Calendar calendar = Calendar.getInstance();
-        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
-        if (numeroSemana % 2 != 0) {
-            ArrayList<String>correos=new ArrayList<>();
-            correos.add("rfrutos@tkm.com.mx");
 
-            CuerpoCorreo correo = new CuerpoCorreo();
-            correo.setRemitente(Constantes.correoRemitente);
-            correo.setPasswordRemitente(Constantes.passwordRemitente);
-            correo.setDestinatario(correos);
-            correo.setAsunto("AVISO, CORRER REVISION DE PAGOS DE LA CARTERA CON PROMESA");
-            correo.setMensaje("Recuerda correr la revison de pagos de la cartera con promesa");
-            RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
-            LOGGER.log(Level.INFO, () -> "Se envia correo para correr proceso de validacion de cuentas con promesas "+enviarCorreo);
-
-            RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
-            ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
-            for(int i=0;i<obtenerPromesas.getData().size();i++){
-                String actualizar="0,"+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
-                actualizarMontoPromesa.add(actualizar);
-            }
-
-            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
-
-        }
-        else{
-            LOGGER.log(Level.INFO, () -> "Batch recordatorioValidarPromesas no han pasado las dos semanas");
-        }
-
-        LOGGER.log(Level.INFO, () -> "Termina Batch de recordatorioValidarPromesas de cada Lunes");
-
-
-    }
 
 //    @Scheduled(cron = "0 0 15,23 * * *")
 //    public void eliminarGestiones3meses() {
