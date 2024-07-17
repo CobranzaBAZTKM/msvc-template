@@ -1,6 +1,8 @@
 package com.spring.services.carteralocal.logic;
 
+import com.spring.services.cartera.logic.DiezYearCarteraLogic;
 import com.spring.services.cartera.logic.ObtenerClientesCartera;
+import com.spring.services.cartera.logic.TerritoriosCarteraLogic;
 import com.spring.services.cartera.logic.VIPCarteraLogic;
 import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.cartera.model.ExtrasModel;
@@ -31,6 +33,8 @@ public class CarteraLocalLogic {
     CarteraLocalDAO carteraDAO=new CarteraLocalDAO();
     CarteraLocalDAO2 carteraDAO2=new CarteraLocalDAO2();
     VIPCarteraLogic obtenerCartVIP=new VIPCarteraLogic();
+    TerritoriosCarteraLogic obtenerCarTer=new TerritoriosCarteraLogic();
+    DiezYearCarteraLogic obtenerCartDiez=new DiezYearCarteraLogic();
 
 
 
@@ -39,16 +43,33 @@ public class CarteraLocalLogic {
     }
 
     public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie,String tipoCarteraTKM)  {
-        LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comienza proceso");
+        LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comienza proceso, tipo Cartera: "+tipoCarteraTKM);
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         RestResponse<ArrayList<ClienteModel>>carteraCompleta=new RestResponse<>();
 
-        if("1".equals(tipoCarteraTKM)){
-            carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
+        switch (tipoCarteraTKM){
+            case "1":
+                carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
+                break;
+            case "2":
+                carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
+                break;
+            case "3":
+                carteraCompleta=obtenerCarTer.TerriSCLcarteraCompleta(cokkie);
+                break;
+            case "4":
+                carteraCompleta=obtenerCartDiez.DiezYearSCLCarteraCompleta(cokkie);
+                break;
+            default:
+                //Vacio
+                break;
         }
-        else{
-            carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
-        }
+//        if("1".equals(tipoCarteraTKM)){
+//            carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
+//        }
+//        else{
+//            carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
+//        }
 
         if(carteraCompleta.getCode()==1){
 
@@ -342,6 +363,14 @@ public class CarteraLocalLogic {
                     LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
                     gestionesDia.add(gestiones.get(l));
                 }
+                else if("Territorios".equals(tipoCartera)&&"3".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("DiezYears".equals(tipoCartera)&&"4".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
 
             }
         }
@@ -377,7 +406,7 @@ public class CarteraLocalLogic {
 
         respuesta.setCode(1);
         respuesta.setData(cuentas);
-        respuesta.setMessage("Proces terminado");
+        respuesta.setMessage("Proceso terminado");
 
         return respuesta;
     }

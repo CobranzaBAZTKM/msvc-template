@@ -61,14 +61,33 @@ public class CarteraCompletaLogic {
         try {
             String url="https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/";
 
-            if(cartera==1){
-                url=url+"60054";
+            switch(cartera){
+                case 1:
+                    url=url+"60054";
+                    break;
+                case 2:
+                    url=url+"60165";
+                    break;
+                case 3:
+                    url=url+"60174";
+                    break;
+                case 4:
+                    url=url+"60187";
+                    break;
+                default:
+                    //Vacio
+                    break;
             }
-            else{
-//                url=url+"59912";
-                url=url+"60165";
 
-            }
+
+//            if(cartera==1){
+//
+//            }
+//            else{
+////                url=url+"59912";
+//                url=url+"60165";
+//
+//            }
 
             CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
 //            HttpGet serviceRequest = new HttpGet("https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/58921");
@@ -248,13 +267,32 @@ public class CarteraCompletaLogic {
         Integer suma=0;
 
         JSONObject jsonRequest=new JSONObject();
-        if(tipoCartera==1){
-            jsonRequest.put("idDespacho",60054);
-        }else{
-//            jsonRequest.put("idDespacho",59912);
-            jsonRequest.put("idDespacho",60165);
 
+        switch(tipoCartera){
+            case 1:
+                jsonRequest.put("idDespacho",60054);
+                break;
+            case 2:
+                jsonRequest.put("idDespacho",60165);
+                break;
+            case 3:
+                jsonRequest.put("idDespacho",60174);
+                break;
+            case 4:
+                jsonRequest.put("idDespacho",60187);
+                break;
+            default:
+                //Vacio
+                break;
         }
+
+//        if(tipoCartera==1){
+//            jsonRequest.put("idDespacho",60054);
+//        }else{
+////            jsonRequest.put("idDespacho",59912);
+//            jsonRequest.put("idDespacho",60165);
+//
+//        }
 
         jsonRequest.put("idSegmento",segmento);
 

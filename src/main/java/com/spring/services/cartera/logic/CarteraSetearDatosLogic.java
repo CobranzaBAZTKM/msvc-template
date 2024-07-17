@@ -125,13 +125,24 @@ public class CarteraSetearDatosLogic {
             cliente.setESTATUS_PROMESA_PAGO(separarDatosCliente[97]);
             cliente.setMONTO_PROMESA_PAGO(separarDatosCliente[98]);
             cliente.setSEGMENTO(segmento);
-            if(tipoCarteraTKM==1){
-                cliente.setTIPOCARTERATKM("Normalidad");
-            }
-            else{
-                cliente.setTIPOCARTERATKM("VIP");
-            }
 
+            switch (tipoCarteraTKM){
+                case 1:
+                    cliente.setTIPOCARTERATKM("Normalidad");
+                    break;
+                case 2:
+                    cliente.setTIPOCARTERATKM("VIP");
+                    break;
+                case 3:
+                    cliente.setTIPOCARTERATKM("Territorios");
+                    break;
+                case 4:
+                    cliente.setTIPOCARTERATKM("DiezYears");
+                    break;
+                default:
+                    //Vacio
+                    break;
+            }
 
             respuesta.add(cliente);
 
