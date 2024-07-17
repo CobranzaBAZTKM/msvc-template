@@ -81,12 +81,30 @@ public class MantenimientoGestoresLogic {
         CloseableHttpResponse serviceResponse = null;
         try{
             String usuario=null;
-            if("1".equals(tipoCarteraTKM)){
-                usuario="LT48022924";
+            switch(tipoCarteraTKM){
+                case "1":
+                    usuario="LT48022924";
+                    break;
+                case "2":
+                    usuario="LT48023012";
+                    break;
+                case "3":
+                    usuario="LT48023015";
+                    break;
+                case "4":
+                    usuario="LT48023029";
+                    break;
+                default:
+                    //Vacio
+                    break;
             }
-            else{
-                usuario="LT48023012";
-            }
+
+//            if("1".equals(tipoCarteraTKM)){
+//                usuario="LT48022924";
+//            }
+//            else{
+//                usuario="LT48023012";
+//            }
             String[] cuPreparado=cu.split("-");
             JSONObject jsonRequest=new JSONObject();
             jsonRequest.put("opcion",1);
