@@ -32,12 +32,12 @@ public class PagosPlanesService implements PagosPlanesImpl {
     }
 
     @Override
-    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cu) {
-        return ppLogic.obtenerPagosDia(cu);
+    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cu,String tipoCarteraTKM) {
+        return ppLogic.obtenerPagosDia(cu,tipoCarteraTKM);
     }
 
     @Override
-    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json){
-        return ppLogic.validarPromesasPago2semanas(json);
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM){
+        return ppLogic.validarPromesasPago2semanas(json,tipoCarteraTKM);
     }
 }

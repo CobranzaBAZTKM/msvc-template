@@ -318,16 +318,33 @@ public class PagosPlanesLogic {
         return respuesta;
     }
 
-    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cookie) {
+    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cookie,String tipoCarteraTKM) {
         RestResponse<ArrayList<PromesasModel>> respuesta=new RestResponse<>();
         String[] fechaHora=util.obtenerFechaActual().split(" ");
         String[] fechaCompleta=fechaHora[0].split("-");
 
         ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
+        ArrayList<PromesasModel> promesasTipoCartera=new ArrayList<>();
         ArrayList<PromesasModel>promesasDia=new ArrayList<>();
-        for(int i=0;i<promesasCompletas.size();i++){
-            if(cookie.getDiaPago().equals(promesasCompletas.get(i).getFechaPago())){
-                RestResponse<JSONObject>montos=this.obtenerEdoCuentasMontos(promesasCompletas.get(i).getClienteUnico(),cookie);
+
+
+
+        for(int m=0;m<promesasCompletas.size();m++){
+            if("1".equals(tipoCarteraTKM)&&"Normalidad".equals(promesasCompletas.get(m).getTipoCartera())){
+                promesasTipoCartera.add(promesasCompletas.get(m));
+            }else if("2".equals(tipoCarteraTKM)&&"VIP".equals(promesasCompletas.get(m).getTipoCartera())){
+                promesasTipoCartera.add(promesasCompletas.get(m));
+            }else if("3".equals(tipoCarteraTKM)&&"Territorios".equals(promesasCompletas.get(m).getTipoCartera())){
+                promesasTipoCartera.add(promesasCompletas.get(m));
+            }else if("4".equals(tipoCarteraTKM)&&"DiezYears".equals(promesasCompletas.get(m).getTipoCartera())){
+                promesasTipoCartera.add(promesasCompletas.get(m));
+            }
+        }
+
+
+        for(int i=0;i<promesasTipoCartera.size();i++){
+            if(cookie.getDiaPago().equals(promesasTipoCartera.get(i).getFechaPago())){
+                RestResponse<JSONObject>montos=this.obtenerEdoCuentasMontos(promesasTipoCartera.get(i).getClienteUnico(),cookie);
                 if(montos.getData()!=null) {
                     String montosObtenidos = montos.getData().getString("diasPago");
                     if (!"".equals(montosObtenidos)) {
@@ -340,13 +357,17 @@ public class PagosPlanesLogic {
                                     Integer monto = Integer.parseInt(separarMonto[1]);
                                     if (monto > 0) {
                                         PromesasModel promesa = new PromesasModel();
-                                        promesa.setId(promesasCompletas.get(i).getId());
-                                        promesa.setClienteUnico(promesasCompletas.get(i).getClienteUnico());
-                                        promesa.setNota(promesasCompletas.get(i).getNota());
+                                        promesa.setId(promesasTipoCartera.get(i).getId());
+                                        promesa.setClienteUnico(promesasTipoCartera.get(i).getClienteUnico());
+                                        promesa.setNota(promesasTipoCartera.get(i).getNota());
                                         promesa.setPagoFinal(monto);
-                                        promesa.setNombreCliente(promesasCompletas.get(i).getNombreCliente());
-                                        promesa.setNombreGestor(promesasCompletas.get(i).getNombreGestor());
-                                        promesa.setMontoPago(promesasCompletas.get(i).getMontoPago());
+                                        promesa.setNombreCliente(promesasTipoCartera.get(i).getNombreCliente());
+                                        promesa.setNombreGestor(promesasTipoCartera.get(i).getNombreGestor());
+                                        promesa.setFechaPago(promesasTipoCartera.get(i).getFechaPago());
+                                        promesa.setFechaVencimientoPP(promesasTipoCartera.get(i).getFechaVencimientoPP());
+                                        promesa.setRecurrencia(promesasTipoCartera.get(i).getRecurrencia());
+                                        promesa.setMontoPago(promesasTipoCartera.get(i).getMontoPago());
+                                        promesa.setTipoCartera(promesasTipoCartera.get(i).getTipoCartera());
                                         promesasDia.add(promesa);
                                         promesas.actualizarPromesasEstPag(promesa);
                                         bandera = 1;
@@ -358,15 +379,15 @@ public class PagosPlanesLogic {
                         }
 
                         if (bandera == 0) {
-                            promesasDia.add(promesasCompletas.get(i));
+                            promesasDia.add(promesasTipoCartera.get(i));
                         }
                     }
                     else {
-                        promesasDia.add(promesasCompletas.get(i));
+                        promesasDia.add(promesasTipoCartera.get(i));
                     }
                 }
                 else {
-                    promesasDia.add(promesasCompletas.get(i));
+                    promesasDia.add(promesasTipoCartera.get(i));
                 }
 
             }
@@ -380,7 +401,7 @@ public class PagosPlanesLogic {
         return respuesta;
     }
 
-    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json){
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM){
         String[] fechaHora=util.obtenerFechaActual().split(" ");
         String fechaDia=fechaHora[0];
         String fechaDiaAtUno=util.FechaDiaAnteriorPosterior(-1);
@@ -396,16 +417,37 @@ public class PagosPlanesLogic {
             numeroSemanaAntePasada=51;
         }
 
+        String cartera=null;
+        switch (tipoCarteraTKM){
+            case "1":
+                cartera="60054";
+                break;
+            case "2":
+                cartera="60165";
+                break;
+            case "3":
+                cartera="60174";
+                break;
+            case "4":
+                cartera="60187";
+                break;
+            default:
+                //Vacio
+                break;
+        }
+
         String json1="{\n" +
                 "    \"anio\":2024,\n" +
-                "    \"despacho\":\"60054\",\n" +
+//                "    \"despacho\":\"60054\",\n" +
+                "    \"despacho\":\""+cartera+"\",\n" +
                 "    \"segmento\":0,\n" +
                 "    \"semana\":"+numeroSemanaPasada+"\n" +
                 "}";
 
         String json2="{\n" +
                 "    \"anio\":2024,\n" +
-                "    \"despacho\":\"60054\",\n" +
+//                "    \"despacho\":\"60054\",\n" +
+                "    \"despacho\":\""+cartera+"\",\n" +
                 "    \"segmento\":0,\n" +
                 "    \"semana\":"+numeroSemanaAntePasada+"\n" +
                 "}";
@@ -415,12 +457,12 @@ public class PagosPlanesLogic {
         RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
         RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
 
-        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData(),fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres);
+        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData(),fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres,tipoCarteraTKM);
     }
 
-    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres) {
+    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres,String tipoCarteraTKM) {
         RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
-        RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
+        RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa(tipoCarteraTKM);
         JSONArray pagosSemPas=reporteSemPas.getJSONArray("respuesta");
         JSONArray pagosSemAntPas=reporteSemAnt.getJSONArray("respuesta");
         ArrayList<ClienteModel> valores=new ArrayList<>();
@@ -485,19 +527,19 @@ public class PagosPlanesLogic {
             valores.add(promesasDifDia.get(i));
         }
 
-        this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
+        this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa,tipoCarteraTKM);
 
         respuesta.setCode(1);
         respuesta.setMessage("Proceso terminado correctamente");
         respuesta.setData(valores);
 
-        this.eliminarPromesas(valores);
+        this.eliminarPromesas(valores,tipoCarteraTKM);
 
 
         return respuesta;
     }
 
-    private RestResponse<String> eliminarPromesas(ArrayList<ClienteModel>promesas){
+    private RestResponse<String> eliminarPromesas(ArrayList<ClienteModel>promesas,String tipoCarteraTKM){
         ArrayList<String>promesasSnMonto=new ArrayList<>();
         for(int i=0;i<promesas.size();i++){
             if("N/A".equals(promesas.get(i).getMONTO_PROMESA_PAGO())){
@@ -505,7 +547,7 @@ public class PagosPlanesLogic {
             }
         }
 
-        return carteraLog.eliminarCuentasConPromesa(promesasSnMonto);
+        return carteraLog.eliminarCuentasConPromesa(promesasSnMonto,tipoCarteraTKM);
 
     }
 

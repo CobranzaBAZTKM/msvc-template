@@ -36,18 +36,18 @@ public class PagosPlanesRest {
         return ppImpl.obtenerPlanesPagoSemanal(cu);
     }
 
-    @PostMapping(value = "/pagosDia",
-            consumes = { MediaType.APPLICATION_JSON_VALUE },
-            produces = { MediaType.APPLICATION_JSON_VALUE })
-    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(@RequestBody final datosEntradaPagosPlanes cu){
-        return ppImpl.obtenerPagosDia(cu);
+    @PostMapping(value = "/pagosDia/{tipoCarteraTKM}",
+            consumes = {"application/json"},
+            produces = {"application/json"})
+    public RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(@RequestBody final datosEntradaPagosPlanes cu,@PathVariable String tipoCarteraTKM){
+        return ppImpl.obtenerPagosDia(cu,tipoCarteraTKM);
     }
 
-    @PostMapping(value = "/validacionPromesasLocal",
+    @PostMapping(value = "/validacionPromesasLocal/{tipoCarteraTKM}",
             consumes = { MediaType.APPLICATION_JSON_VALUE },
             produces = { MediaType.APPLICATION_JSON_VALUE })
-    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(@RequestBody final String json){
-        return ppImpl.validarPromesasPago2semanas(json);
+    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(@RequestBody final String json,@PathVariable String tipoCarteraTKM){
+        return ppImpl.validarPromesasPago2semanas(json,tipoCarteraTKM);
     }
 
 
