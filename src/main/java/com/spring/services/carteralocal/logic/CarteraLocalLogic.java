@@ -73,6 +73,9 @@ public class CarteraLocalLogic {
 
         if(carteraCompleta.getCode()==1){
 
+            carteraDAO.borrarCarteraCompleta(tipoCarteraTKM);
+            this.guardarCarteraCompletaDia(carteraCompleta.getData());
+
             ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa(tipoCarteraTKM).getData();
             ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT(tipoCarteraTKM).getData();
 
@@ -84,18 +87,13 @@ public class CarteraLocalLogic {
 
             LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina validacion de cuentas con gestion");
 
-//            this.guardarNuevas(cuentas,tipoCarteraTKM);
-
-            carteraDAO.borrarCarteraCompleta(tipoCarteraTKM);
+//            this.guardarNuevas(cuentas,tipoCarteraTKM)
             carteraDAO2.borrarCarteraDescarte(tipoCarteraTKM);
-
 
             RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentas,cuentasConPromesa,tipoCarteraTKM);
             RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto,tipoCarteraTKM);
             ArrayList<ClienteModel>sinCumplidosVigente=descartarCumplidosVigente(descartarNoContacto.getData());
 
-//            this.guardarCarteraCompletaDia(cuentas);
-            this.guardarCarteraCompletaDia(carteraCompleta.getData());
             this.guardarCarteraDescarte(sinCumplidosVigente,tipoCarteraTKM);
 
             respuesta.setCode(1);
@@ -447,15 +445,19 @@ public class CarteraLocalLogic {
         return carteraDAO.consultarCUCarteraCompleta(cu);
     }
 
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
-        return carteraDAO.consultarCuentasConPromesa("1");
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(String tipoCarteraTKM){
+        return carteraDAO.consultarCuentasConPromesa(tipoCarteraTKM);
     }
 
-    public RestResponse<String> actualizarMontoCuentaConPromesa(ArrayList<String> registro){
-        return carteraDAO.actualizarMontoCuentaConPromesa(registro);
+    public RestResponse<String> actualizarMontoCuentaConPromesa(ArrayList<String> registro,String tipoCarteraTKM){
+        return carteraDAO.actualizarMontoCuentaConPromesa(registro,tipoCarteraTKM);
     }
 
-    public RestResponse<String>eliminarCuentasConPromesa(ArrayList<String> registros){
-        return carteraDAO.eliminarCuentasConPromesa(registros);
+    public RestResponse<String>eliminarCuentasConPromesa(ArrayList<String> registros,String tipoCarteraTKM){
+        return carteraDAO.eliminarCuentasConPromesa(registros,tipoCarteraTKM);
+    }
+
+    public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(String tipoCarteraTKM) {
+        return carteraDAO.consultarCuentasSinContactoTT(tipoCarteraTKM);
     }
 }

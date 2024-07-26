@@ -1030,7 +1030,7 @@ public class CarteraLocalDAO {
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(40));
                 cuenta.setSEGMENTO(Integer.valueOf(rs.getString(41)));
                 cuenta.setFECHA_INSER_LOCAL(rs.getString(43));
-
+                cuenta.setTIPOCARTERATKM(tipoCartera);
 
                 cuentas.add(cuenta);
             }
@@ -1071,12 +1071,6 @@ public class CarteraLocalDAO {
                 //vacio
                 break;
         }
-//        if("1".equals(tipoCarteraTKM)){
-//            tablaBD="carteraConPromesa";
-//        }
-//        else{
-//            tablaBD="carteraConPromesaVIP";
-//        }
 
         String query= Constantes.insertarBD+tablaBD+"(" +
                 "CLIENTE_UNICO," +
@@ -1180,11 +1174,29 @@ public class CarteraLocalDAO {
         return respuesta;
     }
 
-    public RestResponse<String> actualizarMontoCuentaConPromesa(ArrayList<String> registro){
+    public RestResponse<String> actualizarMontoCuentaConPromesa(ArrayList<String> registro,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(false);
-        String query="UPDATE carteraConPromesa SET carteraConPromesa.MONTO=? WHERE carteraConPromesa.CLIENTE_UNICO=?";
+        String tablaBD=null;
+        switch (tipoCarteraTKM){
+            case "1":
+                tablaBD="carteraConPromesa";
+                break;
+            case "2":
+                tablaBD="carteraConPromesaVIP";
+                break;
+            case "3":
+                tablaBD="carteraConPromesaTerritorios";
+                break;
+            case "4":
+                tablaBD="carteraConPromesaDiezYears";
+                break;
+            default:
+                //vacio
+                break;
+        }
+        String query="UPDATE "+tablaBD+" SET "+tablaBD+".MONTO=? WHERE "+tablaBD+".CLIENTE_UNICO=?";
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
             for (int i=0;i<registro.size();i++){
@@ -1208,11 +1220,29 @@ public class CarteraLocalDAO {
         return respuesta;
 
     }
-    public RestResponse<String> eliminarCuentasConPromesa(ArrayList<String> id){
+    public RestResponse<String> eliminarCuentasConPromesa(ArrayList<String> id,String tipoCarteraTKM){
         RestResponse<String> respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setError(false);
-        String query="DELETE FROM carteraConPromesa WHERE carteraConPromesa.CLIENTE_UNICO=?";
+        String tablaBD=null;
+        switch (tipoCarteraTKM){
+            case "1":
+                tablaBD="carteraConPromesa";
+                break;
+            case "2":
+                tablaBD="carteraConPromesaVIP";
+                break;
+            case "3":
+                tablaBD="carteraConPromesaTerritorios";
+                break;
+            case "4":
+                tablaBD="carteraConPromesaDiezYears";
+                break;
+            default:
+                //vacio
+                break;
+        }
+        String query="DELETE FROM "+tablaBD+" WHERE "+tablaBD+".CLIENTE_UNICO=?";
         try{
             CallableStatement cs=conexionbd.establecerConexion2().prepareCall(query);
             for(int i=0;i<id.size();i++){
@@ -1258,12 +1288,7 @@ public class CarteraLocalDAO {
                 break;
 
         }
-//        if("1".equals(tipoCarteraTKM)){
-//            tablaBD="carteraSinContacto;";
-//        }
-//        else{
-//            tablaBD="carteraSinContactoVIP;";
-//        }
+
         String query= Constantes.consultaBD+tablaBD;
         Statement st;
         try{
@@ -1314,6 +1339,7 @@ public class CarteraLocalDAO {
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(40));
                 cuenta.setSEGMENTO(Integer.valueOf(rs.getString(41)));
                 cuenta.setFECHA_INSER_LOCAL(rs.getString(42));
+                cuenta.setTIPOCARTERATKM(tipoCarteraTKM);
 
 
                 cuentas.add(cuenta);

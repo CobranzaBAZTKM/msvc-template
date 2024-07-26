@@ -45,7 +45,12 @@ public class CarteraLocalService implements CarteraLocalImpl {
     }
 
     @Override
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
-        return carteraLocLog.consultarCarteraConPromesa();
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(String tipoCarteraTKM){
+        return carteraLocLog.consultarCarteraConPromesa(tipoCarteraTKM);
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(String tipoCarteraTKM) {
+        return carteraLocLog.consultarCuentasSinContacto(tipoCarteraTKM);
     }
 }

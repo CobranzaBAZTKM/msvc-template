@@ -57,9 +57,15 @@ public class CarteraLocalRest {
         return carteraLoImpl.consultarCUCarteraCompleta(cu);
     }
 
-    @GetMapping(value = "/consultarCarteraPromesaLocal",
+    @GetMapping(value = "/consultarCarteraPromesaHistorico/{tipoCarteraTKM}",
             produces = {"application/json"})
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(){
-        return carteraLoImpl.consultarCarteraConPromesa();
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraConPromesa(@PathVariable String tipoCarteraTKM){
+        return carteraLoImpl.consultarCarteraConPromesa(tipoCarteraTKM);
+    }
+
+    @GetMapping(value = "/consultarCuentasSinContactoHistorico/{tipoCarteraTKM}",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(@PathVariable String tipoCarteraTKM){
+        return carteraLoImpl.consultarCuentasSinContacto(tipoCarteraTKM);
     }
 }
