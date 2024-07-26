@@ -83,14 +83,50 @@ public class Batchs {
             RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
             LOGGER.log(Level.INFO, () -> "Se envia correo para correr proceso de validacion de cuentas con promesas "+enviarCorreo);
 
-            RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa();
-            ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
-            for(int i=0;i<obtenerPromesas.getData().size();i++){
-                String actualizar="0,"+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
-                actualizarMontoPromesa.add(actualizar);
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesasNormalidad=carteraLog.consultarCarteraConPromesa("1");
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesasVIP=carteraLog.consultarCarteraConPromesa("2");
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesasTerritorios=carteraLog.consultarCarteraConPromesa("3");
+            RestResponse<ArrayList<ClienteModel>>obtenerPromesasDiezYears=carteraLog.consultarCarteraConPromesa("4");
+
+            ArrayList<ClienteModel>obtenerPromesas=new ArrayList<>();
+            obtenerPromesas.addAll(obtenerPromesasNormalidad.getData());
+            obtenerPromesas.addAll(obtenerPromesasVIP.getData());
+            obtenerPromesas.addAll(obtenerPromesasTerritorios.getData());
+            obtenerPromesas.addAll(obtenerPromesasDiezYears.getData());
+
+            ArrayList<String> actualizarMontoPromesaNormalidad=new ArrayList<>();
+            ArrayList<String> actualizarMontoPromesaVIP=new ArrayList<>();
+            ArrayList<String> actualizarMontoPromesaTerritorios=new ArrayList<>();
+            ArrayList<String> actualizarMontoPromesaDiezYears=new ArrayList<>();
+
+            for(int i=0;i<obtenerPromesas.size();i++){
+                String tipoCarteraArr=obtenerPromesas.get(i).getTIPOCARTERATKM();
+                String actualizar = "0," + obtenerPromesas.get(i).getCLIENTE_UNICO();
+
+                switch (tipoCarteraArr){
+                    case "1":
+                        actualizarMontoPromesaNormalidad.add(actualizar);
+                        break;
+                    case "2":
+                        actualizarMontoPromesaVIP.add(actualizar);
+                        break;
+                    case "3":
+                        actualizarMontoPromesaTerritorios.add(actualizar);
+                        break;
+                    case "4":
+                        actualizarMontoPromesaDiezYears.add(actualizar);
+                        break;
+                    default:
+                        //Vacio
+                        break;
+                }
             }
 
-            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa);
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesaNormalidad,"1");
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesaVIP,"2");
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesaTerritorios,"3");
+            this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesaDiezYears,"4");
+
 
         }
         else{
@@ -108,6 +144,25 @@ public class Batchs {
         RestResponse<String> borrar=localDAO.borrarCarteraCompleta("0");
         LOGGER.log(Level.INFO, () -> "Resultado Batch de eliminacion de cartera Diaria: "+borrar);
         LOGGER.log(Level.INFO, () -> "Termina Batch de eliminacion de cartera Diaria: "+borrar);
+    }
+
+    @Scheduled(cron = "0 45 07 * * *")
+    public void resetMontoPagoPromesasPagoDia() {
+        LOGGER.log(Level.INFO, () -> "Comienza Batch de resetMontoPagoPromesasPagoDia");
+        ArrayList<PromesasModel> promesasCompletas=promesas.consultarPromesas().getData();
+        Calendar c = Calendar.getInstance();
+        Date date = c.getTime();
+        String[] fecha= String.valueOf(date).split(" ");
+        String fechaPago=fecha[2]+"/"+fecha[1]+"/"+fecha[5];
+        for(int i=0;i<promesasCompletas.size();i++){
+            if(promesasCompletas.get(i).getFechaPago().equals(fechaPago)){
+                    promesasCompletas.get(i).setPagoFinal(0);
+                    promesas.actualizarPromesasEstPag(promesasCompletas.get(i));
+            }
+        }
+
+
+        LOGGER.log(Level.INFO, () -> "Termina Batch de resetMontoPagoPromesasPagoDia");
     }
 //    @Scheduled(cron = "0 0 12,22 * * *")
 //    public void avisoElimacionPromesasMes(){
