@@ -138,7 +138,7 @@ public class Batchs {
 
     }
 
-    @Scheduled(cron = "0 10 09 * * *")
+    @Scheduled(cron = "0 0 11 * * *")
     public void eliminacionDeCarteraDiaria() {
         LOGGER.log(Level.INFO, () -> "Comienza Batch de eliminacion de cartera Diaria");
         RestResponse<String> borrar=localDAO.borrarCarteraCompleta("0");
