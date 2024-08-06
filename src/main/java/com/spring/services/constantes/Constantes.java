@@ -2,8 +2,8 @@ package com.spring.services.constantes;
 
 public class Constantes {
     public static final String correoRemitente="cobranzabaztkm@gmail.com";
-    public static final String passwordRemitente="zckcfjfcgkmyxibb";
-    public static final String correoEncargada="kreyes@tkm.com.mx";
+    public static final String passwordRemitente="wdpcasnjuwskqfzn";
+    public static final String correoEncargada="amartinezt@tkm.com.mx";
     public static final String consultaBD="SELECT * FROM ";
     public static final String insertarBD="INSERT INTO ";
     public static final String valuesBD=" values ";
