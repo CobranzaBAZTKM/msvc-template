@@ -4,7 +4,7 @@ spring:
 
 cartera:
   segmentos:
-    uno: https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/58921
+    uno: https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/search/60054
     clientes: https://www.sclpcj.com.mx:7071/CyCRest/cartera-download/get
     clientegestor: https://www.sclpcj.com.mx:7071/CyCRest/cartera-gestor/datosCliente
 
@@ -17,7 +17,7 @@ blasters:
   envioMasivoTTS: https://wsblaster.marcatel.com.mx/ServicioBlaster.svc/mex
 
 gestores:
-  obtenerGestores: https://www.sclpcj.com.mx:7071/CyCRest/alta-gestor/obtenerGestores/58921/0
+  obtenerGestores: https://www.sclpcj.com.mx:7071/CyCRest/alta-gestor/obtenerGestores/60054/0
   asignaCartera: https://www.sclpcj.com.mx:7071/CyCRest/cartera-gestor/asignaCartera
   obtenerGestionesSCL: https://www.sclpcj.com.mx:7071/CyCRest/scl-gestiones/consultar
 
