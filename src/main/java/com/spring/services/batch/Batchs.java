@@ -56,7 +56,6 @@ public class Batchs {
             }
         }
 //        promesapagoHoy.add("5539252342");
-        promesapagoHoy.add("5625247459");
 //        promesapagoHoy.add("5543773233");
         String mensaje="Cliente Banco Azteca. No hemos recibido su pago, realice el deposito hoy, no pierda de sus beneficios";
         LOGGER.log(Level.INFO, () -> "mandarBlasterRecordatorios: Se envian "+promesapagoHoy.size()+" para blaster");
@@ -138,11 +137,22 @@ public class Batchs {
 
     }
 
-    @Scheduled(cron = "0 0 11 * * *")
+    @Scheduled(cron = "0 0 10 * * *")
     public void eliminacionDeCarteraDiaria() {
         LOGGER.log(Level.INFO, () -> "Comienza Batch de eliminacion de cartera Diaria");
         RestResponse<String> borrar=localDAO.borrarCarteraCompleta("0");
         LOGGER.log(Level.INFO, () -> "Resultado Batch de eliminacion de cartera Diaria: "+borrar);
+        ArrayList<String>correos=new ArrayList<>();
+        correos.add("rfrutos@tkm.com.mx");
+        correos.add("amartinezt@tkm.com.mx");
+        CuerpoCorreo correo = new CuerpoCorreo();
+        correo.setRemitente(Constantes.correoRemitente);
+        correo.setPasswordRemitente(Constantes.passwordRemitente);
+        correo.setDestinatario(correos);
+        correo.setAsunto("AVISO, SE ELIMINO LA CARTERA");
+        correo.setMensaje("Se elimino la cartera de la Base de Datos");
+        RestResponse<String> enviarCorreo=notificaciones.enviarCorreo(correo);
+        LOGGER.log(Level.INFO, () -> "Se envia correo de aviso de eliminacion de la cartera "+enviarCorreo);
         LOGGER.log(Level.INFO, () -> "Termina Batch de eliminacion de cartera Diaria: "+borrar);
     }
 
