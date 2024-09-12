@@ -17,6 +17,8 @@ import com.spring.utils.UtilService;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -45,25 +47,25 @@ public class CarteraLocalLogic {
     public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie,String tipoCarteraTKM)  {
         LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Comienza proceso, tipo Cartera: "+tipoCarteraTKM);
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
-        RestResponse<ArrayList<ClienteModel>>carteraCompleta=new RestResponse<>();
+        RestResponse<ArrayList<ClienteModel>>carteraCompleta=carteraDAO.consultarCarteraCompletaPorCartera(tipoCarteraTKM);
 
-        switch (tipoCarteraTKM){
-            case "1":
-                carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
-                break;
-            case "2":
-                carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
-                break;
-            case "3":
-                carteraCompleta=obtenerCarTer.TerriSCLcarteraCompleta(cokkie);
-                break;
-            case "4":
-                carteraCompleta=obtenerCartDiez.DiezYearSCLCarteraCompleta(cokkie);
-                break;
-            default:
-                //Vacio
-                break;
-        }
+//        switch (tipoCarteraTKM){
+//            case "1":
+//                carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
+//                break;
+//            case "2":
+//                carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
+//                break;
+//            case "3":
+//                carteraCompleta=obtenerCarTer.TerriSCLcarteraCompleta(cokkie);
+//                break;
+//            case "4":
+//                carteraCompleta=obtenerCartDiez.DiezYearSCLCarteraCompleta(cokkie);
+//                break;
+//            default:
+//                //Vacio
+//                break;
+//        }
 //        if("1".equals(tipoCarteraTKM)){
 //            carteraCompleta=obtenerCartera.carteraCompleta(cokkie);
 //        }
@@ -71,10 +73,10 @@ public class CarteraLocalLogic {
 //            carteraCompleta=obtenerCartVIP.VIPcarteraCompleta(cokkie);
 //        }
 
-        if(carteraCompleta.getCode()==1){
+//        if(carteraCompleta.getCode()==1){
 
-            carteraDAO.borrarCarteraCompleta(tipoCarteraTKM);
-            this.guardarCarteraCompletaDia(carteraCompleta.getData());
+//            carteraDAO.borrarCarteraCompleta(tipoCarteraTKM);
+//            this.guardarCarteraCompletaDia(carteraCompleta.getData());
 
             ArrayList<ClienteModel> cuentasConPromesa=carteraDAO.consultarCuentasConPromesa(tipoCarteraTKM).getData();
             ArrayList<ClienteModel> cuentasSinContacto=carteraDAO.consultarCuentasSinContactoTT(tipoCarteraTKM).getData();
@@ -101,10 +103,10 @@ public class CarteraLocalLogic {
             respuesta.setData(sinCumplidosVigente);
 
 
-        }
-        else{
-            respuesta=carteraCompleta;
-        }
+//        }
+//        else{
+//            respuesta=carteraCompleta;
+//        }
 
         LOGGER.log(Level.INFO, () -> "carteraCompletaGuardar: Termina proceso");
 
@@ -369,6 +371,30 @@ public class CarteraLocalLogic {
                     LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
                     gestionesDia.add(gestiones.get(l));
                 }
+                else if("Abandonados".equals(tipoCartera)&&"5".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("Implant".equals(tipoCartera)&&"6".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("TAZ".equals(tipoCartera)&&"7".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("TOR".equals(tipoCartera)&&"8".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("SaldosAltos".equals(tipoCartera)&&"9".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
+                else if("Italika".equals(tipoCartera)&&"10".equals(tipoCarteraTKM)){
+                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
+                    gestionesDia.add(gestiones.get(l));
+                }
 
             }
         }
@@ -459,5 +485,137 @@ public class CarteraLocalLogic {
 
     public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(String tipoCarteraTKM) {
         return carteraDAO.consultarCuentasSinContactoTT(tipoCarteraTKM);
+    }
+
+
+    public RestResponse<String> insertarCarteraLocal(String clientes) {
+        JSONObject jsonCliente=new JSONObject(clientes);
+        JSONArray jsonArrayClientes=jsonCliente.getJSONArray("cartera");
+        ArrayList<ClienteModel> cartera=new ArrayList<>();
+        for(int i=0;i< jsonArrayClientes.length();i++){
+            String c=String.valueOf(jsonArrayClientes.getJSONObject(i));
+            try {
+                ClienteModel clientesCar = new ClienteModel();
+                clientesCar.setCLIENTE_UNICO(jsonArrayClientes.getJSONObject(i).getString("CLIENTE_UNICO"));
+                clientesCar.setNOMBRE_CTE(jsonArrayClientes.getJSONObject(i).getString("NOMBRE_CTE"));
+                clientesCar.setGENERO_CLIENTE(jsonArrayClientes.getJSONObject(i).getString("GENERO_CLIENTE"));
+                clientesCar.setEDAD_CLIENTE(jsonArrayClientes.getJSONObject(i).getString("EDAD_CLIENTE"));
+                clientesCar.setOCUPACION(jsonArrayClientes.getJSONObject(i).getString("OCUPACION"));
+                clientesCar.setDIRECCION_CTE(jsonArrayClientes.getJSONObject(i).getString("DIRECCION_CTE"));
+                clientesCar.setNUM_EXT_CTE(jsonArrayClientes.getJSONObject(i).getString("NUM_EXT_CTE"));
+                clientesCar.setNUM_INT_CTE(jsonArrayClientes.getJSONObject(i).getString("NUM_INT_CTE"));
+                clientesCar.setCP_CTE(jsonArrayClientes.getJSONObject(i).getString("CP_CTE"));
+                clientesCar.setCOLONIA_CTE(jsonArrayClientes.getJSONObject(i).getString("COLONIA_CTE"));
+                clientesCar.setPOBLACION_CTE(jsonArrayClientes.getJSONObject(i).getString("POBLACION_CTE"));
+                clientesCar.setESTADO_CTE(jsonArrayClientes.getJSONObject(i).getString("ESTADO_CTE"));
+                clientesCar.setTERRITORIO(jsonArrayClientes.getJSONObject(i).getString("TERRITORIO"));
+                clientesCar.setTERRITORIAL(jsonArrayClientes.getJSONObject(i).getString("TERRITORIAL"));
+                clientesCar.setZONA(jsonArrayClientes.getJSONObject(i).getString("ZONA"));
+                clientesCar.setZONAL(jsonArrayClientes.getJSONObject(i).getString("ZONAL"));
+                clientesCar.setNOMBRE_DESPACHO(jsonArrayClientes.getJSONObject(i).getString("NOMBRE_DESPACHO"));
+                clientesCar.setGERENCIA(jsonArrayClientes.getJSONObject(i).getString("GERENCIA"));
+                clientesCar.setFECHA_ASIGNACION(jsonArrayClientes.getJSONObject(i).getString("FECHA_ASIGNACION"));
+                clientesCar.setDIAS_ASIGNACION(jsonArrayClientes.getJSONObject(i).getString("DIAS_ASIGNACION"));
+                clientesCar.setREFERENCIAS_DOMICILIO(jsonArrayClientes.getJSONObject(i).getString("REFERENCIAS_DOMICILIO"));
+                clientesCar.setCLASIFICACION_CTE(jsonArrayClientes.getJSONObject(i).getString("CLASIFICACION_CTE"));
+                clientesCar.setDIQUE(jsonArrayClientes.getJSONObject(i).getString("DIQUE"));
+                clientesCar.setATRASO_MAXIMO(jsonArrayClientes.getJSONObject(i).getString("ATRASO_MAXIMO"));
+                clientesCar.setDIAS_ATRASO(Integer.valueOf(jsonArrayClientes.getJSONObject(i).getString("DIAS_ATRASO")));
+                clientesCar.setSALDO(jsonArrayClientes.getJSONObject(i).getString("SALDO"));
+                clientesCar.setMORATORIOS(jsonArrayClientes.getJSONObject(i).getString("MORATORIOS"));
+                clientesCar.setSALDO_TOTAL(Float.valueOf(jsonArrayClientes.getJSONObject(i).getString("SALDO_TOTAL")));
+                clientesCar.setSALDO_ATRASADO(jsonArrayClientes.getJSONObject(i).getString("SALDO_ATRASADO"));
+                clientesCar.setSALDO_REQUERIDO(jsonArrayClientes.getJSONObject(i).getString("SALDO_REQUERIDO"));
+                clientesCar.setPAGO_NORMAL(jsonArrayClientes.getJSONObject(i).getString("PAGO_NORMAL"));
+                clientesCar.setPRODUCTO(jsonArrayClientes.getJSONObject(i).getString("PRODUCTO"));
+                clientesCar.setFECHA_ULTIMO_PAGO(jsonArrayClientes.getJSONObject(i).getString("FECHA_ULTIMO_PAGO"));
+                clientesCar.setIMP_ULTIMO_PAGO(jsonArrayClientes.getJSONObject(i).getString("IMP_ULTIMO_PAGO"));
+                clientesCar.setCALLE_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("CALLE_EMPLEO"));
+                clientesCar.setNUM_EXT_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("NUM_EXT_EMPLEO"));
+                clientesCar.setNUM_INT_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("NUM_INT_EMPLEO"));
+                clientesCar.setCOLONIA_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("COLONIA_EMPLEO"));
+                clientesCar.setPOBLACION_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("POBLACION_EMPLEO"));
+                clientesCar.setESTADO_EMPLEO(jsonArrayClientes.getJSONObject(i).getString("ESTADO_EMPLEO"));
+                clientesCar.setNOMBRE_AVAL(jsonArrayClientes.getJSONObject(i).getString("NOMBRE_AVAL"));
+                clientesCar.setTEL_AVAL(jsonArrayClientes.getJSONObject(i).getString("TEL_AVAL"));
+                clientesCar.setCALLE_AVAL(jsonArrayClientes.getJSONObject(i).getString("CALLE_AVAL"));
+                clientesCar.setNUM_EXT_AVAL(jsonArrayClientes.getJSONObject(i).getString("NUM_EXT_AVAL"));
+                clientesCar.setCOLONIA_AVAL(jsonArrayClientes.getJSONObject(i).getString("COLONIA_AVAL"));
+                clientesCar.setCP_AVAL(jsonArrayClientes.getJSONObject(i).getString("CP_AVAL"));
+                clientesCar.setPOBLACION_AVAL(jsonArrayClientes.getJSONObject(i).getString("POBLACION_AVAL"));
+                clientesCar.setESTADO_AVAL(jsonArrayClientes.getJSONObject(i).getString("ESTADO_AVAL"));
+                clientesCar.setFIDIAPAGO(jsonArrayClientes.getJSONObject(i).getString("FIDIAPAGO"));
+                clientesCar.setTELEFONO1(jsonArrayClientes.getJSONObject(i).getString("TELEFONO1"));
+                clientesCar.setTELEFONO2(jsonArrayClientes.getJSONObject(i).getString("TELEFONO2"));
+                clientesCar.setTELEFONO3(jsonArrayClientes.getJSONObject(i).getString("TELEFONO3"));
+                clientesCar.setTELEFONO4(jsonArrayClientes.getJSONObject(i).getString("TELEFONO4"));
+                clientesCar.setTIPOTEL1(jsonArrayClientes.getJSONObject(i).getString("TIPOTEL1"));
+                clientesCar.setTIPOTEL2(jsonArrayClientes.getJSONObject(i).getString("TIPOTEL2"));
+                clientesCar.setTIPOTEL3(jsonArrayClientes.getJSONObject(i).getString("TIPOTEL3"));
+                clientesCar.setTIPOTEL4(jsonArrayClientes.getJSONObject(i).getString("TIPOTEL4"));
+                clientesCar.setLATITUD(jsonArrayClientes.getJSONObject(i).getString("LATITUD"));
+                clientesCar.setLONGITUD(jsonArrayClientes.getJSONObject(i).getString("LONGITUD"));
+                clientesCar.setDESPACHO_GESTIONO(jsonArrayClientes.getJSONObject(i).getString("DESPACHO_GESTIONO"));
+                clientesCar.setULTIMA_GESTION(jsonArrayClientes.getJSONObject(i).getString("ULTIMA_GESTION"));
+                clientesCar.setGESTION_DESC(jsonArrayClientes.getJSONObject(i).getString("GESTION_DESC"));
+                clientesCar.setCAMPANIA_RELAMPAGO(jsonArrayClientes.getJSONObject(i).getString("CAMPANIA_RELAMPAGO"));
+                clientesCar.setCAMPANIA(jsonArrayClientes.getJSONObject(i).getString("CAMPANIA"));
+                clientesCar.setID_GRUPO(jsonArrayClientes.getJSONObject(i).getString("ID_GRUPO"));
+                clientesCar.setGRUPO_MAZ(jsonArrayClientes.getJSONObject(i).getString("GRUPO_MAZ"));
+                clientesCar.setCLAVE_SPEI(jsonArrayClientes.getJSONObject(i).getString("CLAVE_SPEI"));
+                clientesCar.setPAGOS_CLIENTE(jsonArrayClientes.getJSONObject(i).getString("PAGOS_CLIENTE"));
+                clientesCar.setMONTO_PAGOS(jsonArrayClientes.getJSONObject(i).getString("MONTO_PAGOS"));
+                clientesCar.setGESTORES(jsonArrayClientes.getJSONObject(i).getString("GESTORES"));
+                clientesCar.setFOLIO_PLAN(jsonArrayClientes.getJSONObject(i).getString("FOLIO_PLAN"));
+                clientesCar.setSEGMENTO_GENERACION(jsonArrayClientes.getJSONObject(i).getString("SEGMENTO_GENERACION"));
+                clientesCar.setESTATUS_PLAN(jsonArrayClientes.getJSONObject(i).getString("ESTATUS_PLAN"));
+                clientesCar.setSEMANAS_ATRASO(jsonArrayClientes.getJSONObject(i).getString("SEMANAS_ATRASO"));
+                clientesCar.setATRASO(jsonArrayClientes.getJSONObject(i).getString("ATRASO"));
+                clientesCar.setGENERACION_PLAN(jsonArrayClientes.getJSONObject(i).getString("GENERACION_PLAN"));
+                clientesCar.setCANCELACION_CUMPLIMIENTO_PLAN(jsonArrayClientes.getJSONObject(i).getString("CANCELACION_CUMPLIMIENTO_PLAN"));
+                clientesCar.setULTIMO_ESTATUS(jsonArrayClientes.getJSONObject(i).getString("ULTIMO_ESTATUS"));
+                clientesCar.setEMPLEADO(jsonArrayClientes.getJSONObject(i).getString("EMPLEADO"));
+                clientesCar.setCANAL(jsonArrayClientes.getJSONObject(i).getString("CANAL"));
+                clientesCar.setABONO_SEMANAL(jsonArrayClientes.getJSONObject(i).getString("ABONO_SEMANAL"));
+                clientesCar.setPLAZO(jsonArrayClientes.getJSONObject(i).getString("PLAZO"));
+                clientesCar.setMONTO_ABONADO(jsonArrayClientes.getJSONObject(i).getString("MONTO_ABONADO"));
+                clientesCar.setMONTO_PLAN(jsonArrayClientes.getJSONObject(i).getString("MONTO_PLAN"));
+                clientesCar.setENGANCHE(jsonArrayClientes.getJSONObject(i).getString("ENGANCHE"));
+                clientesCar.setPAGOS_RECIBIDOS(jsonArrayClientes.getJSONObject(i).getString("PAGOS_RECIBIDOS"));
+                clientesCar.setSALDO_ANTES_DEL_PLAN(jsonArrayClientes.getJSONObject(i).getString("SALDO_ANTES_DEL_PLAN"));
+                clientesCar.setSALDO_ATRASADO_ANTES_PLAN(jsonArrayClientes.getJSONObject(i).getString("SALDO_ATRASADO_ANTES_PLAN"));
+                clientesCar.setMORATORIOS_ANTES_PLAN(jsonArrayClientes.getJSONObject(i).getString("MORATORIOS_ANTES_PLAN"));
+                clientesCar.setESTATUS_PROMESA_PAGO(jsonArrayClientes.getJSONObject(i).getString("ESTATUS_PROMESA_PAGO"));
+                clientesCar.setMONTO_PROMESA_PAGO(jsonArrayClientes.getJSONObject(i).getString("MONTO_PROMESA_PAGO"));
+                clientesCar.setSEGMENTO(Integer.valueOf(jsonArrayClientes.getJSONObject(i).getString("SEGMENTO")));
+                clientesCar.setTIPOCARTERATKM(jsonArrayClientes.getJSONObject(i).getString("TIPOCARTERATKM"));
+                cartera.add(clientesCar);
+            }
+            catch (Exception e){
+                LOGGER.log(Level.INFO, () -> "Ocurrio Algo inesperado "+e);
+                LOGGER.log(Level.INFO, () -> "Cuenta "+c);
+            }
+        }
+        return guardarCarteraCompletaDia(cartera);
+    }
+
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta(){
+        RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
+        ArrayList<ClienteModel> bases=new ArrayList<>();
+        bases.addAll(consultarCarteraDescarte("1").getData());
+        bases.addAll(consultarCarteraDescarte("2").getData());
+        bases.addAll(consultarCarteraDescarte("3").getData());
+        bases.addAll(consultarCarteraDescarte("4").getData());
+        bases.addAll(consultarCarteraDescarte("5").getData());
+        bases.addAll(consultarCarteraDescarte("6").getData());
+        bases.addAll(consultarCarteraDescarte("7").getData());
+        bases.addAll(consultarCarteraDescarte("8").getData());
+        bases.addAll(consultarCarteraDescarte("9").getData());
+        bases.addAll(consultarCarteraDescarte("10").getData());
+        respuesta.setCode(1);
+        respuesta.setMessage("Proceso para obtener Cartera Descarte Dia Completa");
+        respuesta.setData(bases);
+
+        return respuesta;
     }
 }

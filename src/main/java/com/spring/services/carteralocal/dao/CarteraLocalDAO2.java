@@ -41,6 +41,24 @@ public class CarteraLocalDAO2 {
             case "4":
                 tablaBD="carteraDescarteDiezYears;";
                 break;
+            case "5":
+                tablaBD="carteraDescarteAbandonados";
+                break;
+            case "6":
+                tablaBD="carteraDescarteImplant";
+                break;
+            case "7":
+                tablaBD="carteraDescarteTAZ";
+                break;
+            case "8":
+                tablaBD="carteraDescarteTOR";
+                break;
+            case "9":
+                tablaBD="carteraDescarteSaldosAltos";
+                break;
+            case "10":
+                tablaBD="carteraDescarteItalika";
+                break;
             default:
                 //vacio
                 break;
@@ -199,6 +217,24 @@ public class CarteraLocalDAO2 {
                 break;
             case "4":
                 tablaBD="carteraDescarteDiezYears";
+                break;
+            case "5":
+                tablaBD="carteraDescarteAbandonados";
+                break;
+            case "6":
+                tablaBD="carteraDescarteImplant";
+                break;
+            case "7":
+                tablaBD="carteraDescarteTAZ";
+                break;
+            case "8":
+                tablaBD="carteraDescarteTOR";
+                break;
+            case "9":
+                tablaBD="carteraDescarteSaldosAltos";
+                break;
+            case "10":
+                tablaBD="carteraDescarteItalika";
                 break;
             default:
                 break;
@@ -462,6 +498,24 @@ public class CarteraLocalDAO2 {
                 break;
             case "4":
                 tablaBD="carteraDescarteDiezYears";
+                break;
+            case "5":
+                tablaBD="carteraDescarteAbandonados";
+                break;
+            case "6":
+                tablaBD="carteraDescarteImplant";
+                break;
+            case "7":
+                tablaBD="carteraDescarteTAZ";
+                break;
+            case "8":
+                tablaBD="carteraDescarteTOR";
+                break;
+            case "9":
+                tablaBD="carteraDescarteSaldosAltos";
+                break;
+            case "10":
+                tablaBD="carteraDescarteItalika";
                 break;
             default:
                 //Vacio

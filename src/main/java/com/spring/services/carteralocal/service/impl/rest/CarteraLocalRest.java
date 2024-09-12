@@ -68,4 +68,20 @@ public class CarteraLocalRest {
     public RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(@PathVariable String tipoCarteraTKM){
         return carteraLoImpl.consultarCuentasSinContacto(tipoCarteraTKM);
     }
+
+    @PostMapping(value = "/insertarCarteraLocal",
+            consumes = {"application/json"},
+            produces = {"application/json"})
+//            consumes = { MediaType.APPLICATION_JSON_VALUE },
+//            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<String> insertarCarteraLocal(@RequestBody final String clientes){
+//    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
+        return carteraLoImpl.insertarCarteraLocal(clientes);
+    }
+
+    @PostMapping(value = "/carteraConDescarteCompleta",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta(){
+        return carteraLoImpl.consultarCarteraDescarteDiaCompleta();
+    }
 }
