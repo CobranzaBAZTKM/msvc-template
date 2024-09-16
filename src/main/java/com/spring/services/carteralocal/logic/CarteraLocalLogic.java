@@ -618,4 +618,8 @@ public class CarteraLocalLogic {
 
         return respuesta;
     }
+
+    public RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(String tipoCarteraTKM){
+        return carteraDAO.consultarCarteraCompletaPorCartera(tipoCarteraTKM);
+    }
 }
