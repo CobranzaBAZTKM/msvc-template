@@ -75,7 +75,7 @@ public class NotificacionesLogic {
 //        CuerpoCorreo datosCorreo=new CuerpoCorreo();
         ArrayList<String> correos=new ArrayList<>();
         correos.add(Constantes.correoEncargada);
-        correos.add("axel.rodriguezn@elektra.com.mx");
+//        correos.add("axel.rodriguezn@elektra.com.mx");
         correo.setRemitente(Constantes.correoRemitente);
         correo.setPasswordRemitente(Constantes.passwordRemitente);
         correo.setDestinatario(correos);
