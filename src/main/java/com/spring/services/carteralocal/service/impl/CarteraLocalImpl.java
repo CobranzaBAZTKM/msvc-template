@@ -19,4 +19,6 @@ public interface CarteraLocalImpl {
     RestResponse<ArrayList<ClienteModel>> consultarCuentasSinContacto(String tipoCarteraTKM);
     RestResponse<String> insertarCarteraLocal(String clientes);
     RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta();
+    RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(String tipoCarteraTKM);
+    RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(String numero);
 }

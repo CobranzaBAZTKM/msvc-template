@@ -84,4 +84,16 @@ public class CarteraLocalRest {
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta(){
         return carteraLoImpl.consultarCarteraDescarteDiaCompleta();
     }
+
+    @GetMapping(value = "/consultarBaseLocalPorCartera/{tipoCarteraTKM}",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(@PathVariable String tipoCarteraTKM){
+        return carteraLoImpl.consultarBaseCompletaPorCartera(tipoCarteraTKM);
+    }
+
+    @GetMapping(value = "/consultarTitularPorNumero/{numero}",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(@PathVariable String numero){
+        return carteraLoImpl.buscarTitularesNumeros(numero);
+    }
 }

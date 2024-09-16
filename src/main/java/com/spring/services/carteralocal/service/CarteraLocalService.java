@@ -4,6 +4,7 @@ import com.spring.services.cartera.logic.CarteraLogic;
 import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.cartera.model.ExtrasModel;
 import com.spring.services.carteralocal.logic.CarteraLocalLogic;
+import com.spring.services.carteralocal.logic.CarteraLocalLogic2;
 import com.spring.services.carteralocal.service.impl.CarteraLocalImpl;
 import com.spring.utils.RestResponse;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class CarteraLocalService implements CarteraLocalImpl {
 
     CarteraLocalLogic carteraLocLog=new CarteraLocalLogic();
+    CarteraLocalLogic2 carteraLocLog2=new CarteraLocalLogic2();
     public CarteraLocalService() {
         //Vacio
     }
@@ -62,5 +64,15 @@ public class CarteraLocalService implements CarteraLocalImpl {
     @Override
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta(){
         return carteraLocLog.consultarCarteraDescarteDiaCompleta();
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(String tipoCarteraTKM){
+        return carteraLocLog.consultarBaseCompletaPorCartera(tipoCarteraTKM);
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(String numero){
+        return carteraLocLog2.buscarTitularesNumeros(numero);
     }
 }
