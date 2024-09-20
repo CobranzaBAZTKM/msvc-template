@@ -12,4 +12,5 @@ public interface GestionLlamadasImpl {
     RestResponse<String> insertarGestionLlamadas(GestionLlamadasModel gestLlam);
     RestResponse<String> actualizarGestionLlamadas(GestionLlamadasModel gestLlam);
     RestResponse<String> borrarGestionLlamadas(String idGestion, String idSupervisor);
+    RestResponse<ArrayList<GestionLlamadasModel>> consultarGestionLlamadasNumero(String numero);
 }

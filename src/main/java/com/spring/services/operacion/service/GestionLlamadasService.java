@@ -37,4 +37,9 @@ public class GestionLlamadasService implements GestionLlamadasImpl {
         idGest.add(idGestion);
         return gestLog.borrarGestionLlamadas(idGest,idSupervisor);
     }
+
+    @Override
+    public RestResponse<ArrayList<GestionLlamadasModel>> consultarGestionLlamadasNumero(String numero) {
+        return gestLog.consultarGestionLlamadasNumero(numero);
+    }
 }

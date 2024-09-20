@@ -45,4 +45,11 @@ public class GestionLlamadasRest {
     public RestResponse<String> borrarGestionLlamadas(@PathVariable String idGestion, @PathVariable String idSupervisor) {
         return gestLlamIm.borrarGestionLlamadas(idGestion, idSupervisor);
     }
+
+    @GetMapping(value = "/consultarGestionLlamadasNumero/{numero}",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<GestionLlamadasModel>> consultarGestionLlamadasNumero(@PathVariable String numero){
+        return gestLlamIm.consultarGestionLlamadasNumero(numero);
+    }
+
 }

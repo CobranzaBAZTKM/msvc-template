@@ -35,4 +35,8 @@ public class GestionLlamadasLogic {
     public RestResponse<String> borrarGestionLlamadas(ArrayList<String> idGestion, String idSupervisor) {
         return gestLlamDAO.borrarGestionLlamadas(idGestion,idSupervisor);
     }
+
+    public RestResponse<ArrayList<GestionLlamadasModel>> consultarGestionLlamadasNumero(String numero) {
+        return gestLlamDAO.consultarGestionLlamadasNumero(numero);
+    }
 }

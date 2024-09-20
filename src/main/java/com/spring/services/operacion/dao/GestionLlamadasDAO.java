@@ -58,6 +58,44 @@ public class GestionLlamadasDAO {
         return respuesta;
     }
 
+    public RestResponse<ArrayList<GestionLlamadasModel>> consultarGestionLlamadasNumero(String numero) {
+        RestResponse<ArrayList<GestionLlamadasModel>> respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setError(true);
+        String query="SELECT * FROM gestiones WHERE gestiones.telefono='"+numero+"'";
+        Statement st;
+        try{
+            ArrayList<GestionLlamadasModel> gestiones=new ArrayList<>();
+            st=conexionbd.establecerConexion2().createStatement();
+            ResultSet rs=st.executeQuery(query);
+            while(rs.next()){
+                GestionLlamadasModel gestion=new GestionLlamadasModel();
+                gestion.setIdGestionLlam(rs.getInt(1));
+                gestion.setClienteUnico(rs.getString(2));
+                gestion.setTelefono(rs.getString(3));
+                gestion.setIdGestorTkm(rs.getInt(4));
+                gestion.setIdTipificacion(rs.getInt(5));
+                gestion.setComentario(rs.getString(6));
+                gestion.setFechaInserto(rs.getString(7));
+                gestion.setHoraInserto(rs.getString(8));
+                gestion.setTipoCarteraTKM(rs.getString(9));
+                gestiones.add(gestion);
+            }
+            respuesta.setCode(1);
+            respuesta.setError(false);
+            respuesta.setMessage("Se obtuvieron las gestiones telefonicas");
+            respuesta.setData(gestiones);
+            rs.close();
+        }
+        catch (Exception e){
+            respuesta.setMessage("ISSUE consultarGestionLlamadas: "+e);
+            LOGGER.log(Level.INFO, () -> "ISSUE consultarGestionLlamadas: "+e);
+        }
+
+
+        return respuesta;
+    }
+
     public RestResponse<String> insertarGestionLlamadas(GestionLlamadasModel gestLlam) {
         RestResponse<String>respuesta=new RestResponse<>();
         respuesta.setCode(0);
