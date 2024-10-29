@@ -136,9 +136,6 @@ public class CarteraSetearDatosLogic {
                 case 3:
                     cliente.setTIPOCARTERATKM("Territorios");
                     break;
-                case 4:
-                    cliente.setTIPOCARTERATKM("DiezYears");
-                    break;
                 default:
                     //Vacio
                     break;

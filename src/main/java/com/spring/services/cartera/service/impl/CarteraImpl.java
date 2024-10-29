@@ -27,4 +27,5 @@ public interface CarteraImpl {
     RestResponse<String> blasterSegmento(ExtrasModel cokkie);
     RestResponse<ArrayList<ClienteModel>>carteraSegmentoEleg(ExtrasModel cokkie);
     RestResponse<ArrayList<ClienteModel>> numerosListasSegmento(ExtrasModel cokkie);
+//    RestResponse<String> cargaMasivaGestionesCartera(ExtrasModel cokkie);
 }

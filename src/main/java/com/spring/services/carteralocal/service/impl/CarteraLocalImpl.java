@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 public interface CarteraLocalImpl {
     RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie, String tipoCarteraTKM);
-    RestResponse<ArrayList<ClienteModel>> carteraCompletaDia();
     RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia();
     RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(String tipoCarteraTKM);
     RestResponse<ClienteModel> consultarCUCarteraCompleta(String cu);
@@ -21,4 +20,5 @@ public interface CarteraLocalImpl {
     RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarteDiaCompleta();
     RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(String tipoCarteraTKM);
     RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(String numero);
+    RestResponse<ArrayList<ClienteModel>>carterasDescarteCompleta();
 }

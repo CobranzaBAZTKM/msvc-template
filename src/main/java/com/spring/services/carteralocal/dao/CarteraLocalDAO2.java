@@ -38,9 +38,6 @@ public class CarteraLocalDAO2 {
             case "3":
                 tablaBD="carteraDescarteTerritorios;";
                 break;
-            case "4":
-                tablaBD="carteraDescarteDiezYears;";
-                break;
             case "5":
                 tablaBD="carteraDescarteAbandonados";
                 break;
@@ -214,9 +211,6 @@ public class CarteraLocalDAO2 {
                 break;
             case "3":
                 tablaBD="carteraDescarteTerritorios";
-                break;
-            case "4":
-                tablaBD="carteraDescarteDiezYears";
                 break;
             case "5":
                 tablaBD="carteraDescarteAbandonados";
@@ -495,9 +489,6 @@ public class CarteraLocalDAO2 {
                 break;
             case "3":
                 tablaBD="carteraDescarteTerritorios";
-                break;
-            case "4":
-                tablaBD="carteraDescarteDiezYears";
                 break;
             case "5":
                 tablaBD="carteraDescarteAbandonados";

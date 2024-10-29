@@ -24,13 +24,6 @@ public class CarteraLocalService implements CarteraLocalImpl {
     public RestResponse<ArrayList<ClienteModel>> carteraCompletaGuardar(ExtrasModel cokkie, String tipoCarteraTKM) {
         return carteraLocLog.carteraCompletaGuardar(cokkie,tipoCarteraTKM);
     }
-
-
-    @Override
-    public RestResponse<ArrayList<ClienteModel>> carteraCompletaDia() {
-        return carteraLocLog.consultarCarteraCompletaDia();
-    }
-
     @Override
     public RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia() {
         return carteraLocLog.nuevasCuentasDia();
@@ -74,5 +67,10 @@ public class CarteraLocalService implements CarteraLocalImpl {
     @Override
     public RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(String numero){
         return carteraLocLog2.buscarTitularesNumeros(numero);
+    }
+
+    @Override
+    public RestResponse<ArrayList<ClienteModel>>carterasDescarteCompleta() {
+        return carteraLocLog.carterasDescarteCompleta();
     }
 }

@@ -19,7 +19,7 @@ public class CarteraLocalLogic2 {
         RestResponse<ArrayList<ClienteModel>>respuesta=new RestResponse<>();
         respuesta.setCode(0);
         respuesta.setData(null);
-        ArrayList<ClienteModel> base=carteraDAO.consultarCarteraCompleta().getData();
+        ArrayList<ClienteModel> base=carteraDAO.consultarCarteraCompletaPorCartera("0").getData();
         ArrayList<ClienteModel> datosEncontrados=new ArrayList<>();
 
         if(base.size()>0){

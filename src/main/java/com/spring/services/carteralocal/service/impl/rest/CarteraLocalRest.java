@@ -30,14 +30,6 @@ public class CarteraLocalRest {
         return carteraLoImpl.carteraCompletaGuardar(cokkie,tipoCarteraTKM);
     }
 
-
-    @PostMapping(value = "/carteraCompletaDia",
-            produces = {"application/json"})
-    public RestResponse<ArrayList<ClienteModel>> carteraCompletaDia(){
-//    public RestResponse<String> carteraCompleta(@RequestBody final ExtrasModel cokkie){
-        return carteraLoImpl.carteraCompletaDia();
-    }
-
     @GetMapping(value = "/consultarNuevasCuentasDia",
             produces = {"application/json"})
     public RestResponse<ArrayList<ClienteModel>> consultarNuevasCuentasDia(){
@@ -85,7 +77,7 @@ public class CarteraLocalRest {
         return carteraLoImpl.consultarCarteraDescarteDiaCompleta();
     }
 
-    @GetMapping(value = "/consultarBaseLocalPorCartera/{tipoCarteraTKM}",
+    @PostMapping(value = "/consultarBaseLocalPorCartera/{tipoCarteraTKM}",
             produces = {"application/json"})
     public RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(@PathVariable String tipoCarteraTKM){
         return carteraLoImpl.consultarBaseCompletaPorCartera(tipoCarteraTKM);
@@ -95,5 +87,11 @@ public class CarteraLocalRest {
             produces = {"application/json"})
     public RestResponse<ArrayList<ClienteModel>> buscarTitularesNumeros(@PathVariable String numero){
         return carteraLoImpl.buscarTitularesNumeros(numero);
+    }
+
+    @PostMapping(value = "/carteraConDescarteCompletaProceso",
+            produces = {"application/json"})
+    public RestResponse<ArrayList<ClienteModel>> carterasDescarteCompleta(){
+        return carteraLoImpl.carterasDescarteCompleta();
     }
 }

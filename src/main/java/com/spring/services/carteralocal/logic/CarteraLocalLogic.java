@@ -1,6 +1,5 @@
 package com.spring.services.carteralocal.logic;
 
-import com.spring.services.cartera.logic.DiezYearCarteraLogic;
 import com.spring.services.cartera.logic.ObtenerClientesCartera;
 import com.spring.services.cartera.logic.TerritoriosCarteraLogic;
 import com.spring.services.cartera.logic.VIPCarteraLogic;
@@ -21,6 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -36,7 +37,6 @@ public class CarteraLocalLogic {
     CarteraLocalDAO2 carteraDAO2=new CarteraLocalDAO2();
     VIPCarteraLogic obtenerCartVIP=new VIPCarteraLogic();
     TerritoriosCarteraLogic obtenerCarTer=new TerritoriosCarteraLogic();
-    DiezYearCarteraLogic obtenerCartDiez=new DiezYearCarteraLogic();
 
 
 
@@ -58,9 +58,6 @@ public class CarteraLocalLogic {
 //                break;
 //            case "3":
 //                carteraCompleta=obtenerCarTer.TerriSCLcarteraCompleta(cokkie);
-//                break;
-//            case "4":
-//                carteraCompleta=obtenerCartDiez.DiezYearSCLCarteraCompleta(cokkie);
 //                break;
 //            default:
 //                //Vacio
@@ -93,7 +90,9 @@ public class CarteraLocalLogic {
             carteraDAO2.borrarCarteraDescarte(tipoCarteraTKM);
 
             RestResponse<ArrayList<ClienteModel>>descartarPromesas=this.guardarConPromesa(cuentas,cuentasConPromesa,tipoCarteraTKM);
-            RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto,tipoCarteraTKM);
+            RestResponse<ArrayList<ClienteModel>>obtenerGestionesGral=this.revisarGestionesGenerales(descartarPromesas.getData(),tipoCarteraTKM);
+            RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(obtenerGestionesGral.getData(),cuentasSinContacto,tipoCarteraTKM);
+//            RestResponse<ArrayList<ClienteModel>>descartarNoContacto=this.descartarNoCCTT(descartarPromesas.getData(),cuentasSinContacto,tipoCarteraTKM);
             ArrayList<ClienteModel>sinCumplidosVigente=descartarCumplidosVigente(descartarNoContacto.getData());
 
             this.guardarCarteraDescarte(sinCumplidosVigente,tipoCarteraTKM);
@@ -118,12 +117,6 @@ public class CarteraLocalLogic {
 //        RestResponse<ArrayList<ClienteModel>>carteraCompleta=obtCliLog.carteraCompleta(cokkie);
         return carteraDAO.consultarCuentasNuevasDia();
     }
-
-
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraCompletaDia() {
-        return carteraDAO.consultarCarteraCompleta();
-    }
-
 
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraDescarte(String tipoCarteraTKM) {
         LOGGER.log(Level.INFO, () -> "consultarCarteraDescarte: Comenzando consulta de la cartera con Descarte");
@@ -304,7 +297,7 @@ public class CarteraLocalLogic {
 
                 if(valor==0){
                     String CU=cuentasDescartadas.get(j).getCLIENTE_UNICO()+","+j;
-                    LOGGER.log(Level.INFO, () -> "guardarConPromesa: Cliente Unico: "+CU);
+                    LOGGER.log(Level.INFO, () -> "guardarSinContacto: Cliente Unico: "+CU);
                     carteraDAO.insertarCuentaSinContactoTT(cuentasDescartadas.get(j),fecha,tipoCarteraTKM);
                 }
 
@@ -367,10 +360,6 @@ public class CarteraLocalLogic {
                     LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
                     gestionesDia.add(gestiones.get(l));
                 }
-                else if("DiezYears".equals(tipoCartera)&&"4".equals(tipoCarteraTKM)){
-                    LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
-                    gestionesDia.add(gestiones.get(l));
-                }
                 else if("Abandonados".equals(tipoCartera)&&"5".equals(tipoCarteraTKM)){
                     LOGGER.log(Level.INFO, () -> "revisarGestiones: "+tipoCartera+" "+tipoCarteraTKM);
                     gestionesDia.add(gestiones.get(l));
@@ -403,21 +392,27 @@ public class CarteraLocalLogic {
             for (int i = 0; i < cartera.size(); i++) {
                 for (int j = 0; j < gestionesDia.size(); j++) {
                     int valor = 0;
+                    String nombreTipificacion=null;
                     for (int k = 0; k < tipificacion.size(); k++) {
                         if (gestionesDia.get(j).getIdTipificacion() == tipificacion.get(k).getId()) {
                             valor = tipificacion.get(k).getValor();
+                            nombreTipificacion = tipificacion.get(k).getTipificacion();
                         }
 
                     }
 
                     if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO1())) {
                         cartera.get(i).setTIPOTEL1("" + valor);
+                        cartera.get(i).setCLIENTE_GRUPAL("" + nombreTipificacion);
                     } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO2())) {
                         cartera.get(i).setTIPOTEL2("" + valor);
+                        cartera.get(i).setFIPAISGEO("" + nombreTipificacion);
                     } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO3())) {
                         cartera.get(i).setTIPOTEL3("" + valor);
+                        cartera.get(i).setFICUADRANTEGEO("" + nombreTipificacion);
                     } else if (gestionesDia.get(j).getTelefono().equals(cartera.get(i).getTELEFONO4())) {
                         cartera.get(i).setTIPOTEL4("" + valor);
+                        cartera.get(i).setFIZONAGEO("" + nombreTipificacion);
                     }
                 }
 
@@ -432,6 +427,107 @@ public class CarteraLocalLogic {
         respuesta.setData(cuentas);
         respuesta.setMessage("Proceso terminado");
 
+        return respuesta;
+    }
+
+    private RestResponse<ArrayList<ClienteModel>> revisarGestionesGenerales(ArrayList<ClienteModel> cartera,String tipoCarteraTKM){
+        RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
+        ArrayList<GestionLlamadasModel>gestiones=gestionLlam.consultarGestionLlamadas().getData();
+        ArrayList<TipificacionesModel>tipificacion=tipificaciones.consultarTipificaciones().getData();
+        ArrayList<String>numeroGest=new ArrayList<>();
+        ArrayList<ClienteModel>cuentas=new ArrayList<>();
+        String fechaTresMeses= utilService.FechaMesAnteriorPosterior(-2);
+        String tipoCarteraSol=null;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate fecha1 = LocalDate.parse(fechaTresMeses, formatter);
+
+        switch (tipoCarteraTKM){
+            case "1":
+                tipoCarteraSol="Normalidad";
+                break;
+            case "2":
+                tipoCarteraSol="VIP";
+                break;
+            case "3":
+                tipoCarteraSol="Territorios";
+                break;
+            case "5":
+                tipoCarteraSol="Abandonados";
+                break;
+            case "6":
+                tipoCarteraSol="Implant";
+                break;
+            case "7":
+                tipoCarteraSol="TAZ";
+                break;
+            case "8":
+                tipoCarteraSol="TOR";
+                break;
+            case "9":
+                tipoCarteraSol="SaldosAltos";
+                break;
+            case "10":
+                tipoCarteraSol="Italika";
+                break;
+            default:
+                //Vacio
+                break;
+        }
+
+        for (int j = 0; j < gestiones.size(); j++) {
+
+            int valor = 0;
+            String nombreTipificacion=null;
+            String fechaGestion=gestiones.get(j).getFechaInserto();
+
+            LocalDate fecha2 = LocalDate.parse(fechaGestion, formatter);
+
+            if(fecha2.isEqual(fecha1)||fecha2.isAfter(fecha1)) {
+                if(gestiones.get(j).getTipoCarteraTKM()!=null){
+                    if(gestiones.get(j).getTipoCarteraTKM().equals(tipoCarteraSol)) {
+                        for (int k = 0; k < tipificacion.size(); k++) {
+                            if (gestiones.get(j).getIdTipificacion() == tipificacion.get(k).getId()) {
+                                valor = tipificacion.get(k).getValor();
+                                nombreTipificacion=tipificacion.get(k).getTipificacion();
+                            }
+                        }
+                        if (valor != 6) {
+                            numeroGest.add(gestiones.get(j).getTelefono() + "," + valor + "," + gestiones.get(j).getTipoCarteraTKM()+","+nombreTipificacion);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        for (int i = 0; i < cartera.size(); i++) {
+            for (int l = 0; l < numeroGest.size(); l++) {
+                String telefono=numeroGest.get(l).split(",")[0];
+                int valor = Integer.parseInt(numeroGest.get(l).split(",")[1]);
+                String nomTipi=numeroGest.get(l).split(",")[3];
+
+                if (telefono.equals(cartera.get(i).getTELEFONO1())) {
+                    cartera.get(i).setTIPOTEL1("" + valor);
+                    cartera.get(i).setCLIENTE_GRUPAL("" + nomTipi);
+                } else if (telefono.equals(cartera.get(i).getTELEFONO2())) {
+                    cartera.get(i).setTIPOTEL2("" + valor);
+                    cartera.get(i).setFIPAISGEO("" + nomTipi);
+                } else if (telefono.equals(cartera.get(i).getTELEFONO3())) {
+                    cartera.get(i).setTIPOTEL3("" + valor);
+                    cartera.get(i).setFICUADRANTEGEO("" + nomTipi);
+                } else if (telefono.equals(cartera.get(i).getTELEFONO4())) {
+                    cartera.get(i).setTIPOTEL4("" + valor);
+                    cartera.get(i).setFIZONAGEO("" + nomTipi);
+                }
+
+            }
+            cuentas.add(cartera.get(i));
+        }
+
+        respuesta.setCode(1);
+        respuesta.setMessage("Gestiones Insertadas");
+        respuesta.setData(cuentas);
         return respuesta;
     }
 
@@ -621,5 +717,39 @@ public class CarteraLocalLogic {
 
     public RestResponse<ArrayList<ClienteModel>> consultarBaseCompletaPorCartera(String tipoCarteraTKM){
         return carteraDAO.consultarCarteraCompletaPorCartera(tipoCarteraTKM);
+    }
+
+
+    public RestResponse<ArrayList<ClienteModel>>carterasDescarteCompleta() {
+        RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
+        LOGGER.log(Level.INFO, () -> "Comienza proceso de todas las carteras Descarte");
+        ArrayList<ClienteModel> cuentasCompletas = new ArrayList<>();
+        ExtrasModel cokkie = new ExtrasModel();
+        RestResponse<ArrayList<ClienteModel>> carteraNormalidad = this.carteraCompletaGuardar(cokkie, "1");
+        RestResponse<ArrayList<ClienteModel>> carteraVIP = this.carteraCompletaGuardar(cokkie, "2");
+        RestResponse<ArrayList<ClienteModel>> carteraTerritorios = this.carteraCompletaGuardar(cokkie, "3");
+        RestResponse<ArrayList<ClienteModel>> carteraAbandonados = this.carteraCompletaGuardar(cokkie, "5");
+        RestResponse<ArrayList<ClienteModel>> carteraImplant = this.carteraCompletaGuardar(cokkie, "6");
+        RestResponse<ArrayList<ClienteModel>> carteraTAZ = this.carteraCompletaGuardar(cokkie, "7");
+        RestResponse<ArrayList<ClienteModel>> carteraTOR = this.carteraCompletaGuardar(cokkie, "8");
+        RestResponse<ArrayList<ClienteModel>> carteraSaldosAltos = this.carteraCompletaGuardar(cokkie, "9");
+        RestResponse<ArrayList<ClienteModel>> carteraItalika = this.carteraCompletaGuardar(cokkie, "10");
+
+        cuentasCompletas.addAll(carteraNormalidad.getData());
+        cuentasCompletas.addAll(carteraVIP.getData());
+        cuentasCompletas.addAll(carteraTerritorios.getData());
+        cuentasCompletas.addAll(carteraAbandonados.getData());
+        cuentasCompletas.addAll(carteraImplant.getData());
+        cuentasCompletas.addAll(carteraTAZ.getData());
+        cuentasCompletas.addAll(carteraTOR.getData());
+        cuentasCompletas.addAll(carteraSaldosAltos.getData());
+        cuentasCompletas.addAll(carteraItalika.getData());
+
+        respuesta.setCode(1);
+        respuesta.setMessage("Cartera Completas Descarte");
+        respuesta.setData(cuentasCompletas);
+        LOGGER.log(Level.INFO, () -> "Termina proceso de todas las carteras Descarte");
+
+        return respuesta;
     }
 }

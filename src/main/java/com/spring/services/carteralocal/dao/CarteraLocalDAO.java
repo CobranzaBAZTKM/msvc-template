@@ -22,144 +22,6 @@ public class CarteraLocalDAO {
     public CarteraLocalDAO() {
         //VACIO
     }
-
-
-    public RestResponse<ArrayList<ClienteModel>> consultarCarteraCompleta(){
-        RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
-        respuesta.setCode(0);
-        respuesta.setError(true);
-        LOGGER.log(Level.INFO, () -> "consultarCarteraCompleta: Comenzando consulta de la cartera Completa");
-        String query= Constantes.consultaBD+"cartera;";
-        Statement st;
-        try{
-            ArrayList<ClienteModel> cuentas=new ArrayList<>();
-            st=conexionbd.establecerConexion2().createStatement();
-            ResultSet rs=st.executeQuery(query);
-            while(rs.next()){
-                ClienteModel cuenta=new ClienteModel();
-                cuenta.setCLIENTE_UNICO(rs.getString(1));
-                cuenta.setNOMBRE_CTE(rs.getString(2));
-                cuenta.setRFC_CTE(rs.getString(3));
-                cuenta.setGENERO_CLIENTE(rs.getString(4));
-                cuenta.setEDAD_CLIENTE(rs.getString(5));
-                cuenta.setOCUPACION(rs.getString(6));
-                cuenta.setCORREO_ELECTRONICO(rs.getString(7));
-                cuenta.setDIRECCION_CTE(rs.getString(8));
-                cuenta.setNUM_EXT_CTE(rs.getString(9));
-                cuenta.setNUM_INT_CTE(rs.getString(10));
-                cuenta.setCP_CTE(rs.getString(11));
-                cuenta.setCOLONIA_CTE(rs.getString(12));
-                cuenta.setPOBLACION_CTE(rs.getString(13));
-                cuenta.setESTADO_CTE(rs.getString(14));
-                cuenta.setTERRITORIO(rs.getString(15));
-                cuenta.setTERRITORIAL(rs.getString(16));
-                cuenta.setZONA(rs.getString(17));
-                cuenta.setZONAL(rs.getString(18));
-                cuenta.setNOMBRE_DESPACHO(rs.getString(19));
-                cuenta.setGERENCIA(rs.getString(20));
-                cuenta.setFECHA_ASIGNACION(rs.getString(21));
-                cuenta.setDIAS_ASIGNACION(rs.getString(22));
-                cuenta.setREFERENCIAS_DOMICILIO(rs.getString(23));
-                cuenta.setCLASIFICACION_CTE(rs.getString(24));
-                cuenta.setDIQUE(rs.getString(25));
-                cuenta.setATRASO_MAXIMO(rs.getString(26));
-                cuenta.setDIAS_ATRASO(Integer.parseInt(rs.getString(27)));
-                cuenta.setSALDO(rs.getString(28));
-                cuenta.setMORATORIOS(rs.getString(29));
-                cuenta.setSALDO_TOTAL(Float.parseFloat(rs.getString(30)));
-                cuenta.setSALDO_ATRASADO(rs.getString(31));
-                cuenta.setSALDO_REQUERIDO(rs.getString(32));
-                cuenta.setPAGO_PUNTUAL(rs.getString(33));
-                cuenta.setPAGO_NORMAL(rs.getString(34));
-                cuenta.setPRODUCTO(rs.getString(35));
-                cuenta.setFECHA_ULTIMO_PAGO(rs.getString(36));
-                cuenta.setIMP_ULTIMO_PAGO(rs.getString(37));
-                cuenta.setCALLE_EMPLEO(rs.getString(38));
-                cuenta.setNUM_EXT_EMPLEO(rs.getString(39));
-                cuenta.setNUM_INT_EMPLEO(rs.getString(40));
-                cuenta.setCOLONIA_EMPLEO(rs.getString(41));
-                cuenta.setPOBLACION_EMPLEO(rs.getString(42));
-                cuenta.setESTADO_EMPLEO(rs.getString(43));
-                cuenta.setNOMBRE_AVAL(rs.getString(44));
-                cuenta.setTEL_AVAL(rs.getString(45));
-                cuenta.setCALLE_AVAL(rs.getString(46));
-                cuenta.setNUM_EXT_AVAL(rs.getString(47));
-                cuenta.setCOLONIA_AVAL(rs.getString(48));
-                cuenta.setCP_AVAL(rs.getString(49));
-                cuenta.setPOBLACION_AVAL(rs.getString(50));
-                cuenta.setESTADO_AVAL(rs.getString(51));
-                cuenta.setCLIENTE_GRUPAL(rs.getString(52));
-                cuenta.setFIPAISGEO(rs.getString(53));
-                cuenta.setFICUADRANTEGEO(rs.getString(54));
-                cuenta.setFIZONAGEO(rs.getString(55));
-                cuenta.setFIDIAPAGO(rs.getString(56));
-                cuenta.setTELEFONO1(rs.getString(57));
-                cuenta.setTELEFONO2(rs.getString(58));
-                cuenta.setTELEFONO3(rs.getString(59));
-                cuenta.setTELEFONO4(rs.getString(60));
-                cuenta.setTIPOTEL1(rs.getString(61));
-                cuenta.setTIPOTEL2(rs.getString(62));
-                cuenta.setTIPOTEL3(rs.getString(63));
-                cuenta.setTIPOTEL4(rs.getString(64));
-                cuenta.setLATITUD(rs.getString(65));
-                cuenta.setLONGITUD(rs.getString(66));
-                cuenta.setDESPACHO_GESTIONO(rs.getString(67));
-                cuenta.setULTIMA_GESTION(rs.getString(68));
-                cuenta.setGESTION_DESC(rs.getString(69));
-                cuenta.setCAMPANIA_RELAMPAGO(rs.getString(70));
-                cuenta.setCAMPANIA(rs.getString(71));
-                cuenta.setTIPO_CARTERA(rs.getString(72));
-                cuenta.setID_GRUPO(rs.getString(73));
-                cuenta.setGRUPO_MAZ(rs.getString(74));
-                cuenta.setCLAVE_SPEI(rs.getString(75));
-                cuenta.setPAGOS_CLIENTE(rs.getString(76));
-                cuenta.setMONTO_PAGOS(rs.getString(77));
-                cuenta.setGESTORES(rs.getString(78));
-                cuenta.setFOLIO_PLAN(rs.getString(79));
-                cuenta.setSEGMENTO_GENERACION(rs.getString(80));
-                cuenta.setESTATUS_PLAN(rs.getString(81));
-                cuenta.setSEMANAS_ATRASO(rs.getString(82));
-                cuenta.setATRASO(rs.getString(83));
-                cuenta.setGENERACION_PLAN(rs.getString(84));
-                cuenta.setCANCELACION_CUMPLIMIENTO_PLAN(rs.getString(85));
-                cuenta.setULTIMO_ESTATUS(rs.getString(86));
-                cuenta.setEMPLEADO(rs.getString(87));
-                cuenta.setCANAL(rs.getString(88));
-                cuenta.setABONO_SEMANAL(rs.getString(89));
-                cuenta.setPLAZO(rs.getString(90));
-                cuenta.setMONTO_ABONADO(rs.getString(91));
-                cuenta.setMONTO_PLAN(rs.getString(92));
-                cuenta.setENGANCHE(rs.getString(93));
-                cuenta.setPAGOS_RECIBIDOS(rs.getString(94));
-                cuenta.setSALDO_ANTES_DEL_PLAN(rs.getString(95));
-                cuenta.setSALDO_ATRASADO_ANTES_PLAN(rs.getString(96));
-                cuenta.setMORATORIOS_ANTES_PLAN(rs.getString(97));
-                cuenta.setESTATUS_PROMESA_PAGO(rs.getString(98));
-                cuenta.setMONTO_PROMESA_PAGO(rs.getString(99));
-                cuenta.setSEGMENTO(Integer.parseInt(rs.getString(100)));
-                cuenta.setTIPOCARTERATKM(rs.getString(102));
-
-                cuentas.add(cuenta);
-
-
-            }
-            respuesta.setCode(1);
-            respuesta.setError(false);
-            respuesta.setMessage("Se obtuvieron correctamente las promesas");
-            respuesta.setData(cuentas);
-            st.close();
-            LOGGER.log(Level.INFO, () -> "consultarCarteraCompleta: Termina consulta de la cartera Completa con "+cuentas.size()+" cuentas");
-        }
-        catch (Exception e){
-            respuesta.setMessage("ISSUE consultarCarteraCompleta: "+e);
-            LOGGER.log(Level.INFO, () -> "ISSUE consultarCarteraCompleta: "+e);
-
-        }
-
-        return respuesta;
-    }
-
-
     public RestResponse<ArrayList<ClienteModel>> consultarCarteraCompletaPorCartera(String tipoCarteraTKM){
         RestResponse<ArrayList<ClienteModel>> respuesta=new RestResponse<>();
         respuesta.setCode(0);
@@ -177,9 +39,6 @@ public class CarteraLocalDAO {
                 break;
             case "3":
                 valoresBD=" WHERE cartera.TIPOCARTERATKM='Territorios'";
-                break;
-            case "4":
-                valoresBD=" WHERE cartera.TIPOCARTERATKM='DiezYears'";
                 break;
             case "5":
                 valoresBD=" WHERE cartera.TIPOCARTERATKM='Abandonados'";
@@ -722,9 +581,6 @@ public class CarteraLocalDAO {
             case "3":
                 valoresBD=" WHERE cartera.TIPOCARTERATKM='Territorios'";
                 break;
-            case "4":
-                valoresBD=" WHERE cartera.TIPOCARTERATKM='DiezYears'";
-                break;
             case "5":
                 valoresBD=" WHERE cartera.TIPOCARTERATKM='Abandonados'";
                 break;
@@ -1164,9 +1020,6 @@ public class CarteraLocalDAO {
             case "3":
                 tablaBD="carteraConPromesaTerritorios";
                 break;
-            case "4":
-                tablaBD="carteraConPromesaDiezYears";
-                break;
             case "5":
                 tablaBD="carteraConPromesaAbandonados";
                 break;
@@ -1248,7 +1101,9 @@ public class CarteraLocalDAO {
                 cuenta.setCLAVE_SPEI(rs.getString(39));
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(40));
                 cuenta.setSEGMENTO(Integer.valueOf(rs.getString(41)));
+                cuenta.setESTATUS_PROMESA_PAGO(rs.getString(42));
                 cuenta.setFECHA_INSER_LOCAL(rs.getString(43));
+
                 cuenta.setTIPOCARTERATKM(tipoCartera);
 
                 cuentas.add(cuenta);
@@ -1282,9 +1137,6 @@ public class CarteraLocalDAO {
                 break;
             case "3":
                 tablaBD="carteraConPromesaTerritorios";
-                break;
-            case "4":
-                tablaBD="carteraConPromesaDiezYears";
                 break;
             case "5":
                 tablaBD="carteraConPromesaAbandonados";
@@ -1426,9 +1278,6 @@ public class CarteraLocalDAO {
             case "3":
                 tablaBD="carteraConPromesaTerritorios";
                 break;
-            case "4":
-                tablaBD="carteraConPromesaDiezYears";
-                break;
             case "5":
                 tablaBD="carteraConPromesaAbandonados";
                 break;
@@ -1490,9 +1339,6 @@ public class CarteraLocalDAO {
             case "3":
                 tablaBD="carteraConPromesaTerritorios";
                 break;
-            case "4":
-                tablaBD="carteraConPromesaDiezYears";
-                break;
             case "5":
                 tablaBD="carteraConPromesaAbandonados";
                 break;
@@ -1552,9 +1398,6 @@ public class CarteraLocalDAO {
                 break;
             case"3":
                 tablaBD="carteraSinContactoTerritorios";
-                break;
-            case"4":
-                tablaBD="carteraSinContactoDiezYears";
                 break;
             case "5":
                 tablaBD="carteraSinContactoAbandonados";
@@ -1629,7 +1472,7 @@ public class CarteraLocalDAO {
                 cuenta.setCLAVE_SPEI(rs.getString(39));
                 cuenta.setMONTO_PROMESA_PAGO(rs.getString(40));
                 cuenta.setSEGMENTO(Integer.valueOf(rs.getString(41)));
-                cuenta.setFECHA_INSER_LOCAL(rs.getString(42));
+                cuenta.setFECHA_INSER_LOCAL(rs.getString(43));
                 cuenta.setTIPOCARTERATKM(tipoCarteraTKM);
 
 
@@ -1664,9 +1507,6 @@ public class CarteraLocalDAO {
                 break;
             case "3":
                 tablaBD="carteraSinContactoTerritorios";
-                break;
-            case "4":
-                tablaBD="carteraSinContactoDiezYears";
                 break;
             case "5":
                 tablaBD="carteraSinContactoAbandonados";
