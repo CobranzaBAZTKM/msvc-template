@@ -15,6 +15,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.BodyPart;
+import javax.mail.Multipart;
 
 @Component
 public class NotificacionesLogic {
@@ -42,7 +46,7 @@ public class NotificacionesLogic {
             LOGGER.log(Level.INFO, () -> "REQUEST enviarCorreo"+correo);
             String correos="";
             MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(correo.getRemitente()));
+            message.setFrom(new InternetAddress(Constantes.correoRemitente));
             for(int i=0;i<correo.getDestinatario().size();i++) {
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario().get(i)));
                 correos=correos+" "+correo.getDestinatario().get(i)+",";
@@ -51,6 +55,61 @@ public class NotificacionesLogic {
 //            message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario()));
             message.setSubject(correo.getAsunto());
             message.setText(correo.getMensaje());
+            Transport t = session.getTransport("smtp");
+            t.connect(Constantes.correoRemitente, Constantes.passwordRemitente);
+            t.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
+            t.close();
+
+            respuesta.setCode(1);
+            respuesta.setError(false);
+            respuesta.setMessage("Correo(s) enviado(s) correctamente "+correos);
+            respuesta.setData("Revisa tu buzon de enviados");
+            LOGGER.log(Level.INFO, () -> "RESPONSE enviarCorreo"+respuesta);
+
+        }
+        catch (Exception e){
+            respuesta.setMessage("Algo ocurrio "+e);
+        }
+
+        return respuesta;
+    }
+
+    public RestResponse<String> enviarCorreo2(CuerpoCorreo correo) {
+        RestResponse<String> respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setData(null);
+
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.setProperty("mail.smtp.starttls.enable", "true");
+        properties.setProperty("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+
+        Session session = Session.getDefaultInstance(properties);
+
+        try{
+            LOGGER.log(Level.INFO, () -> "REQUEST enviarCorreo"+correo);
+            String correos="";
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(correo.getRemitente()));
+            for(int i=0;i<correo.getDestinatario().size();i++) {
+                message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario().get(i)));
+                correos=correos+" "+correo.getDestinatario().get(i)+",";
+            }
+//            message.addRecipient(Message.RecipientType.TO, new InternetAddress("axel.rodriguezn@elektra.com.mx"));
+//            message.addRecipient(Message.RecipientType.TO, new InternetAddress(correo.getDestinatario()));
+            message.setSubject(correo.getAsunto());
+
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(correo.getMensaje() + "<br><br>", "text/html");
+            MimeMultipart mimeMultipart = new MimeMultipart();
+            mimeMultipart.addBodyPart((BodyPart)mimeBodyPart);
+            message.setContent((Multipart)mimeMultipart);
+
+
+//            message.setText(correo.getMensaje());
             Transport t = session.getTransport("smtp");
             t.connect(correo.getRemitente(), correo.getPasswordRemitente());
             t.sendMessage(message, message.getRecipients(Message.RecipientType.TO));
@@ -69,7 +128,6 @@ public class NotificacionesLogic {
 
         return respuesta;
     }
-
 
     public RestResponse<String>  enviarCorreoGenerico(CuerpoCorreo correo){
 //        CuerpoCorreo datosCorreo=new CuerpoCorreo();
