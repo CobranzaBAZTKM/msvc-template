@@ -40,4 +40,9 @@ public class PagosPlanesService implements PagosPlanesImpl {
     public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM){
         return ppLogic.validarPromesasPago2semanas(json,tipoCarteraTKM);
     }
+
+    @Override
+    public RestResponse<String>layoutSemanal(String layout) {
+        return ppLogic.layoutSemanal(layout);
+    }
 }

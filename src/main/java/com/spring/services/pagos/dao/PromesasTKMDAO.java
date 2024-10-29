@@ -54,7 +54,7 @@ public class PromesasTKMDAO {
                 promesa.setInserto(rs.getInt(18));
                 promesa.setTipoLlamada(rs.getString(22));
                 promesa.setFechInser(rs.getString(23));
-                promesa.setPagoFinal(rs.getInt(24));
+                promesa.setPagoFinal(rs.getString(24));
                 promesa.setTurnoGestor(rs.getString(25));
                 promesa.setIdAutorizo(rs.getInt(26));
                 promesa.setTipoCartera(rs.getString(27));
@@ -104,7 +104,7 @@ public class PromesasTKMDAO {
             cs.setInt(16,promesa.getInserto());
             cs.setString(17,promesa.getTipoLlamada());
             cs.setString(18,promesa.getFechInser());
-            cs.setInt(19,promesa.getPagoFinal());
+            cs.setString(19,promesa.getPagoFinal());
             cs.setString(20,promesa.getTurnoGestor());
             cs.setInt(21,promesa.getIdAutorizo());
             cs.setString(22,promesa.getTipoCartera());
@@ -220,7 +220,7 @@ public class PromesasTKMDAO {
 
 
             cs.setString(1,promesa.getNota());
-            cs.setInt(2,promesa.getPagoFinal());
+            cs.setString(2,promesa.getPagoFinal());
             cs.setString(3,promesa.getFechaPago());
             cs.setString(4,promesa.getFechaVencimientoPP());
             cs.setString(5,promesa.getRecurrencia());
@@ -244,7 +244,33 @@ public class PromesasTKMDAO {
 
     }
 
+    public RestResponse<String>actualizarMontoPromesa(ArrayList<PromesasModel> montos){
+        RestResponse<String> respuesta=new RestResponse<>();
+        respuesta.setCode(0);
+        respuesta.setError(true);
+        String query=Constantes.updateBD+"promesaspp SET promesaspp.pagoFinal=? WHERE promesaspp.id=?";
+        try {
+            LOGGER.log(Level.INFO, () -> "REQUEST actualizarMontoPromesa: "+montos.toString());
+            CallableStatement cs=conexionbd.establecerConexion().prepareCall(query);
+            for(int i=0;i<montos.size();i++){
+                cs.setString(1,montos.get(i).getPagoFinal());
+                cs.setInt(2,montos.get(i).getId());
+                cs.execute();
+            }
+            respuesta.setCode(1);
+            respuesta.setError(false);
+            respuesta.setMessage("Registros actualizados en la BD");
+            respuesta.setData("Registros actualizados en la BD correctamente");
+            cs.close();
 
+            LOGGER.log(Level.INFO, () -> "RESPONSE actualizarMontoPromesa: "+respuesta);
+        }
+        catch (Exception e){
+            respuesta.setMessage("ISSUE actualizarMontoPromesa: "+e);
+            LOGGER.log(Level.INFO, () -> "ISSUE actualizarMontoPromesa: "+e);
+        }
+        return respuesta;
+    }
 
     public RestResponse<String> borrarPromesas(String idPromesa,String idAdmin) {
         RestResponse<String> respuesta=new RestResponse<>();

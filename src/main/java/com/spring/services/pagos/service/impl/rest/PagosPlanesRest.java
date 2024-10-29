@@ -50,7 +50,12 @@ public class PagosPlanesRest {
         return ppImpl.validarPromesasPago2semanas(json,tipoCarteraTKM);
     }
 
-
+    @PostMapping(value = "/layoutSemanal",
+            consumes = { MediaType.APPLICATION_JSON_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<String>layoutSemanal(@RequestBody final String layout) {
+        return ppImpl.layoutSemanal(layout);
+    }
 
 }
 

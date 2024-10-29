@@ -31,7 +31,7 @@ public class PromesasModel {
     private String gestion3;
     private String tipoLlamada;
     private String fechInser;
-    private Integer pagoFinal;
+    private String pagoFinal;
     private String turnoGestor;
     private Integer idAutorizo;
     private String tipoCartera;

@@ -13,4 +13,5 @@ public interface PagosPlanesImpl {
     RestResponse<String> obtenerPlanesPagoSemanal(datosEntradaPagosPlanes cu);
     RestResponse<ArrayList<PromesasModel>> obtenerPagosDia(datosEntradaPagosPlanes cu,String tipoCarteraTKM);
     RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM);
+    RestResponse<String>layoutSemanal(String layout);
 }

@@ -48,7 +48,9 @@ public class PromesasTKMService implements PromesasTKMImpl {
     public RestResponse<String> actualizarPromesasEstPag(PromesasModel promesa) {
         return ppLogic.actualizarPromesasEstPag(promesa);
     }
-
-
+    @Override
+    public RestResponse<String>actualizarMontoPromesa(ArrayList<PromesasModel> montos){
+        return ppLogic.actualizarMontoPromesa(montos);
+    }
 
 }

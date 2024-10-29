@@ -62,4 +62,11 @@ public class PromesasTKMRest {
         return promTKMImp.actualizarPromesasEstPag(promesa);
     }
 
+    @PostMapping(value={"/actualizarMontoPromesa"},
+            consumes = { MediaType.APPLICATION_JSON_VALUE },
+            produces = { MediaType.APPLICATION_JSON_VALUE })
+    public RestResponse<String>actualizarMontoPromesa(@RequestBody final ArrayList<PromesasModel> montos){
+        return promTKMImp.actualizarMontoPromesa(montos);
+    }
+
 }

@@ -12,5 +12,7 @@ public interface PromesasTKMImpl {
     RestResponse<String> actualizarPromesas(PromesasModel promesa);
     RestResponse<String> borrarPromesas(String idPromesa,String idAdmin);
     RestResponse<String> actualizarPromesasEstPag(PromesasModel promesa);
+    RestResponse<String>actualizarMontoPromesa(ArrayList<PromesasModel> montos);
+
 
 }

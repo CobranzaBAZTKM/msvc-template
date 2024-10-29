@@ -173,7 +173,7 @@ public class PromesasTKMLogic {
             promesa.setTipoLlamada((String) cus.getJSONObject(i).get("tipoLlamada"));
             promesa.setClienteUnico((String) cus.getJSONObject(i).get("clienteUnico"));
             promesa.setFechInser((String) cus.getJSONObject(i).get("fechInser"));
-            promesa.setPagoFinal((Integer) cus.getJSONObject(i).get("pagoFinal"));
+            promesa.setPagoFinal((String) cus.getJSONObject(i).get("pagoFinal"));
             promesa.setTurnoGestor((String) cus.getJSONObject(i).get("turnoGestor"));
 
             if(!cus.getJSONObject(i).isNull("edito")){
@@ -217,7 +217,9 @@ public class PromesasTKMLogic {
         return gesDao2.actualizarPromesasEstPag(promesa);
     }
 
-
+    public RestResponse<String>actualizarMontoPromesa(ArrayList<PromesasModel> montos){
+        return gesDao2.actualizarMontoPromesa(montos);
+    }
 
 
 }

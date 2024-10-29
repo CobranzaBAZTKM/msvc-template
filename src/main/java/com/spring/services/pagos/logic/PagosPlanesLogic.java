@@ -2,6 +2,9 @@ package com.spring.services.pagos.logic;
 
 import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.carteralocal.logic.CarteraLocalLogic;
+import com.spring.services.constantes.Constantes;
+import com.spring.services.notificaciones.logic.NotificacionesLogic;
+import com.spring.services.notificaciones.model.CuerpoCorreo;
 import com.spring.services.pagos.model.PromesasModel;
 import com.spring.services.pagos.model.datosEntradaPagosPlanes;
 import com.spring.utils.RestResponse;
@@ -29,6 +32,8 @@ public class PagosPlanesLogic {
 
     @Autowired
     private SetearDatosPagoPlanesLog sdPpLogic;
+
+    private NotificacionesLogic notificaciones=new NotificacionesLogic();
 
 //    @Autowired
     private ObtenerDatosPlanesPagos obDatLogic=new ObtenerDatosPlanesPagos();
@@ -336,8 +341,6 @@ public class PagosPlanesLogic {
                 promesasTipoCartera.add(promesasCompletas.get(m));
             }else if("3".equals(tipoCarteraTKM)&&"Territorios".equals(promesasCompletas.get(m).getTipoCartera())){
                 promesasTipoCartera.add(promesasCompletas.get(m));
-            }else if("4".equals(tipoCarteraTKM)&&"DiezYears".equals(promesasCompletas.get(m).getTipoCartera())){
-                promesasTipoCartera.add(promesasCompletas.get(m));
             }
         }
 
@@ -354,13 +357,13 @@ public class PagosPlanesLogic {
                             if (!"".equals(montosEnc[j])) {
                                 String[] separarMonto = montosEnc[j].split("=");
                                 if (separarMonto[0].equals(cookie.getIdPlanActivo())) {
-                                    Integer monto = Integer.parseInt(separarMonto[1]);
+                                    Float monto = Float.parseFloat(separarMonto[1]);
                                     if (monto > 0) {
                                         PromesasModel promesa = new PromesasModel();
                                         promesa.setId(promesasTipoCartera.get(i).getId());
                                         promesa.setClienteUnico(promesasTipoCartera.get(i).getClienteUnico());
                                         promesa.setNota(promesasTipoCartera.get(i).getNota());
-                                        promesa.setPagoFinal(monto);
+                                        promesa.setPagoFinal(separarMonto[1]);
                                         promesa.setNombreCliente(promesasTipoCartera.get(i).getNombreCliente());
                                         promesa.setNombreGestor(promesasTipoCartera.get(i).getNombreGestor());
                                         promesa.setFechaPago(promesasTipoCartera.get(i).getFechaPago());
@@ -401,6 +404,158 @@ public class PagosPlanesLogic {
         return respuesta;
     }
 
+//    public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM){
+//        String[] fechaHora=util.obtenerFechaActual().split(" ");
+//        String fechaDia=fechaHora[0];
+//        String fechaDiaAtUno=util.FechaDiaAnteriorPosterior(-1);
+//        String fechaDiaAtDos=util.FechaDiaAnteriorPosterior(-2);
+//        String fechaDiaAtTres=util.FechaDiaAnteriorPosterior(-3);
+//
+//        Calendar calendar = Calendar.getInstance();
+//        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
+//        int numeroSemanaPasada=numeroSemana-1;
+//        int numeroSemanaAntePasada=numeroSemana-2;
+//        if(numeroSemana==1){
+//            numeroSemanaPasada=52;
+//            numeroSemanaAntePasada=51;
+//        }
+//
+//        String cartera=null;
+//        switch (tipoCarteraTKM){
+//            case "1":
+//                cartera="60054";
+//                break;
+//            case "2":
+//                cartera="60165";
+//                break;
+//            case "3":
+//                cartera="60174";
+//                break;
+//            case "4":
+//                cartera="60187";
+//                break;
+//            default:
+//                //Vacio
+//                break;
+//        }
+//
+//        String json1="{\n" +
+//                "    \"anio\":2024,\n" +
+////                "    \"despacho\":\"60054\",\n" +
+//                "    \"despacho\":\""+cartera+"\",\n" +
+//                "    \"segmento\":0,\n" +
+//                "    \"semana\":"+numeroSemanaPasada+"\n" +
+//                "}";
+//
+//        String json2="{\n" +
+//                "    \"anio\":2024,\n" +
+////                "    \"despacho\":\"60054\",\n" +
+//                "    \"despacho\":\""+cartera+"\",\n" +
+//                "    \"segmento\":0,\n" +
+//                "    \"semana\":"+numeroSemanaAntePasada+"\n" +
+//                "}";
+//
+//        JSONObject jsonCookie=new JSONObject(json);
+//
+//        RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
+//        RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
+//
+//        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData(),fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres,tipoCarteraTKM);
+//    }
+//
+//    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres,String tipoCarteraTKM) {
+//        RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
+//        RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa(tipoCarteraTKM);
+//        JSONArray pagosSemPas=reporteSemPas.getJSONArray("respuesta");
+//        JSONArray pagosSemAntPas=reporteSemAnt.getJSONArray("respuesta");
+//        ArrayList<ClienteModel> valores=new ArrayList<>();
+//        ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
+//
+//
+//        ArrayList<ClienteModel> promesasDifDia=new ArrayList<>();
+//
+//        for(int m=0;m<obtenerPromesas.getData().size();m++){
+//            if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaDia)){
+//                if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtUno)) {
+//                    if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtDos)) {
+//                        if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtTres)) {
+//                            promesasDifDia.add(obtenerPromesas.getData().get(m));
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+////        for(int i=0;i<obtenerPromesas.getData().size();i++){
+//        for(int i=0;i<promesasDifDia.size();i++){
+//            int bandera=0;
+//            for(int j=0;j<pagosSemPas.length();j++){
+//                JSONObject pagos=(JSONObject) pagosSemPas.get(j);
+//                String montoPago= String.valueOf( pagos.get("recupporgestion"));
+//                if(!"0".equals(montoPago)){
+//                    String cuMonto= (String) pagos.get("clienteUnico");
+////                    if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+//                    if(promesasDifDia.get(i).getCLIENTE_UNICO().equals(cuMonto)){
+//                      bandera=1;
+//                      String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
+////                      obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(detalles);
+//                      promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
+////                      String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+//                      String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
+//                      actualizarMontoPromesa.add(actualizar);
+//                    }
+//                }
+//            }
+//
+//            if(bandera!=1){
+//                for(int k=0;k<pagosSemAntPas.length();k++){
+//                    JSONObject pagos= (JSONObject) pagosSemAntPas.get(k);
+//                    String montoPago= String.valueOf(pagos.get("recupporgestion"));
+//                    if(!"0".equals(montoPago)){
+//                        String cuMonto= (String) pagos.get("clienteUnico");
+//
+////                        if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
+//                        if(promesasDifDia.get(i).getCLIENTE_UNICO().equals(cuMonto)){
+//                            String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
+////                            obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(detalles);
+//                            promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
+////                            String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
+//                            String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
+//                            actualizarMontoPromesa.add(actualizar);
+//                        }
+//                    }
+//                }
+//            }
+//
+//            valores.add(promesasDifDia.get(i));
+//        }
+//
+//        this.carteraLog.actualizarMontoCuentaConPromesa(actualizarMontoPromesa,tipoCarteraTKM);
+//
+//        respuesta.setCode(1);
+//        respuesta.setMessage("Proceso terminado correctamente");
+//        respuesta.setData(valores);
+//
+//        this.eliminarPromesas(valores,tipoCarteraTKM);
+//
+//
+//        return respuesta;
+//    }
+
+    private RestResponse<String> eliminarPromesas(ArrayList<ClienteModel>promesas,String tipoCarteraTKM){
+        ArrayList<String>promesasSnMonto=new ArrayList<>();
+        for(int i=0;i<promesas.size();i++){
+            if("N/A".equals(promesas.get(i).getMONTO_PROMESA_PAGO())||"0".equals(promesas.get(i).getMONTO_PROMESA_PAGO())){
+                promesasSnMonto.add(promesas.get(i).getCLIENTE_UNICO());
+            }
+        }
+
+        return carteraLog.eliminarCuentasConPromesa(promesasSnMonto,tipoCarteraTKM);
+
+    }
+
+
+
     public RestResponse<ArrayList<ClienteModel>> validarPromesasPago2semanas(String json,String tipoCarteraTKM){
         String[] fechaHora=util.obtenerFechaActual().split(" ");
         String fechaDia=fechaHora[0];
@@ -408,63 +563,25 @@ public class PagosPlanesLogic {
         String fechaDiaAtDos=util.FechaDiaAnteriorPosterior(-2);
         String fechaDiaAtTres=util.FechaDiaAnteriorPosterior(-3);
 
-        Calendar calendar = Calendar.getInstance();
-        int numeroSemana = calendar.get(Calendar.WEEK_OF_YEAR);
-        int numeroSemanaPasada=numeroSemana-1;
-        int numeroSemanaAntePasada=numeroSemana-2;
-        if(numeroSemana==1){
-            numeroSemanaPasada=52;
-            numeroSemanaAntePasada=51;
-        }
+        JSONObject reporteSemPag=new JSONObject(json);
 
-        String cartera=null;
-        switch (tipoCarteraTKM){
-            case "1":
-                cartera="60054";
-                break;
-            case "2":
-                cartera="60165";
-                break;
-            case "3":
-                cartera="60174";
-                break;
-            case "4":
-                cartera="60187";
-                break;
-            default:
-                //Vacio
-                break;
-        }
 
-        String json1="{\n" +
-                "    \"anio\":2024,\n" +
-//                "    \"despacho\":\"60054\",\n" +
-                "    \"despacho\":\""+cartera+"\",\n" +
-                "    \"segmento\":0,\n" +
-                "    \"semana\":"+numeroSemanaPasada+"\n" +
-                "}";
-
-        String json2="{\n" +
-                "    \"anio\":2024,\n" +
-//                "    \"despacho\":\"60054\",\n" +
-                "    \"despacho\":\""+cartera+"\",\n" +
-                "    \"segmento\":0,\n" +
-                "    \"semana\":"+numeroSemanaAntePasada+"\n" +
-                "}";
 
         JSONObject jsonCookie=new JSONObject(json);
 
-        RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
-        RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
+//        RestResponse<JSONObject> reporteSemPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json1);
+//        RestResponse<JSONObject> reporteSemAntPas=obDatLogic.obtenerPagosReporteSCl((String) jsonCookie.get("cokkie"),json2);
 
-        return this.validarPagosPromesas(reporteSemPas.getData(),reporteSemAntPas.getData(),fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres,tipoCarteraTKM);
+
+        return this.validarPagosPromesas(reporteSemPag,fechaDia,fechaDiaAtUno,fechaDiaAtDos,fechaDiaAtTres,tipoCarteraTKM);
     }
 
-    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPas, JSONObject reporteSemAnt,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres,String tipoCarteraTKM) {
+
+    private RestResponse<ArrayList<ClienteModel>> validarPagosPromesas(JSONObject reporteSemPag,String fechaDia, String fechaAtUno,String fechaAtDos,String fechaAtTres,String tipoCarteraTKM) {
         RestResponse<ArrayList<ClienteModel>> respuesta = new RestResponse<>();
         RestResponse<ArrayList<ClienteModel>>obtenerPromesas=carteraLog.consultarCarteraConPromesa(tipoCarteraTKM);
-        JSONArray pagosSemPas=reporteSemPas.getJSONArray("respuesta");
-        JSONArray pagosSemAntPas=reporteSemAnt.getJSONArray("respuesta");
+        JSONArray pagosSemPas=reporteSemPag.getJSONArray("semanaPasada");
+        JSONArray pagosSemAntPas=reporteSemPag.getJSONArray("semanaAntePasada");
         ArrayList<ClienteModel> valores=new ArrayList<>();
         ArrayList<String> actualizarMontoPromesa=new ArrayList<>();
 
@@ -476,6 +593,7 @@ public class PagosPlanesLogic {
                 if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtUno)) {
                     if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtDos)) {
                         if(!obtenerPromesas.getData().get(m).getFECHA_INSER_LOCAL().equals(fechaAtTres)) {
+                            obtenerPromesas.getData().get(m).setMONTO_PROMESA_PAGO("0");
                             promesasDifDia.add(obtenerPromesas.getData().get(m));
                         }
                     }
@@ -493,13 +611,13 @@ public class PagosPlanesLogic {
                     String cuMonto= (String) pagos.get("clienteUnico");
 //                    if(obtenerPromesas.getData().get(i).getCLIENTE_UNICO().equals(cuMonto)){
                     if(promesasDifDia.get(i).getCLIENTE_UNICO().equals(cuMonto)){
-                      bandera=1;
-                      String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
+                        bandera=1;
+                        String detalles=montoPago+","+pagos.get("fdfecharecepcion")+","+pagos.get("gestor");
 //                      obtenerPromesas.getData().get(i).setMONTO_PROMESA_PAGO(detalles);
-                      promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
+                        promesasDifDia.get(i).setMONTO_PROMESA_PAGO(detalles);
 //                      String actualizar=montoPago+","+obtenerPromesas.getData().get(i).getCLIENTE_UNICO();
-                      String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
-                      actualizarMontoPromesa.add(actualizar);
+                        String actualizar=montoPago+","+promesasDifDia.get(i).getCLIENTE_UNICO();
+                        actualizarMontoPromesa.add(actualizar);
                     }
                 }
             }
@@ -533,28 +651,107 @@ public class PagosPlanesLogic {
         respuesta.setMessage("Proceso terminado correctamente");
         respuesta.setData(valores);
 
+
         this.eliminarPromesas(valores,tipoCarteraTKM);
 
 
         return respuesta;
     }
 
-    private RestResponse<String> eliminarPromesas(ArrayList<ClienteModel>promesas,String tipoCarteraTKM){
-        ArrayList<String>promesasSnMonto=new ArrayList<>();
-        for(int i=0;i<promesas.size();i++){
-            if("N/A".equals(promesas.get(i).getMONTO_PROMESA_PAGO())){
-                promesasSnMonto.add(promesas.get(i).getCLIENTE_UNICO());
-            }
-        }
+    public RestResponse<String>layoutSemanal(String layout) {
+        RestResponse<String> respuesta=new RestResponse<>();
+        JSONObject layoutIngreso=new JSONObject(layout);
+        StringBuilder html = new StringBuilder();
+        html.append("Buen dia. <br>");
+        html.append("Se envia la recuperacion de la semana <br><br><br>");
+        html.append("<table BORDER>");
+        html.append("<tr>");
+        html.append("<td><H5>CUENTAS GENERAL</H5></td>"+"<td>" + layoutIngreso.getString("cuentasGeneral")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>EPR GENERAL</H5></td>"+"<td>" + layoutIngreso.getString("eprGeneral")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CUENTAS NORMALIDAD</H5></td>"+"<td>" + layoutIngreso.getString("cuentasNormalidad")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>EPR NORMALIDAD</H5></td>"+"<td>" + layoutIngreso.getString("eprNormalidad")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS NORMALIDAD</H5></td>"+"<td>" + layoutIngreso.getString("pagosNormalidad")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE NORMALIDAD</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionNormalidad")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS VIP</H5></td>"+"<td>" + layoutIngreso.getString("pagosVIP")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE VIP</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionVIP")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS TERRITORIOS</H5></td>"+"<td>" + layoutIngreso.getString("pagosTerritorios")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE TERRITORIOS</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionTerritorios")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS ABANDONADOS</H5></td>"+"<td>" + layoutIngreso.getString("pagosAbandonados")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE ABANDONADOS</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionAbandonados")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS IMPLANT</H5></td>"+"<td>" + layoutIngreso.getString("pagosImplant")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE IMPLANT</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionImplant")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS TAZ</H5></td>"+"<td>" + layoutIngreso.getString("pagosTAZ")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE TAZ</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionTAZ")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS TOR</H5></td>"+"<td>" + layoutIngreso.getString("pagosTOR")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE TOR</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionTOR")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS SALDOS ALTOS</H5></td>"+"<td>" + layoutIngreso.getString("pagosSaldAlt")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE SALDOS ALTOS</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionSaldAlt")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS ITALIKA</H5></td>"+"<td>" + layoutIngreso.getString("pagosItalika")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE ITALIKA</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionItalika")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>TOTAL</H5></td>"+"<td>" + layoutIngreso.getString("total")+ "</td>");
+        html.append("</tr>");
+        html.append("</table>");
+        html.append("<br><br><br><b>Saludos.</b>");
 
-        return carteraLog.eliminarCuentasConPromesa(promesasSnMonto,tipoCarteraTKM);
+        ArrayList<String>correos=new ArrayList<>();
+        correos.add("rfrutos@tkm.com.mx");
+        correos.add("asalas@tkm.com.mx");
+        correos.add("eflorentino@tkm.com.mx");
+        correos.add("bhernandezc@tkm.com.mx");
+        correos.add("amartinezt@tkm.com.mx");
+        CuerpoCorreo correo = new CuerpoCorreo();
+        correo.setRemitente(Constantes.correoRemitente);
+        correo.setPasswordRemitente(Constantes.passwordRemitente);
+        correo.setDestinatario(correos);
+        correo.setAsunto("Recuperacion semanal");
+        correo.setMensaje(html.toString());
+        respuesta=notificaciones.enviarCorreo2(correo);
 
+
+        return respuesta;
     }
-
-
-
-
-
-
-
 }
