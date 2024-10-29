@@ -4,9 +4,20 @@ import com.spring.services.cartera.model.ClienteModel;
 import com.spring.services.cartera.model.ExtrasModel;
 import com.spring.utils.RestResponse;
 import com.spring.utils.UtilService;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -15,6 +26,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.json.Json;
+import javax.json.JsonObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -266,4 +279,45 @@ public class BlastersSMSLogic {
         return respuesta;
     }
 
+    public String envioSMS(ArrayList <String> numero,String mensaje,String usuario, String password){
+        String respuesta="";
+
+            for(int i=0;i<numero.size();i++){
+                String res=conexionEnvioSMS(numero.get(i),mensaje,usuario,password);
+                respuesta=respuesta+"\n"+numero.get(i)+res;
+            }
+        return respuesta;
+    }
+
+    public String conexionEnvioSMS(String numero, String mensaje,String usuario, String password){
+        String respuesta=null;
+        String liga="https://b2c.marcatel.com.mx/MarcatelSMSWCF/ServicioInsertarSMS.svc/EnviaSMS?usuario="+usuario+"&password="+password+"&telefonos="+numero+"&mensaje="+mensaje+"&codigopais=52&smsdosvias=0&mensajelargo=0&modonotificacion=0&notificarRespuestas=0&frecuenciaminutos=0&antispam=0&notransaccion=0&validarlistanegra=0";
+        CloseableHttpResponse serviceResponse = null;
+        try {
+            LOGGER.log(Level.INFO, () -> "REQUEST SMS Blasters | NUMERO: "+numero+" | MENSAJE: "+mensaje+" | LIGA: "+liga);
+            CloseableHttpClient client = HttpClients.custom().setSSLSocketFactory((LayeredConnectionSocketFactory)new SSLConnectionSocketFactory(SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy)new TrustSelfSignedStrategy()).build())).build();
+            HttpGet serviceRequest = new HttpGet(liga);
+            serviceResponse = client.execute((HttpUriRequest)serviceRequest);
+            JsonObject serviceObject = Json.createReader(serviceResponse.getEntity().getContent()).readObject();
+            LOGGER.log(Level.INFO, () -> "RESPONSE SMS Blasters: "+serviceObject);
+            int respStatus=serviceResponse.getStatusLine().getStatusCode();
+            if(respStatus==200||respStatus==201) {
+                JSONObject jsonGenerado = new JSONObject(serviceObject.toString());
+                int codigo = (int) jsonGenerado.get("code");
+                if(codigo==200){
+                    respuesta=" | Envio Exitoso | "+serviceObject.toString();
+                }
+                else{
+                    respuesta=" | No se realizo el envio | "+serviceObject.toString();
+                }
+            }
+            else{
+                respuesta="No se realizo la peticion: "+serviceObject.toString();
+            }
+        }
+        catch(Exception e){
+            respuesta="Ocurrio algo inesperado "+e;
+        }
+        return respuesta;
+    }
 }
