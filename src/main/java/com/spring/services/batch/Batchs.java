@@ -294,19 +294,19 @@ public class Batchs {
 
 
 //        @Scheduled(cron = "0 0 07 * * *")
-    public void resetAsistenciaDia() {
-        LOGGER.log(Level.INFO, () -> "Comienza Batch de resetAsistenciaDia");
-        ArrayList<GestoresModel> obtenerGestores=gestoresLogic.consultarGestoresTKM().getData();
-        ArrayList<String> gestoresAct=new ArrayList<>();
-        for(int i=0;i< obtenerGestores.size();i++){
-            if(obtenerGestores.get(i).getEstado()==1){
-                gestoresAct.add("I|"+obtenerGestores.get(i).getIdTkm());
-            }
-        }
-
-        RestResponse<String> act=gestoresLogic.actualizarAsisGestoresTKMArr(gestoresAct);
-        LOGGER.log(Level.INFO, () -> "Termina Batch de resetAsistenciaDia "+act);
-    }
+//    public void resetAsistenciaDia() {
+//        LOGGER.log(Level.INFO, () -> "Comienza Batch de resetAsistenciaDia");
+//        ArrayList<GestoresModel> obtenerGestores=gestoresLogic.consultarGestoresTKM().getData();
+//        ArrayList<String> gestoresAct=new ArrayList<>();
+//        for(int i=0;i< obtenerGestores.size();i++){
+//            if(obtenerGestores.get(i).getEstado()==1){
+//                gestoresAct.add("I|"+obtenerGestores.get(i).getIdTkm());
+//            }
+//        }
+//
+//        RestResponse<String> act=gestoresLogic.actualizarAsisGestoresTKMArr(gestoresAct);
+//        LOGGER.log(Level.INFO, () -> "Termina Batch de resetAsistenciaDia "+act);
+//    }
 
 //    @Scheduled(cron = "0 0 12,22 * * *")
 //    public void avisoElimacionPromesasMes(){
