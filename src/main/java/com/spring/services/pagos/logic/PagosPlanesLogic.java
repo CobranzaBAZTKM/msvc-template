@@ -732,6 +732,12 @@ public class PagosPlanesLogic {
         html.append("<td><H5>RECUPERACION DE ITALIKA</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionItalika")+ "</td>");
         html.append("</tr>");
         html.append("<tr>");
+        html.append("<td><H5>CANTIDA DE PAGOS ESPEJO</H5></td>"+"<td>" + layoutIngreso.getString("pagosEspejo")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><H5>RECUPERACION DE ESPEJO</H5></td>"+"<td>" + layoutIngreso.getString("recuperacionEspejo")+ "</td>");
+        html.append("</tr>");
+        html.append("<tr>");
         html.append("<td><H5>TOTAL</H5></td>"+"<td>" + layoutIngreso.getString("total")+ "</td>");
         html.append("</tr>");
         html.append("</table>");
